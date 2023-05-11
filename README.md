@@ -56,6 +56,3 @@ Once you are done with your work, you can deactivate the virtual environment by 
 ```
 (env)$ deactivate
 ```
-
-=======
-# SCC_Schichtplan_Algorithmus
