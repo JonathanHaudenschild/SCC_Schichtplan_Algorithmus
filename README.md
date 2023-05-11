@@ -12,13 +12,13 @@ These instructions will get you a copy of the project up and running on your loc
 You need Python 3.7.XX to run the following code. You can verify the Python version by typing the following:
 
 ```
-$ python --version
+python --version
 ```
 ## Setting Up a Virtual Environment
 Before you can start installing or using packages in your Python project, you'll need to set up a virtual environment. This will help to prevent any package dependencies from clashing with each other. In your project directory, run the following commands:
 
 ```
-$ python3 -m venv env
+python3 -m venv env
 ```
 This command creates a virtual environment named **env**. You can use any name you prefer.
 
@@ -27,19 +27,19 @@ Before you can start using the virtual environment, you need to activate it.
 
 For MacOS/Linux, use this:
 ```
-$ source env/bin/activate
+source env/bin/activate
 ```
 
 For Windows, use this:
 ```
-$ .\env\Scripts\activate
+.\env\Scripts\activate
 ```
 
 ## Installing Required Packages
 After activating the virtual environment, you can install the required packages using this command:
 
 ```
-(env)$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 Make sure you have a **requirements.txt** file at the root of your project directory that lists all the Python packages that your project depends on. You can create one using **pip freeze > requirements.txt** if you don't have one already.
 
@@ -47,12 +47,12 @@ Make sure you have a **requirements.txt** file at the root of your project direc
 Now, you can run the script using Python. For example, if your script is named **script.py**, you can run it like so:
 
 ```
-(env)$ python simulatedAnnealing_ref.py
+python simulatedAnnealing_ref.py
 ```
 
 ## Deactivating a Virtual Environment
 Once you are done with your work, you can deactivate the virtual environment by typing **deactivate** in your shell.
 
 ```
-(env)$ deactivate
+deactivate
 ```
