@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SCC Shift Scheduling System
 The SCC Shift Scheduling System is a Python-based project designed to simplify and optimize the process of creating shift schedules. The algorithm takes into account various factors such as the persons availability, preferences for certain shifts, and the number of shifts per person. It also considers the capacity of each shift and balances the distribution of persons experience levels and genders across shifts for a diversity and efficiency.
 
@@ -60,4 +59,3 @@ Once you are done with your work, you can deactivate the virtual environment by 
 
 =======
 # SCC_Schichtplan_Algorithmus
->>>>>>> parent of 80fb54c (Create Project)
