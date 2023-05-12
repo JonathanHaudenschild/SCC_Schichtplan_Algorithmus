@@ -12,7 +12,6 @@ from functools import partial
 from threading import Lock
 import pandas as pd
 
-
 # Costs Factor
 # Adjust to increase or decrease a cost factor's influence on the total cost.
 INEXPERIENCE_FACTOR = 10
@@ -126,12 +125,24 @@ def excel_to_checkinshift_array(file_path, nummer_col, check_in_col):
     # Array aus Check-in-Werten erstellen
     checkinpref_data = []
     for i, (nummer, check_in) in df[[nummer_col, check_in_col]].iterrows():
-        if check_in == "CHECK_IN":
-            checkinpref_data.append((nummer, check_in))
+        if pd.isnull(check_in):
+            checkinpref_data.append((nummer, 'nan'))
+        else:
+            checkinpref_data.append((nummer, 'CHECK_IN'))
 
     return checkinpref_data
 
+preferred_shift_category_list = checkinpref_data
 
+
+
+# These are constants representing different categories of shifts.
+NORMAL = 0  # Normal shift
+CHECK_IN = 1  # Check-in shift
+
+# This list defines the preferred shift categories of the people.
+# Each tuple consists of a persons index and a shift category constant.
+# For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
 
 ############################################################################################################## 
 # end - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
@@ -195,20 +206,8 @@ preference_list = [
 # Add more preferences here
 ]
 
-# These are constants representing different categories of shifts.
-NORMAL = 0  # Normal shift
-CHECK_IN = 1  # Check-in shift
-
-# This list defines the preferred shift categories of the people.
-# Each tuple consists of a persons index and a shift category constant.
-# For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
 
 
-preferred_shift_category_list = [
-    (4, "CHECK_IN"),  # Person with index 4 prefers to work check-in shifts
-    (34, "CHECK_IN")  # Person with index 34 also prefers to work check-in shifts
-    # Add more preferred shift categories here
-]
 
 
 # This list defines the categories of each shift.
@@ -406,9 +405,6 @@ shift_capacity_list= [
     # Add more shift capacity data here
 ]
 
-
-
-
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
 cooling_rate = 0.9999  # cooling rate
@@ -569,7 +565,10 @@ def create_persons_capacity_array(capacity_list):
 def create_preferred_shift_category_array(pref_shift_category_list):
     pref_shift_category_array = [0] * num_people
     for pref_shift_category in pref_shift_category_list:
-        pref_shift_category_array[pref_shift_category[0]] = pref_shift_category[1]
+        if pref_shift_category[1] == 'CHECK_IN':
+            pref_shift_category_array[pref_shift_category[0]] = 1
+        else:
+            pref_shift_category_array[pref_shift_category[0]] = 0
     return pref_shift_category_array
 
 def create_experience_array(experience_list):
@@ -808,17 +807,22 @@ if __name__ == "__main__":
     # Namen aus Excel Liste auslesen
     name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
     # Namen aus Excel Liste auslesen - TEST
+    print('NAMEN:')
     print(name)
     
     # Person Capacity aus Excel Liste auslesen
     person_capacity_list = excel_to_person_capacity_list('crewliste.xlsx', 'Schichtanzahl')
 
     # Gib die Liste aus - TEST
+    print('SCHICHTANZAHL:')
     print(person_capacity_list)
     
     preferred_shift_category_list = excel_to_checkinshift_array('crewliste.xlsx', 'Nummer' , 'check_in')
+    pref_shift_category_array = create_preferred_shift_category_array(preferred_shift_category_list)
+    print('CHECK_IN:')
     print(preferred_shift_category_list)
-    
+    print('CHECK_IN array 2:')
+    print(pref_shift_category_array)
     
     
     
