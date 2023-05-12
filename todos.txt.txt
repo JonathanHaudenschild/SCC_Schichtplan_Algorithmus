@@ -1,20 +1,21 @@
 1. Einlesen einer Excel Datei um die Listen zu generieren: (easy)
-	Listen bzgl. Personen
-	a. Namens Liste [(index, "Name")..] .
-	b. Kapazität
-	c. Schichtart präferenz (nacht, tag, früh, spät)
-	d. Schicht Kategorie Präferenz (Normal, Seeseit)
-	e. Partner/Nicht Partner Präferenzen
-	f. Geschlecht
-	g. Erfahrung
-	h. Abwesenheiten (Welche Schichten sie nicht da sind) -> Bonus: Angabe von Ankunft/Abfahrt und genau die Schichten werden berechnet die nicht machbar sind
-	i. Freier Tag Wahl (Welche Schichten sie gerne frei haben wollen) Mittags zu Mittags oder Mitternacht zu Mitternacht
-	Listen bzgl. Schichten
-	a. Names Liste der Schicht
-	b. Rangliste der Schichten 
-	c. Rangliste der Schichtart
-	d. Liste welche Schichten innerhalb einem Tag sind
-	e. Schicht Kapazitäten
+	a. Listen bzgl. Personen
+		i. Namens Liste [(index, "Name")..] .
+		ii. Kapazität
+		iii. Schichtart präferenz (nacht, tag, früh, spät)
+		iv. Schicht Kategorie Präferenz (Normal, Seeseit)
+		v. Partner/Nicht Partner Präferenzen
+		vi. Geschlecht
+		vii. Erfahrung
+		viii. Abwesenheiten (Welche Schichten sie nicht da sind) -> Bonus: Angabe von Ankunft/Abfahrt und genau die Schichten werden berechnet die nicht machbar sind
+		ix. Freier Tag Wahl (Welche Schichten sie gerne frei haben wollen) Mittags zu Mittags oder Mitternacht zu Mitternacht
+	b. Listen bzgl. Schichten
+		i. Names Liste der Schicht
+		ii. Rangliste der Schichten 
+		iii. Rangliste der Schichtart
+		iv. Liste welche Schichten innerhalb einem Tag sind
+		v. Schicht Kapazitäten
+	Optimieren des Einlesens (Datei wird nur einmal eingelesen)
 
 2. Auslesen des generierten Namensliste (easy/mittel)
 	a. Gesamtübersicht schöner gestalten
