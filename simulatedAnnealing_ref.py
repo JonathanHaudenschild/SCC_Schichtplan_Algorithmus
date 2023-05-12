@@ -12,6 +12,7 @@ from functools import partial
 from threading import Lock
 import pandas as pd
 
+
 # Costs Factor
 # Adjust to increase or decrease a cost factor's influence on the total cost.
 INEXPERIENCE_FACTOR = 10
@@ -19,7 +20,7 @@ ONE_SIDED_GENDER_FACTOR = 5
 SHIFT_CATEGORY_FACTOR = 5
 OFF_DAY_FACTOR = 5
 SHIFT_RANKING_FACTOR = 1
-
+CONSECUTIVE_SHIFT_FACTOR = 1
 ############################################################################################################## 
 # start - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
 ##############################################################################################################
@@ -30,7 +31,7 @@ SHIFT_RANKING_FACTOR = 1
 # or to keep track of the order of elements in a dataset.
 
 
-def excel_to_array(file_path, name_col, nickname_col):
+def excel_to_array(file_path, name_col, nickname_col, ):
     # Excel-Datei einlesen
     df = pd.read_excel(file_path)
 
@@ -125,24 +126,12 @@ def excel_to_checkinshift_array(file_path, nummer_col, check_in_col):
     # Array aus Check-in-Werten erstellen
     checkinpref_data = []
     for i, (nummer, check_in) in df[[nummer_col, check_in_col]].iterrows():
-        if pd.isnull(check_in):
-            checkinpref_data.append((nummer, 'nan'))
-        else:
-            checkinpref_data.append((nummer, 'CHECK_IN'))
+        if check_in == "CHECK_IN":
+            checkinpref_data.append((nummer, CHECK_IN))
 
     return checkinpref_data
 
-preferred_shift_category_list = checkinpref_data
 
-
-
-# These are constants representing different categories of shifts.
-NORMAL = 0  # Normal shift
-CHECK_IN = 1  # Check-in shift
-
-# This list defines the preferred shift categories of the people.
-# Each tuple consists of a persons index and a shift category constant.
-# For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
 
 ############################################################################################################## 
 # end - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
@@ -206,8 +195,20 @@ preference_list = [
 # Add more preferences here
 ]
 
+# These are constants representing different categories of shifts.
+NORMAL = 0  # Normal shift
+CHECK_IN = 1  # Check-in shift
+
+# This list defines the preferred shift categories of the people.
+# Each tuple consists of a persons index and a shift category constant.
+# For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
 
 
+preferred_shift_category_list = [
+    (4, "CHECK_IN"),  # Person with index 4 prefers to work check-in shifts
+    (34, "CHECK_IN")  # Person with index 34 also prefers to work check-in shifts
+    # Add more preferred shift categories here
+]
 
 
 # This list defines the categories of each shift.
@@ -404,6 +405,9 @@ shift_capacity_list= [
     (23, (7, 8)),   
     # Add more shift capacity data here
 ]
+
+
+
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
@@ -644,6 +648,8 @@ def preference_cost(solution, preference_matrix):
 def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailability_matrix):
     shift_costs = [0] * num_people
     shift_types = [[1] * num_of_shift_types for _ in range(num_people)]
+    last_shift_index = [0] * num_people
+    conc_shifts = [0] * num_people
 
     for shift_index, shift in enumerate(solution):
         for person in shift:
@@ -656,8 +662,18 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
 
             persons_cost += (shift_cost / (math.log(personal_pref_matrix[person][shift_type] + 1) + 1)) * duplicate_factor
 
-            shift_costs[person] += persons_cost
             shift_types[person][shift_type] += 1
+            shift_diff = shift_index - last_shift_index[person]
+        
+            if (conc_shifts[person] > 0):
+                persons_cost *= CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person]**2
+    
+            if shift_diff == 3:
+                conc_shifts[person] += 1
+            else:
+                conc_shifts[person] = 0     
+            last_shift_index[person] = shift_index
+            shift_costs[person] += persons_cost
 
     deviation = statistics.stdev(shift_costs)
     mean = statistics.mean(shift_costs)
