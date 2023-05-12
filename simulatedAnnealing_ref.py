@@ -36,14 +36,14 @@ def excel_to_array(file_path, name_col, nickname_col):
     df = pd.read_excel(file_path)
 
     # Array aus Namen und Spitznamen erstellen
-    data = []
+    name_data = []
     for i, (name, nickname) in enumerate(zip(df[name_col], df[nickname_col])):
         if pd.isna(nickname):
-            data.append((i, name))
+            name_data.append((i, name))
         else:
-            data.append((i, nickname))
+            name_data.append((i, nickname))
 
-    return data
+    return name_data
 
 name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
 index_name_list = []
