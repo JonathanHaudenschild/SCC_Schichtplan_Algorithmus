@@ -399,7 +399,7 @@ person_capacity_list   = [
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
-cooling_rate = 0.9999  # cooling rate
+cooling_rate = 0.99  # cooling rate
 activate_parallelization = True  # activate parallelization
 num_of_parallel_threads = 8  # number of parallel threads
 
@@ -764,26 +764,25 @@ def createFile(solution, shift_name_list):
     name_colors = {}
     white_font = Font(color='FFFFFF')  # Set font color to white
     dark_font = Font(color='000000')  # Set font color to black
+    for row_index, name in enumerate(solution, start=4):
+        cell = worksheet.cell(row=row_index, column=1)
+        cell.value = row_index - 3
+        cell.font = dark_font
     for col_index, shift in enumerate(solution, start=1):
-        if col_index == 1:
-            for row_index, shift in enumerate(solution, start=4):
-                cell = worksheet.cell(row=row_index, column=1)
-                cell.value = row_index - 3
-                cell.font = dark_font
-        else:    
-            for row_index, name in enumerate(shift, start=4):
-                cell = worksheet.cell(row=row_index, column=col_index)
-                cell.value = name
+        for row_index, name in enumerate(shift, start=4):
+            
+            cell = worksheet.cell(row=row_index, column=col_index+1)
+            cell.value = name
 
-                # Generate a unique color for each name if not already generated
-                if name not in name_colors:
-                    color = ColorHash(name).hex
-                    color = 'FF' + color[1:]  # Add alpha channel to the hex color
-                    name_colors[name] = PatternFill(start_color=color, end_color=color, fill_type='solid')
+            # Generate a unique color for each name if not already generated
+            if name not in name_colors:
+                color = ColorHash(name).hex
+                color = 'FF' + color[1:]  # Add alpha channel to the hex color
+                name_colors[name] = PatternFill(start_color=color, end_color=color, fill_type='solid')
 
-                # Apply the unique color to the cell
-                cell.fill = name_colors[name]
-                cell.font = white_font
+            # Apply the unique color to the cell
+            cell.fill = name_colors[name]
+            cell.font = white_font
 
     # Save the workbook as an Excel file
     workbook.save('shifts_with_unique_colors.xlsx')
