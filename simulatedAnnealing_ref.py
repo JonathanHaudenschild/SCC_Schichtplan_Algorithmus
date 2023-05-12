@@ -21,121 +21,62 @@ SHIFT_CATEGORY_FACTOR = 5
 OFF_DAY_FACTOR = 5
 SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 1
-############################################################################################################## 
-# start - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
-##############################################################################################################
-
-# Creating a list of tuples, where each tuple contains an index and a name.
-# The purpose of this list is to link a unique index with a specific name,
-# which can be used for instance, to identify users in a system, 
-# or to keep track of the order of elements in a dataset.
-
-
-def excel_to_array(file_path, name_col, nickname_col, ):
-    # Excel-Datei einlesen
-    df = pd.read_excel(file_path)
-
-    # Array aus Namen und Spitznamen erstellen
-    name_data = []
-    for i, (name, nickname) in enumerate(zip(df[name_col], df[nickname_col])):
-        if pd.isna(nickname):
-            name_data.append((i, name))
-        else:
-            name_data.append((i, nickname))
-
-    return name_data
-
-name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
-index_name_list = []
-
-for i, n in name:
-    index_name_list.append((i, n))
-
+# These are constants representing different levels of preference for or against working with certain partners.
+# Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
+# Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
+FRIEND_FACTOR = -3
+ENEMY_FACTOR = 15
 
 NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
 
-# Global variables to store the data from the Excel file
-name_data = []
-capacity_data = []
-checkinpref_data = []
-
-def excel_to_array(file_path, name_col, nickname_col):
-    global name_data
-    # Only read the Excel file if the global variable is empty
-    if not name_data:
-        # Excel-Datei einlesen
-        df = pd.read_excel(file_path)
-
-        # Array aus Namen und Spitznamen erstellen
-        data = []
-        for i, (name, nickname) in enumerate(zip(df[name_col], df[nickname_col])):
-            if pd.isna(nickname):
-                data.append((i, name))
-            else:
-                data.append((i, nickname))
-
-        name_data = data
-
-    return name_data
-
-def excel_to_person_capacity_list(file_path, capacity_col):
-    global capacity_data
-    # Only read the Excel file if the global variable is empty
-    if not capacity_data:
-        # Excel-Datei einlesen
-        df = pd.read_excel(file_path)
-
-        # Array aus Kapazitäten erstellen
-        cdata = []
-        for i, capacity in df[capacity_col].items():
-            if pd.isnull(capacity):
-                capacity = NUM_OF_SHIFTS_PER_PERSON
-            else:
-                capacity = int(capacity)
-            cdata.append((i, capacity))
-
-        capacity_data = cdata
-
-    return capacity_data
-
-# Creating a list of tuples, where each tuple contains an index and a name.
-# The purpose of this list is to link a unique index with a specific name,
-# which can be used for instance, to identify users in a system, 
-# or to keep track of the order of elements in a dataset.
-name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
-index_name_list = []
-
-for i, n in name:
-    index_name_list.append((i, n))
-
-# This list specifies the capacity for each person.
-# Each tuple represents a person's index and the number of shifts that the person can work.
-# For example, (0, 4) means that person 0 can work 4 shifts.
-# NUM_OF_SHIFTS_PER_PERSON is the default number of shifts per person. Each tuple will override this default value.
-person_capacity = excel_to_person_capacity_list('crewliste.xlsx', 'Schichtanzahl')
-person_capacity_list = []
-for i, pc in person_capacity:
-    person_capacity_list.append((i, pc))
-    
-    
-
-def excel_to_checkinshift_array(file_path, nummer_col, check_in_col):
-    # Excel-Datei einlesen
+def process_excel(file_path, name_col, nickname_col, capacity_col, shift_category_col, shift_type_ranking_col, friends_col, enemies_col, off_shifts_col, unavailable_shifts_col):
+    # Read excel file
     df = pd.read_excel(file_path)
 
-    # Array aus Check-in-Werten erstellen
-    checkinpref_data = []
-    for i, (nummer, check_in) in df[[nummer_col, check_in_col]].iterrows():
-        if check_in == "CHECK_IN":
-            checkinpref_data.append((nummer, CHECK_IN))
+    # Process names and nicknames
+    name_data = [(i, row[name_col]) if pd.isna(row[nickname_col]) else (i, row[nickname_col]) for i, row in df.iterrows()]
 
-    return checkinpref_data
+    # Process person capacities
+    df[capacity_col].fillna(NUM_OF_SHIFTS_PER_PERSON, inplace=True)
+    capacity_data = [(i, int(capacity)) for i, capacity in df[capacity_col].items()]
+
+    CHECK_IN = 1
+    # This list defines the preferred shift categories of the people.
+    # Each tuple consists of a persons index and a shift category constant.
+    # For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
+    check_in_pref_data = [(i, CHECK_IN) for i, check_in in df[shift_category_col].items() if (check_in == "CHECK_IN") or (check_in == 1)]
 
 
 
-############################################################################################################## 
-# end - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
-##############################################################################################################
+    # This list defines the preference of people to work together.
+    # Each tuple consists of two persons indices and a preference constant.
+    # A negative preference constant (e.g., ONE_FRIEND) indicates a preference to work together.
+    # A positive preference constant (e.g., ONE_ENEMY) indicates a preference to avoid working together.
+    friends_data = [(i, int(j), round(FRIEND_FACTOR/(math.log(len(str(friends).split(','))+1)))) for i, friends in df[friends_col].items() if not pd.isna(friends) for j in str(friends).split(',')]
+    enemies_data = [(i, int(j), round(ENEMY_FACTOR/(math.log(len(str(enemies).split(','))+1)))) for i, enemies in df[enemies_col].items() if not pd.isna(enemies) for j in str(enemies).split(',')]
+    friends_enemies_data = friends_data + enemies_data
+
+    # Process off shifts
+    # This list defines the off shifts of the people.
+    # Each tuple consists of a person's index and a shift index.
+    off_shifts_data = [(i, tuple(int(j) for j in off_shifts.split(','))) for i, off_shifts in df[off_shifts_col].items() if not pd.isna(off_shifts)]
+
+    # Process unavailable shifts
+    # This list defines the unavailable shifts of the people.
+    # Each tuple consists of a person's index and a shift index.
+    unavailable_shifts_data = [(i, tuple(int(j) for j in unavailable_shifts.split(','))) for i, unavailable_shifts in df[unavailable_shifts_col].items() if not pd.isna(unavailable_shifts)]
+
+    #
+    # This list defines the shift rankings of the people.
+    # Each tuple consists of a person's index and a shift ranking.
+    # A shift ranking is a number that indicates the priority of a shift.
+    # A shift ranking of 3 is the highest priority, a shift ranking of 2 is the second highest priority, and so on.
+    # A shift ranking of 0 means that the person has no preference for any shift.
+    preferred_shift_data = [(i, tuple(int(j) for j in shift_ranking.split(','))) for i, shift_ranking in df[shift_type_ranking_col].items() if not pd.isna(shift_ranking)]
+    
+    return name_data, capacity_data, check_in_pref_data, preferred_shift_data, friends_enemies_data, off_shifts_data, unavailable_shifts_data
+
+index_name_list, person_capacity_list, preferred_shift_category_list, preferred_shift_list, preference_list, offShift_list, unavailability_list = process_excel('crewliste.xlsx', 'Namen', 'Spitznamen', 'Schichtanzahl', 'Schichtart', 'Schichtpräferenz', 'Freunde', 'Feinde', 'Freie Schichten', 'Nicht Verfügbar')
 
 # Creating a list of tuples to represent different work shifts.
 # Each tuple contains an index and a corresponding shift time.
@@ -168,48 +109,9 @@ shift_type_ranking_list = [
     # Add more shift type rankings here
 ]
 
-# These are constants representing different levels of preference for or against working with certain partners.
-# Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
-# Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
-ONE_FRIEND = -5
-TWO_FRIENDS = -3
-THREE_FRIENDS = -2
-FOUR_FRIENDS = -1
-ONE_ENEMY = 15
-TWO_ENEMIES = 12
-THREE_ENEMIES = 9
-FOUR_ENEMIES = 6
-
-# This list defines the preference of employees to work together.
-# Each tuple consists of two persons indices and a preference constant.
-# A negative preference constant (e.g., ONE_FRIEND) indicates a preference to work together.
-# A positive preference constant (e.g., ONE_ENEMY) indicates a preference to avoid working together.
-
-preference_list = [
-    (3, 17, ONE_FRIEND),  # Person 0 and person 1 have a preference of 5 to work together
-    (45, 50, ONE_FRIEND),
-    (36, 28, ONE_FRIEND),
-    (6, 11, TWO_FRIENDS),
-    (6, 46, TWO_FRIENDS),
-    (11, 46, TWO_FRIENDS),
-# Add more preferences here
-]
-
 # These are constants representing different categories of shifts.
 NORMAL = 0  # Normal shift
 CHECK_IN = 1  # Check-in shift
-
-# This list defines the preferred shift categories of the people.
-# Each tuple consists of a persons index and a shift category constant.
-# For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
-
-
-preferred_shift_category_list = [
-    (4, "CHECK_IN"),  # Person with index 4 prefers to work check-in shifts
-    (34, "CHECK_IN")  # Person with index 34 also prefers to work check-in shifts
-    # Add more preferred shift categories here
-]
-
 
 # This list defines the categories of each shift.
 # Each tuple consists of a shift index and a shift category constant.
@@ -569,10 +471,7 @@ def create_persons_capacity_array(capacity_list):
 def create_preferred_shift_category_array(pref_shift_category_list):
     pref_shift_category_array = [0] * num_people
     for pref_shift_category in pref_shift_category_list:
-        if pref_shift_category[1] == 'CHECK_IN':
-            pref_shift_category_array[pref_shift_category[0]] = 1
-        else:
-            pref_shift_category_array[pref_shift_category[0]] = 0
+        pref_shift_category_array[pref_shift_category[0]] = pref_shift_category[1]
     return pref_shift_category_array
 
 def create_experience_array(experience_list):
@@ -665,13 +564,14 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
             shift_types[person][shift_type] += 1
             shift_diff = shift_index - last_shift_index[person]
         
-            if (conc_shifts[person] > 0):
-                persons_cost *= CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person]**2
+            if conc_shifts[person] > 0:
+                persons_cost *= CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person]
     
-            if shift_diff == 3:
+            if shift_diff < 4:
                 conc_shifts[person] += 1
             else:
                 conc_shifts[person] = 0     
+
             last_shift_index[person] = shift_index
             shift_costs[person] += persons_cost
 
@@ -819,29 +719,6 @@ def createFile(solution, shift_name_list):
 
 #Main Funktion
 if __name__ == "__main__":
-    
-    # Namen aus Excel Liste auslesen
-    name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
-    # Namen aus Excel Liste auslesen - TEST
-    print('NAMEN:')
-    print(name)
-    
-    # Person Capacity aus Excel Liste auslesen
-    person_capacity_list = excel_to_person_capacity_list('crewliste.xlsx', 'Schichtanzahl')
-
-    # Gib die Liste aus - TEST
-    print('SCHICHTANZAHL:')
-    print(person_capacity_list)
-    
-    preferred_shift_category_list = excel_to_checkinshift_array('crewliste.xlsx', 'Nummer' , 'check_in')
-    pref_shift_category_array = create_preferred_shift_category_array(preferred_shift_category_list)
-    print('CHECK_IN:')
-    print(preferred_shift_category_list)
-    print('CHECK_IN array 2:')
-    print(pref_shift_category_array)
-    
-    
-    
     if activate_parallelization:
         best_solution, best_cost, init_cost = run_parallel_simulated_annealing(num_of_parallel_threads)
     else:
