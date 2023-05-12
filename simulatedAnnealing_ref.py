@@ -11,6 +11,7 @@ import concurrent.futures
 from functools import partial
 from threading import Lock
 import pandas as pd
+import openpyxl
 
 
 # Costs Factor
@@ -29,6 +30,9 @@ ENEMY_FACTOR = 15
 
 NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
 
+##############
+# Excel Crewliste einlesen
+##############
 def process_excel(file_path, name_col, nickname_col, capacity_col, shift_category_col, shift_type_ranking_col, friends_col, enemies_col, off_shifts_col, unavailable_shifts_col):
     # Read excel file
     df = pd.read_excel(file_path)
@@ -76,6 +80,7 @@ def process_excel(file_path, name_col, nickname_col, capacity_col, shift_categor
     
     return name_data, capacity_data, check_in_pref_data, preferred_shift_data, friends_enemies_data, off_shifts_data, unavailable_shifts_data
 
+#Excel Crewliste verknüpfen
 index_name_list, person_capacity_list, preferred_shift_category_list, preferred_shift_list, preference_list, offShift_list, unavailability_list = process_excel('crewliste.xlsx', 'Namen', 'Spitznamen', 'Schichtanzahl', 'Schichtart', 'Schichtpräferenz', 'Freunde', 'Feinde', 'Freie Schichten', 'Nicht Verfügbar')
 
 # Creating a list of tuples to represent different work shifts.
@@ -189,74 +194,6 @@ unavailability_list = [
     # Add more unavailability data here
 ]
 
-# This list specifies the off-shifts for each person. 
-# Each tuple represents a person's index and the indices of the shifts during which they are off.
-# For example, (0, (0, 1, 2, 3)) means that person 0 has off-shifts 0, 1, 2, and 3.
-offShift_list= [
-    (0, (0, 1, 2, 3)), # Person 0 has off-shifts 0, 1, 2, and 3
-    (1, (4, 5, 6, 7)),
-    (3, (4, 5, 6, 7)),
-    (4, (4, 5, 6, 7)),
-    (5, (4, 5, 6, 7)),
-    (6, (4, 5, 6, 7)),
-    (7, (4, 5, 6, 7)),
-    (8, (8, 9, 10, 11)),
-    (9, (8, 9, 10, 11)),
-    (10, (8, 9, 10, 11)),
-    (11, (8, 9, 10, 11)),
-    (12, (8, 9, 10, 11)),
-    (13, (8, 9, 10, 11)),
-    (14, (8, 9, 10, 11)),
-    (15, (8, 9, 10, 11)),
-    (16, (8, 9, 10, 11)),
-    (17, (12,13, 14,15)),
-    (18, (12,13, 14,15)),
-    (19, (12,13, 14,15)),
-    (20, (12,13, 14,15)),
-    (21, (12,13, 14,15)),
-    (22, (12,13, 14,15)),
-    (23, (12,13, 14,15)),
-    (24, (12,13, 14,15)),
-    (25, (12,13, 14,15)),
-    (26, (12,13, 14,15)),
-    (27, (16, 17, 18, 19)),
-    (28, (16, 17, 18, 19)),
-    (29, (16, 17, 18, 19)),
-    (30, (16, 17, 18, 19)),
-    (31, (16, 17, 18, 19)),
-    (32, (16, 17, 18, 19)),
-    (33, (16, 17, 18, 19)),
-    (34, (16, 17, 18, 19)),
-    (35, (16, 17, 18, 19)),
-    (36, (16, 17, 18, 19)),
-    (37, (16, 17, 18, 19)),
-    (38, (16, 17, 18, 19)),
-    (39, (16, 17, 18, 19)),
-    (40, (16, 17, 18, 19)),
-    (41, (16, 17, 18, 19)),
-    (42, (16, 17, 18, 19)),
-    (43, (16, 17, 18, 19)),
-    (44, (16, 17, 18, 19)),
-    (45, (16, 17, 18, 19)),
-    (46, (16, 17, 18, 19)),
-    (47, (16, 17, 18, 19)),
-    (48, (16, 17, 18, 19)),
-    (49, (16, 17, 18, 19)),
-    (50, (16, 17, 18, 19)),
-    (51, (16, 17, 18, 19)),
-    (52, (20, 21, 22, 23)),
-    (53, (20, 21, 22, 23)),
-    (54, (20, 21, 22, 23)),
-    (55, (20, 21, 22, 23)),
-    (56, (20, 21, 22, 23)),
-    (57, (20, 21, 22, 23)),
-    (58, (20, 21, 22, 23)),
-    (59, (20, 21, 22, 23)),
-    (60, (20, 21, 22, 23)),
-    (61, (20, 21, 22, 23)),
-    # Add more off-shift data here
-]
-
 # This list specifies the dates for which the schedule is being generated.
 # Each tuple represents a date's index, the date in string format, and the indices of the shifts on that date.
 dates_list = [
@@ -269,53 +206,45 @@ dates_list = [
     (22, '03.07.2023 Monday', (22, 23)),
 ]
 
+########
 # This list specifies the capacity for each shift.
+########
 # Each tuple represents a shift's index and the minimum and maximum number of persons that can work during this shift.
-shift_capacity_list= [
-    # For example, (0, (12, 13)) means that shift 0 requires between 12 and 13 persons.
-    # Dates are mentioned in comments for better understanding
-    # 27.06.2023 Tuesday
-    (0, (12, 14)), 
-    (1, (17, 18)),  
-    # 28.06.2023 Wednesday
-    (2, (17, 18)),  
-    (3, (18, 19)), 
-    (4, (17, 18)),  
-    (5, (16, 17)), 
-    # 29.06.2023 Thursday
-    (6, (12, 13)),  
-    (7, (15, 16)), 
-    (8, (15, 16)),  
-    (9, (14, 15)),  
-    # 30.06.2023 Friday
-    (10, (10, 11)),  
-    (11, (13, 14)),  
-    (12, (13, 14)), 
-    (13, (12, 13)), 
-    # 01.07.2023 Saturday
-    (14, (8, 10)), 
-    (15, (11, 12)), 
-    (16, (11, 12)), 
-    (17, (11, 12)),  
-    # 02.07.2023 Sunday     
-    (18, (8, 9)),
-    (19, (12, 13)),
-    (20, (12, 13)), 
-    (21, (11, 12)), 
-    # 03.07.2023 Monday
-    (22, (6, 7)),
-    (23, (7, 8)),   
-    # Add more shift capacity data here
-]
+# Load the workbook
 
+# Lade das Workbook
+workbook = openpyxl.load_workbook('crewliste.xlsx')
 
+# Wähle das gewünschte Worksheet
+worksheet = workbook['Schichten']
 
+# Find the column numbers for index, min, and max
+column_names = next(worksheet.iter_rows(min_row=1, max_row=1, values_only=True))
+index_col = column_names.index('index')
+min_col = column_names.index('min')
+max_col = column_names.index('max')
+
+# Create an empty list to store the shift capacity data
+shift_capacity_list = []
+
+# Loop through the rows in the worksheet, starting from row 2 (skipping the header row)
+for row in worksheet.iter_rows(min_row=2, values_only=True):
+
+    # Extract the values for index, min, and max from the current row
+    index = row[index_col]
+    min_persons = row[min_col]
+    max_persons = row[max_col]
+
+    # Add a tuple with the values to the shift_capacity_list
+    shift_capacity_list.append((index, (min_persons, max_persons)))
+
+# Print the resulting list for testing
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
 cooling_rate = 0.9999  # cooling rate
 activate_parallelization = True  # activate parallelization
-num_of_parallel_threads = 8  # number of parallel threads
+num_of_parallel_threads = 6  # number of parallel threads
 
 ############################################################################################################## 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
@@ -725,6 +654,7 @@ if __name__ == "__main__":
         best_solution, best_cost, init_cost = simulated_annealing(num_of_shifts, num_people, initial_temperature, cooling_rate, max_iterations_without_improvement=1000)
    
     # Print the best solution and its cost
+    print(shift_capacity_list)
     best_solution_with_names = replace_numbers_with_names(best_solution, index_name_list) 
     print(f"Best solution with names: {best_solution_with_names}")
     print(f"Initial cost: {init_cost}")
