@@ -10,6 +10,7 @@ import time
 import concurrent.futures
 from functools import partial
 from threading import Lock
+import pandas as pd
 
 
 # Costs Factor
@@ -20,88 +21,121 @@ SHIFT_CATEGORY_FACTOR = 5
 OFF_DAY_FACTOR = 5
 SHIFT_RANKING_FACTOR = 1
 
+############################################################################################################## 
+# start - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
+##############################################################################################################
 
 # Creating a list of tuples, where each tuple contains an index and a name.
 # The purpose of this list is to link a unique index with a specific name,
 # which can be used for instance, to identify users in a system, 
 # or to keep track of the order of elements in a dataset.
-index_name_list = [
-    (0, 'John'),
-    (1, 'Jane'),
-    (2, 'James'),
-    (3, 'Emily'),
-    (4, 'Robert'),
-    (5, 'Mary'),
-    (6, 'Michael'),
-    (7, 'Sarah'),
-    (8, 'William'),
-    (9, 'Jessica'),
-    (10, 'David'),
-    (11, 'Ashley'),
-    (12, 'Richard'),
-    (13, 'Amanda'),
-    (14, 'Joseph'),
-    (15, 'Jennifer'),
-    (16, 'Charles'),
-    (17, 'Linda'),
-    (18, 'Thomas'),
-    (19, 'Patricia'),
-    (20, 'Christopher'),
-    (21, 'Elizabeth'),
-    (22, 'Daniel'),
-    (23, 'Susan'),
-    (24, 'Matthew'),
-    (25, 'Jessica'),
-    (26, 'Donald'),
-    (27, 'Sarah'),
-    (28, 'Anthony'),
-    (29, 'Karen'),
-    (30, 'Paul'),
-    (31, 'Nancy'),
-    (32, 'Mark'),
-    (33, 'Betty'),
-    (34, 'Steven'),
-    (35, 'Dorothy'),
-    (36, 'Andrew'),
-    (37, 'Margaret'),
-    (38, 'Kenneth'),
-    (39, 'Emily'),
-    (40, 'George'),
-    (41, 'Olivia'),
-    (42, 'Joshua'),
-    (43, 'Ava'),
-    (44, 'Kevin'),
-    (45, 'Sophia'),
-    (46, 'Brian'),
-    (47, 'Isabella'),
-    (48, 'Edward'),
-    (49, 'Mia'),
-    (50, 'Ronald'),
-    (51, 'Charlotte'),
-    (52, 'Timothy'),
-    (53, 'Amelia'),
-    (54, 'Jason'),
-    (55, 'Harper'),
-    (56, 'Jeffrey'),
-    (57, 'Evelyn'),
-    (58, 'Ryan'),
-    (59, 'Abigail'),
-    (60, 'Jacob'),
-    (61, 'Liam'),
-    (62, 'Ethan'),
-    (63, 'Mason'),
-    (64, 'Lucas'),
-    (65, 'Emma'),
-    (66, 'Oliver'),
-    (67, 'Aiden'),
-    (68, 'Logan'),
-    (69, 'Sophia'),
-    (70, 'Benjamin'),
-    (71, 'Mia'),
-    (72, 'Michael'),
-    (73, 'Emily')
-    # Add more names here
-]
+
+
+def excel_to_array(file_path, name_col, nickname_col):
+    # Excel-Datei einlesen
+    df = pd.read_excel(file_path)
+
+    # Array aus Namen und Spitznamen erstellen
+    data = []
+    for i, (name, nickname) in enumerate(zip(df[name_col], df[nickname_col])):
+        if pd.isna(nickname):
+            data.append((i, name))
+        else:
+            data.append((i, nickname))
+
+    return data
+
+name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
+index_name_list = []
+
+for i, n in name:
+    index_name_list.append((i, n))
+
+
+NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
+
+# Global variables to store the data from the Excel file
+name_data = []
+capacity_data = []
+checkinpref_data = []
+
+def excel_to_array(file_path, name_col, nickname_col):
+    global name_data
+    # Only read the Excel file if the global variable is empty
+    if not name_data:
+        # Excel-Datei einlesen
+        df = pd.read_excel(file_path)
+
+        # Array aus Namen und Spitznamen erstellen
+        data = []
+        for i, (name, nickname) in enumerate(zip(df[name_col], df[nickname_col])):
+            if pd.isna(nickname):
+                data.append((i, name))
+            else:
+                data.append((i, nickname))
+
+        name_data = data
+
+    return name_data
+
+def excel_to_person_capacity_list(file_path, capacity_col):
+    global capacity_data
+    # Only read the Excel file if the global variable is empty
+    if not capacity_data:
+        # Excel-Datei einlesen
+        df = pd.read_excel(file_path)
+
+        # Array aus Kapazitäten erstellen
+        cdata = []
+        for i, capacity in df[capacity_col].items():
+            if pd.isnull(capacity):
+                capacity = NUM_OF_SHIFTS_PER_PERSON
+            else:
+                capacity = int(capacity)
+            cdata.append((i, capacity))
+
+        capacity_data = cdata
+
+    return capacity_data
+
+# Creating a list of tuples, where each tuple contains an index and a name.
+# The purpose of this list is to link a unique index with a specific name,
+# which can be used for instance, to identify users in a system, 
+# or to keep track of the order of elements in a dataset.
+name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
+index_name_list = []
+
+for i, n in name:
+    index_name_list.append((i, n))
+
+# This list specifies the capacity for each person.
+# Each tuple represents a person's index and the number of shifts that the person can work.
+# For example, (0, 4) means that person 0 can work 4 shifts.
+# NUM_OF_SHIFTS_PER_PERSON is the default number of shifts per person. Each tuple will override this default value.
+person_capacity = excel_to_person_capacity_list('crewliste.xlsx', 'Schichtanzahl')
+person_capacity_list = []
+for i, pc in person_capacity:
+    person_capacity_list.append((i, pc))
+    
+    
+
+def excel_to_checkinshift_array(file_path, nummer_col, check_in_col):
+    # Excel-Datei einlesen
+    df = pd.read_excel(file_path)
+
+    # Array aus Check-in-Werten erstellen
+    checkinpref_data = []
+    for i, (nummer, check_in) in df[[nummer_col, check_in_col]].iterrows():
+        if check_in == "CHECK_IN":
+            checkinpref_data.append((nummer, check_in))
+
+    return checkinpref_data
+
+
+
+############################################################################################################## 
+# end - crewliste.xlsx: index_name_list & person_capacity_list & preferred_shift_category_list
+##############################################################################################################
 
 # Creating a list of tuples to represent different work shifts.
 # Each tuple contains an index and a corresponding shift time.
@@ -112,8 +146,6 @@ shift_name_list = [
     (3, '07:00 - 13:00'),
     # Adjust the shift times and amount here to match your schedule
 ]
-
-
 
 # Creating a list of tuples to represent shift rankings.
 # Each tuple contains a ranking and a corresponding tuple of shift indices.
@@ -152,6 +184,7 @@ FOUR_ENEMIES = 6
 # Each tuple consists of two persons indices and a preference constant.
 # A negative preference constant (e.g., ONE_FRIEND) indicates a preference to work together.
 # A positive preference constant (e.g., ONE_ENEMY) indicates a preference to avoid working together.
+
 preference_list = [
     (3, 17, ONE_FRIEND),  # Person 0 and person 1 have a preference of 5 to work together
     (45, 50, ONE_FRIEND),
@@ -159,7 +192,7 @@ preference_list = [
     (6, 11, TWO_FRIENDS),
     (6, 46, TWO_FRIENDS),
     (11, 46, TWO_FRIENDS),
-    # Add more preferences here
+# Add more preferences here
 ]
 
 # These are constants representing different categories of shifts.
@@ -169,11 +202,14 @@ CHECK_IN = 1  # Check-in shift
 # This list defines the preferred shift categories of the people.
 # Each tuple consists of a persons index and a shift category constant.
 # For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
+
+
 preferred_shift_category_list = [
-    (4, CHECK_IN),  # Person with index 4 prefers to work check-in shifts
-    (34, CHECK_IN)  # Person with index 34 also prefers to work check-in shifts
+    (4, "CHECK_IN"),  # Person with index 4 prefers to work check-in shifts
+    (34, "CHECK_IN")  # Person with index 34 also prefers to work check-in shifts
     # Add more preferred shift categories here
 ]
+
 
 # This list defines the categories of each shift.
 # Each tuple consists of a shift index and a shift category constant.
@@ -198,7 +234,6 @@ SECOND_PREFERENCE = 2
 THIRD_PREFERENCE = 1
 FOURTH_PREFERENCE = 0  # Lowest preference
 
- 
 # This list defines the shift preferences of each person.
 # Each tuple consists of a person index and a tuple of preferences for each shift.
 # The preferences are ordered by shift time. For example, the shift times is ordered as '13:00 - 19:00', '19:00 - 01:00', '01:00 - 07:00', '07:00 - 13:00', etc.
@@ -211,7 +246,6 @@ preferred_shift_list = [
     (4, (FOURTH_PREFERENCE, SECOND_PREFERENCE, FIRST_PREFERENCE, THIRD_PREFERENCE)),
     # Add more shift preferences here
 ]
-    
 
 # These constants represent different levels of experience.
 NEW = 0  # Represents a person with less than one year of experience
@@ -338,64 +372,42 @@ dates_list = [
 shift_capacity_list= [
     # For example, (0, (12, 13)) means that shift 0 requires between 12 and 13 persons.
     # Dates are mentioned in comments for better understanding
-    # 27.06.2023
-    (0, (12, 13)),  # Shift 0 on 27.06.2023 requires between 12 and 13 persons
-    (1, (17, 18)),  # Shift 1 on 27.06.2023 requires between 17 and 18 persons
-    # 28.06.2023
+    # 27.06.2023 Tuesday
+    (0, (12, 14)), 
+    (1, (17, 18)),  
+    # 28.06.2023 Wednesday
     (2, (17, 18)),  
-    (3, (17, 19)), 
+    (3, (18, 19)), 
     (4, (17, 18)),  
-    (5, (16, 18)), 
-    # 29.06.2023
-    (6, (12, 14)),  
-    (7, (15, 17)), 
-    (8, (15, 17)),  
-    (9, (14, 16)),  
-    # 30.06.2023
+    (5, (16, 17)), 
+    # 29.06.2023 Thursday
+    (6, (12, 13)),  
+    (7, (15, 16)), 
+    (8, (15, 16)),  
+    (9, (14, 15)),  
+    # 30.06.2023 Friday
     (10, (10, 11)),  
-    (11, (13, 15)),  
-    (12, (13, 15)), 
-    (13, (11, 12)), 
-    # 01.07.2023
+    (11, (13, 14)),  
+    (12, (13, 14)), 
+    (13, (12, 13)), 
+    # 01.07.2023 Saturday
     (14, (8, 10)), 
     (15, (11, 12)), 
-    (16, (11, 14)), 
-    (17, (11, 14)),  
-    # 02.07.2023    
-    (18, (9, 10)),
-    (19, (11, 12)),
-    (20, (11, 12)), 
-    (21, (10, 11)), 
-    # 03.07.2023
-    (22, (5, 7)),
-    (23, (7, 8)),  
+    (16, (11, 12)), 
+    (17, (11, 12)),  
+    # 02.07.2023 Sunday     
+    (18, (8, 9)),
+    (19, (12, 13)),
+    (20, (12, 13)), 
+    (21, (11, 12)), 
+    # 03.07.2023 Monday
+    (22, (6, 7)),
+    (23, (7, 8)),   
     # Add more shift capacity data here
 ]
 
 
-NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
-# This list specifies the capacity for each person.
-# Each tuple represents a person's index and the number of shifts that the person can work.
-# For example, (0, 4) means that person 0 can work 4 shifts.
-# NUM_OF_SHIFTS_PER_PERSON is the default number of shifts per person. Each tuple will override this default value.
-person_capacity_list   = [
-    (16, 4),  
-    (33, 4),
-    (61, 1),  
-    (62, 1),  
-    (63, 1), 
-    (64, 1),
-    (65, 1),
-    (66, 1),
-    (67, 1),
-    (68, 1),
-    (69, 1), 
-    (70, 1), 
-    (71, 1), 
-    (72, 1),
-    (73, 1), 
-    # Add more person capacity data here
-]
+
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
@@ -764,13 +776,14 @@ def createFile(solution, shift_name_list):
     name_colors = {}
     white_font = Font(color='FFFFFF')  # Set font color to white
     dark_font = Font(color='000000')  # Set font color to black
-    for row_index, name in enumerate(solution, start=4):
+    for row_index, shift in enumerate(solution, start=4):
         cell = worksheet.cell(row=row_index, column=1)
         cell.value = row_index - 3
         cell.font = dark_font
     for col_index, shift in enumerate(solution, start=1):
+
+         
         for row_index, name in enumerate(shift, start=4):
-            
             cell = worksheet.cell(row=row_index, column=col_index+1)
             cell.value = name
 
@@ -787,7 +800,28 @@ def createFile(solution, shift_name_list):
     # Save the workbook as an Excel file
     workbook.save('shifts_with_unique_colors.xlsx')
 
+
+
+#Main Funktion
 if __name__ == "__main__":
+    
+    # Namen aus Excel Liste auslesen
+    name = excel_to_array('crewliste.xlsx', 'Namen', 'Spitznamen')
+    # Namen aus Excel Liste auslesen - TEST
+    print(name)
+    
+    # Person Capacity aus Excel Liste auslesen
+    person_capacity_list = excel_to_person_capacity_list('crewliste.xlsx', 'Schichtanzahl')
+
+    # Gib die Liste aus - TEST
+    print(person_capacity_list)
+    
+    preferred_shift_category_list = excel_to_checkinshift_array('crewliste.xlsx', 'Nummer' , 'check_in')
+    print(preferred_shift_category_list)
+    
+    
+    
+    
     if activate_parallelization:
         best_solution, best_cost, init_cost = run_parallel_simulated_annealing(num_of_parallel_threads)
     else:
