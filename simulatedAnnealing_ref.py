@@ -411,7 +411,7 @@ shift_capacity_list= [
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
-cooling_rate = 0.99  # cooling rate
+cooling_rate = 0.9999  # cooling rate
 activate_parallelization = True  # activate parallelization
 num_of_parallel_threads = 8  # number of parallel threads
 
