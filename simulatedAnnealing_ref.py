@@ -18,7 +18,7 @@ ONE_SIDED_GENDER_FACTOR = 5
 SHIFT_CATEGORY_FACTOR = 5
 OFF_DAY_FACTOR = 5
 SHIFT_RANKING_FACTOR = 1
-CONSECUTIVE_SHIFT_FACTOR = 1
+CONSECUTIVE_SHIFT_FACTOR = 5
 # These are constants representing different levels of preference for or against working with certain partners.
 # Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
 # Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
@@ -189,7 +189,7 @@ def process_excel(file_path):
 initial_temperature = 1000  # initial temperature
 cooling_rate = 0.9999  # cooling rate
 activate_parallelization = True  # activate parallelization
-num_of_parallel_threads = 8  # number of parallel threads
+num_of_parallel_threads = 4  # number of parallel threads
 
 ############################################################################################################## 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
@@ -431,7 +431,7 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
             shift_diff = shift_index - last_shift_index[person]
         
             if conc_shifts[person] > 1:
-                persons_cost *= (0.5 * CONSECUTIVE_SHIFT_FACTOR + conc_shifts[person] - 1)
+               persons_cost += (CONSECUTIVE_SHIFT_FACTOR + conc_shifts[person])
     
             if shift_diff < 4:
                 conc_shifts[person] += 1
