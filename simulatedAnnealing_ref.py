@@ -34,7 +34,7 @@ def process_excel(file_path):
     people_column_names = ['Namen', 'Spitznamen', 'Schichtanzahl', 'Schichtart', 'Schichtpräferenz', 'Freunde', 'Feinde', 'Freie Schichten', 'Nicht Verfügbar', 'Geschlecht', 'Erfahrung']
     shifts_column_names = ['date', 'time', 'min', 'max', 'Schichtart']
     # Read excel file
-    workbook = openpyxl.load_workbook(file_path)
+    workbook = openpyxl.load_workbook(file_path, data_only=True)
     # Get the first sheet of the workbook
     people_ws = workbook['Personen']
     # Get the second sheet of the workbook
@@ -374,6 +374,7 @@ def create_preferred_shift_matrix(pref_shift_list, num_of_shift_types, num_peopl
 
 def create_unavailability_matrix(unavailability_list, num_of_shifts, num_people):
     unavailability_matrix = [[0 for _ in range(num_of_shifts)] for _ in range(num_people)]
+    print(unavailability_matrix)
     for person, shifts in unavailability_list:
         for shift in shifts:
             unavailability_matrix[person][shift] = 1
