@@ -108,6 +108,9 @@ def process_excel(file_path):
     experience_data = [(i, int(experience)) for i, experience in enumerate(people_raw_data[people_column_names[10]])
                 if experience is not None]
     
+    people_config_data = [{"minimum_break": 1} for i, config in enumerate(people_raw_data[people_column_names[11]])
+                if config is not None]
+
     people_data = {
         "name_data": name_data,
         "capacity_data": capacity_data,
@@ -117,7 +120,8 @@ def process_excel(file_path):
         "unavailability_data": unavailability_data,
         "shift_preference_data": shift_preference_data,
         "gender_data": gender_data,
-        "experience_data": experience_data
+        "experience_data": experience_data,
+        "people_config_data": people_config_data
     }
   
     # Initialize an empty dictionary to hold column data    
@@ -140,12 +144,12 @@ def process_excel(file_path):
     
     # Creating a list of tuples to represent different work shifts.
     # Each tuple contains an index and a corresponding shift time.
-    shift_time_data = []
-    seen_shift_times = set()
-    for i, shift_time in enumerate(shifts_raw_data[shifts_column_names[1]]):
-        if shift_time is not None and shift_time != '' and shift_time not in seen_shift_times:
-            shift_time_data.append((i, shift_time))
-            seen_shift_times.add(shift_time)
+    shift_name_data = []
+    seen_shift_names = set()
+    for i, shift_name in enumerate(shifts_raw_data[shifts_column_names[1]]):
+        if shift_name is not None and shift_name != '' and shift_name not in seen_shift_names:
+            shift_name_data.append((i, shift_name))
+            seen_shift_names.add(shift_name)
     shift_min_data = [(int(shift_min)) for i, shift_min in enumerate(shifts_raw_data[shifts_column_names[2]])
                 if shift_min is not None]
     shift_max_data = [(int(shift_max)) for i, shift_max in enumerate(shifts_raw_data[shifts_column_names[3]])
@@ -153,6 +157,13 @@ def process_excel(file_path):
     shift_capacity_data = [(i,(shift_min, shift_max)) for i, (shift_min, shift_max) in enumerate(zip(shift_min_data, shift_max_data))]
     shift_category_data = [(i, int(shift_category)) for i, shift_category in enumerate(shifts_raw_data[shifts_column_names[4]])
                 if shift_category is not None and shift_category != '']
+    
+    shift_start_data = [0]
+
+    shift_time_data = [
+        (0, (1, 5)),
+        (1, (12, 17)),
+    ]
     
     # Creating a list of tuples to represent shift rankings.
     # Each tuple contains a ranking and a corresponding tuple of shift indices.
@@ -174,10 +185,12 @@ def process_excel(file_path):
         (9, (0,)), # The shift type at index 0 is assigned a ranking of 9
         # Add more shift type rankings here
     ]
+
   
     shifts_data = {
         "shift_date_data": shift_date_data,
         "shift_time_data": shift_time_data,
+        "shift_name_data": shift_name_data,
         "shift_capacity_data": shift_capacity_data,
         "shift_ranking_data": shift_ranking_list,
         "shift_type_ranking_data": shift_type_ranking_list,
@@ -389,7 +402,7 @@ def create_shift_capacity_matrix(shift_capacity_list, num_of_shifts):
 # Create the cost arrays and matrices
 def cost_function(solution, people_data, shifts_data):
     num_of_shifts =  len(shifts_data["shift_date_array"])
-    num_of_shift_types = len(shifts_data["shift_time_array"])
+    num_of_shift_types = len(shifts_data["shift_name_array"])
     num_people = len(people_data["name_array"])
 
     pref_cost = preference_cost(solution, people_data["preference_matrix"])
@@ -494,7 +507,10 @@ def unavailability(shift_index, unavailability_matrix, person):
             return 1 
         return 0
 
-def consecutive_shifts(solution, shift_index, person):
+def consecutive_shifts(solution, shift_index, person, config_array):
+
+
+
     # Check previous shifts
     for i in range(1, 3):
         if shift_index - i >= 0:
@@ -583,7 +599,7 @@ def createFile(solution, shift_name_list, dates_list):
 def transform_data(people_data, shifts_data):
     num_of_shifts = len(shifts_data["shift_date_data"])
     num_people = len(people_data["name_data"])
-    num_of_shift_types = len(shifts_data["shift_time_data"])
+    num_of_shift_types = len(shifts_data["shift_name_data"])
     people_transformed_data = {
         "name_array": people_data["name_data"],
         "person_capacity_array": create_persons_capacity_array(people_data["capacity_data"], num_people),
@@ -598,7 +614,7 @@ def transform_data(people_data, shifts_data):
 
     shifts_transformed_data = {
         "shift_date_array": shifts_data["shift_date_data"],
-        "shift_time_array": shifts_data["shift_time_data"],
+        "shift_name_array": shifts_data["shift_name_data"],
         "shift_capacity_matrix": create_shift_capacity_matrix(shifts_data["shift_capacity_data"], num_of_shifts),
         "ranking_array": create_ranking_array(shifts_data["shift_ranking_data"], shifts_data["shift_type_ranking_data"], num_of_shifts, num_of_shift_types),
         "shift_category_array": create_shift_category_array(shifts_data["shift_category_data"], num_of_shifts)
@@ -611,7 +627,7 @@ if __name__ == "__main__":
 
     people_data, shifts_data = process_excel('crewliste.xlsx')
     people_transformed_data, shifts_transformed_data = transform_data(people_data, shifts_data)
-    shift_time_list = shifts_transformed_data["shift_time_array"]
+    shift_name_list = shifts_transformed_data["shift_name_array"]
     name_list = people_transformed_data["name_array"]
     dates_list = shifts_transformed_data["shift_date_array"]
 
@@ -626,5 +642,5 @@ if __name__ == "__main__":
     print(f"Best solution with names: {best_solution_with_names}")
     print(f"Initial cost: {init_cost}")
     print(f"Best cost: {best_cost}")
-    createFile(best_solution_with_names, shift_time_list, dates_list)
+    createFile(best_solution_with_names, shift_name_list, dates_list)
    
