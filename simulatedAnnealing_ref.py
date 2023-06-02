@@ -18,11 +18,11 @@ ONE_SIDED_GENDER_FACTOR = 5
 SHIFT_CATEGORY_FACTOR = 5
 OFF_DAY_FACTOR = 5
 SHIFT_RANKING_FACTOR = 1
-CONSECUTIVE_SHIFT_FACTOR = 1
+CONSECUTIVE_SHIFT_FACTOR = 5
 # These are constants representing different levels of preference for or against working with certain partners.
 # Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
 # Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
-FRIEND_FACTOR = -3
+FRIEND_FACTOR = -5
 ENEMY_FACTOR = 15
 
 NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
@@ -31,7 +31,7 @@ NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
 # Excel Crewliste einlesen
 ##############
 def process_excel(file_path):
-    people_column_names = ['Namen', 'Spitznamen', 'Schichtanzahl', 'Schichtart', 'Schichtpräferenz', 'Freunde', 'Feinde', 'Freie Schichten', 'Nicht Verfügbar', 'Gender', 'Erfahrung']
+    people_column_names = ['Namen', 'Spitznamen', 'Schichtanzahl', 'Schichtart', 'Schichtpräferenz', 'Freunde', 'Feinde', 'Freie Schichten', 'Nicht Verfügbar', 'Geschlecht', 'Erfahrung']
     shifts_column_names = ['date', 'time', 'min', 'max', 'Schichtart']
     # Read excel file
     workbook = openpyxl.load_workbook(file_path, data_only=True)
@@ -191,7 +191,7 @@ def process_excel(file_path):
 initial_temperature = 1000  # initial temperature
 cooling_rate = 0.9999  # cooling rate
 activate_parallelization = True  # activate parallelization
-num_of_parallel_threads = 8  # number of parallel threads
+num_of_parallel_threads = 6  # number of parallel threads
 
 ############################################################################################################## 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
@@ -433,7 +433,7 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
             shift_diff = shift_index - last_shift_index[person]
         
             if conc_shifts[person] > 1:
-                persons_cost *= (0.5 * CONSECUTIVE_SHIFT_FACTOR + conc_shifts[person] - 1)
+               persons_cost += (CONSECUTIVE_SHIFT_FACTOR + conc_shifts[person])
     
             if shift_diff < 4:
                 conc_shifts[person] += 1
@@ -611,7 +611,7 @@ def transform_data(people_data, shifts_data):
 #Main Funktion
 if __name__ == "__main__":
 
-    people_data, shifts_data = process_excel('crewliste.xlsx')
+    people_data, shifts_data = process_excel('SCC_SCHICHTPLAN_FINAL.xlsx')
     people_transformed_data, shifts_transformed_data = transform_data(people_data, shifts_data)
     shift_time_list = shifts_transformed_data["shift_time_array"]
     name_list = people_transformed_data["name_array"]
