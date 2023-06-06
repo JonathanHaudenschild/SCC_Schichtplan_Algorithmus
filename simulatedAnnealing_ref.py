@@ -10,6 +10,10 @@ import time
 import concurrent.futures
 from functools import partial
 
+FRIENDS_MODE = 1
+SHIFT_RANKING_MODE = 0
+OFF_DAYS_MODE = 1
+
 
 # Costs Factor
 # Adjust to increase or decrease a cost factor's influence on the total cost.
@@ -22,11 +26,12 @@ CONSECUTIVE_SHIFT_FACTOR = 5
 # These are constants representing different levels of preference for or against working with certain partners.
 # Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
 # Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
-FRIEND_FACTOR = -5
-ENEMY_FACTOR = 15
+FRIEND_FACTOR = -3
+ENEMY_FACTOR = 25
 
 NUM_OF_SHIFTS_PER_PERSON = 5  # default number of shifts per person
 
+total_obstructed_people = 0
 ##############
 # Excel Crewliste einlesen
 ##############
@@ -53,61 +58,65 @@ def process_excel(file_path):
         # Add the column data to the dictionary
         people_raw_data[column_name] = column_values
 
-    name_data = [(i, nickname) if nickname is not None and nickname != '' else (i, name) 
-                for i, (name, nickname) in enumerate(zip(people_raw_data[people_column_names[0]], people_raw_data[people_column_names[1]])) 
-                if name is not None and name != '']
-    capacity_data = [(i, int(capacity)) for i, capacity in enumerate(people_raw_data[people_column_names[2]])
-                if capacity is not None]
+    name_data = [(int(index), nickname) if nickname is not None and nickname != '' else (int(index), name) 
+            for index, name, nickname in zip(people_raw_data['index'], people_raw_data[people_column_names[0]], people_raw_data[people_column_names[1]]) 
+            if name is not None and name != '']
+    capacity_data = [(int(index), int(capacity)) for index, capacity in zip(people_raw_data['index'], people_raw_data[people_column_names[2]])
+            if capacity is not None]
+
     
     # This list defines the preferred shift categories of the people.
     # Each tuple consists of a persons index and a shift category constant.
     # For example, a tuple (4, CHECK_IN) means that the person with index 4 prefers to work check-in shifts.
     # check_in_pref_peopleData, shiftsData = [(i, CHECK_IN) for i, check_in in df[shift_category_col].items() if (check_in == "CHECK_IN") or (check_in == 1)]
-    preferred_shift_category_list = [(i, 1 if shift_category == 'CHECK_IN' else shift_category) 
-                for i, shift_category in enumerate(people_raw_data[people_column_names[3]]) 
+    preferred_shift_category_list = [(int(index), 1 if shift_category == 'CHECK_IN' else shift_category) 
+                for index, shift_category in zip(people_raw_data['index'], people_raw_data[people_column_names[3]]) 
                 if shift_category is not None and str(shift_category) != '']
+
     # This list defines the shift rankings of the people.
     # Each tuple consists of a person's index and a shift ranking.
     # A shift ranking is a number that indicates the priority of a shift.
     # A shift ranking of 3 is the highest priority, a shift ranking of 2 is the second highest priority, and so on.
     # A shift ranking of 0 means that the person has no preference for any shift.
-    shift_preference_data = [(i, tuple(int(j) for j in shift_ranking.split(',')))
-                for i, shift_ranking in enumerate(people_raw_data[people_column_names[4]]) 
-                if shift_ranking is not None and str(shift_ranking) != '']
+    shift_preference_data = [(int(index), tuple(int(j) for j in shift_ranking.split(',')))
+            for index, shift_ranking in zip(people_raw_data['index'], people_raw_data[people_column_names[4]]) 
+            if shift_ranking is not None and str(shift_ranking) != '']
+
     
 
     # This list defines the preference of people to work together.
     # Each tuple consists of two persons indices and a preference constant.
-    friends_data = [(i, int(float(j)), round(FRIEND_FACTOR/(math.log(len(str(friends).split(','))+1)))) 
-                for i, friends in enumerate(people_raw_data[people_column_names[5]]) 
-                if friends is not None 
-                for j in str(friends).split(',') 
-                if j.strip() != '']
-    enemies_data = [(i, int(float(j)), round(ENEMY_FACTOR/(math.log(len(str(enemies).split(','))+1))))
-                for i, enemies in enumerate(people_raw_data[people_column_names[6]])
-                if enemies is not None
-                for j in str(enemies).split(',')
-                if j.strip() != '']
+    friends_data = [(int(index), int(float(j)), round(FRIEND_FACTOR/(math.log(len(str(friends).split(','))+1)))) 
+                    for index, friends in zip(people_raw_data['index'], people_raw_data[people_column_names[5]]) 
+                    if friends is not None 
+                    for j in str(friends).split(',') 
+                    if j.strip() != '']
+    enemies_data = [(int(index), int(float(j)), round(ENEMY_FACTOR/(math.log(len(str(enemies).split(','))+1))))
+                    for index, enemies in zip(people_raw_data['index'], people_raw_data[people_column_names[6]])
+                    if enemies is not None
+                    for j in str(enemies).split(',')
+                    if j.strip() != '']
     preference_data = friends_data + enemies_data
+
     # Process off shifts
     # This list defines the off shifts of the people.
     # Each tuple consists of a person's index and a shift index.
-    off_shifts_data = [(i, tuple(int(val) for val in str(off_day).split(','))) 
-                for i, off_day in enumerate(people_raw_data[people_column_names[7]]) 
+    off_shifts_data = [(int(index), tuple(int(val) for val in str(off_day).split(','))) 
+                for index, off_day in zip(people_raw_data['index'], people_raw_data[people_column_names[7]]) 
                 if off_day is not None and str(off_day) != '']
     # Process unavailable shifts
     # This list defines the unavailable shifts of the people.
     # Each tuple consists of a person's index and a shift index.
-    unavailability_data = [(i, tuple(int(val) for val in str(unavailable).split(',')))
-                for i, unavailable in enumerate(people_raw_data[people_column_names[8]])
+    unavailability_data = [(int(index), tuple(int(val) for val in str(unavailable).split(',')))
+                for index, unavailable in zip(people_raw_data['index'], people_raw_data[people_column_names[8]])
                 if unavailable is not None and str(unavailable) != '']
     # This list defines the gender of each person.
     # Each tuple consists of a person index and a gender category.
-    gender_data = [(i, int(gender)) for i, gender in enumerate(people_raw_data[people_column_names[9]])
+    gender_data = [(int(index), int(gender)) for index, gender in zip(people_raw_data['index'], people_raw_data[people_column_names[9]])
                 if gender is not None]
     # This list defines the experience level of each person.
     # Each tuple consists of a person index and a experience level.
-    experience_data = [(i, int(experience)) for i, experience in enumerate(people_raw_data[people_column_names[10]])
+    experience_data = [(int(index), int(experience)) for index, experience in zip(people_raw_data['index'], people_raw_data[people_column_names[10]])
                 if experience is not None]
     
     people_data = {
@@ -137,23 +146,27 @@ def process_excel(file_path):
     # This list specifies the dates for which the schedule is being generated.
     # Each tuple represents a date's index, the date in string format, and the indices of the shifts on that date.
 
-    shift_date_data = [(i, shift_name) for i, shift_name in enumerate(shifts_raw_data[shifts_column_names[0]])
+    shift_date_data = [(int(index), shift_name) for index, shift_name in zip(shifts_raw_data['index'], shifts_raw_data[shifts_column_names[0]])
                 if shift_name is not None and shift_name != '']
-    
+
     # Creating a list of tuples to represent different work shifts.
     # Each tuple contains an index and a corresponding shift time.
     shift_time_data = []
     seen_shift_times = set()
-    for i, shift_time in enumerate(shifts_raw_data[shifts_column_names[1]]):
+    for index, shift_time in zip(shifts_raw_data['index'], shifts_raw_data[shifts_column_names[1]]):
         if shift_time is not None and shift_time != '' and shift_time not in seen_shift_times:
-            shift_time_data.append((i, shift_time))
+            shift_time_data.append((int(index), shift_time))
             seen_shift_times.add(shift_time)
-    shift_min_data = [(int(shift_min)) for i, shift_min in enumerate(shifts_raw_data[shifts_column_names[2]])
-                if shift_min is not None]
-    shift_max_data = [(int(shift_max)) for i, shift_max in enumerate(shifts_raw_data[shifts_column_names[3]])
+
+    shift_min_data = [(int(index), int(shift_min)) for index, shift_min in zip(shifts_raw_data['index'], shifts_raw_data[shifts_column_names[2]])
+             if shift_min is not None]
+
+    shift_max_data = [(int(index), int(shift_max)) for index, shift_max in zip(shifts_raw_data['index'], shifts_raw_data[shifts_column_names[3]])
                 if shift_max is not None]
-    shift_capacity_data = [(i,(shift_min, shift_max)) for i, (shift_min, shift_max) in enumerate(zip(shift_min_data, shift_max_data))]
-    shift_category_data = [(i, int(shift_category)) for i, shift_category in enumerate(shifts_raw_data[shifts_column_names[4]])
+
+    shift_capacity_data = [(int(index), (min_capacity, max_capacity)) for (index, min_capacity, max_capacity) in zip(shifts_raw_data['index'],shift_min_data, shift_max_data)]
+
+    shift_category_data = [(int(index), int(shift_category)) for index, shift_category in zip(shifts_raw_data['index'], shifts_raw_data[shifts_column_names[4]])
                 if shift_category is not None and shift_category != '']
     
     # Creating a list of tuples to represent shift rankings.
@@ -191,7 +204,7 @@ def process_excel(file_path):
 initial_temperature = 1000  # initial temperature
 cooling_rate = 0.9999  # cooling rate
 activate_parallelization = True  # activate parallelization
-num_of_parallel_threads = 6  # number of parallel threads
+num_of_parallel_threads = 3  # number of parallel threads
 
 ############################################################################################################## 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
@@ -203,9 +216,9 @@ def generate_initial_solution(x, y, shift_capacity_matrix, person_capacity_array
         assigned_shifts = set()
         while len(assigned_shifts) < person_capacity_array[person]:
             shift = random.randint(0, x - 1)
-            if len(solution[shift]) < shift_capacity_matrix[1][shift] and shift not in assigned_shifts:
+            if len(solution[shift]) < shift_capacity_matrix[1][shift][1] and shift not in assigned_shifts:
                 # Higher probability of adding a person if the shift has less than the minimum people
-                if len(solution[shift]) < shift_capacity_matrix[0][shift] or random.random() < 0.30:
+                if len(solution[shift]) < shift_capacity_matrix[0][shift][1]  or random.random() < 0.30:
                     solution[shift].add(person)
                     assigned_shifts.add(shift)
     return solution
@@ -219,7 +232,7 @@ def get_neighbor(solution, unavailability_matrix, shift_capacity_matrix, max_att
         shift1 = solution[index1].copy()
         shift2 = solution[index2].copy()
 
-        if len(shift1) > shift_capacity_matrix[0][index1] and len(shift2) < shift_capacity_matrix[0][index2] :
+        if len(shift1) > shift_capacity_matrix[0][index1][1] and len(shift2) < shift_capacity_matrix[0][index2][1] :
           
             person_to_move = get_random_element(shift1)
 
@@ -330,11 +343,17 @@ def create_ranking_array(shift_ranking_list, shift_type_ranking_list, num_of_shi
 
     return cost_array
 
+def calcTotalFriends(preference_matrix):
+    total = 0
+    total = sum(value < 0 for sublist in preference_matrix for value in sublist)
+    return total
+
 def create_preference_matrix(preference_list, num_people):
     preference_matrix = [[0 for _ in range(num_people)] for _ in range(num_people)]
     for person1, person2, preference in preference_list:
         preference_matrix[person1][person2] = preference
         preference_matrix[person2][person1] = preference
+
     return preference_matrix
 
 def create_persons_capacity_array(capacity_list, num_people):
@@ -370,7 +389,7 @@ def create_shift_category_array(shift_category_list, num_of_shifts):
 
 def create_preferred_shift_matrix(pref_shift_list, num_of_shift_types, num_people):
     matrix = [[1] * num_of_shift_types for _ in range(num_people)]
-    for _, (person, shift_values) in enumerate(pref_shift_list):
+    for person, shift_values in pref_shift_list:
         matrix[person] = list(shift_values)
     return matrix
 
@@ -394,9 +413,9 @@ def cost_function(solution, people_data, shifts_data):
     num_of_shift_types = len(shifts_data["shift_time_array"])
     num_people = len(people_data["name_array"])
 
-    pref_cost = preference_cost(solution, people_data["preference_matrix"])
+    pref_cost = preference_cost(solution, people_data["preference_matrix"], people_data["total_friends"])
     exp_cost = mixedExperience_cost(solution, people_data["experience_array"], num_of_shifts)
-    oday_cost = offDay_cost(solution, people_data["unavailability_matrix"])
+    oday_cost = offDay_cost(solution, people_data["off_shifts_matrix"])
     rank_cost = shift_ranking_cost(solution, shifts_data["ranking_array"], people_data["preferred_shift_matrix"], people_data["unavailability_matrix"], num_people, num_of_shift_types)
     shift_category_cost = shift_category_com_cost(solution, shifts_data["shift_category_array"], people_data["preferred_shift_category_array"])
     gender_cost = mixedGender_cost(solution, people_data["gender_array"], num_of_shifts)
@@ -405,13 +424,17 @@ def cost_function(solution, people_data, shifts_data):
     return total_cost
 
 
-def preference_cost(solution, preference_matrix):
+def preference_cost(solution, preference_matrix, total_friends):
     total_cost = 0
+    match_friends = 0
     for shift in solution:
         for person1 in shift:
             for person2 in shift:
                 if person1 != person2:
-                    total_cost += preference_matrix[person1][person2]
+                    if preference_matrix[person1][person2] < 0:
+                        match_friends += 1
+                    total_cost += preference_matrix[person1][person2] 
+    total_cost += (140 - match_friends) * FRIENDS_MODE
     return total_cost
 
 def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailability_matrix, num_people, num_of_shift_types):
@@ -427,7 +450,7 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
             duplicate_factor = shift_types[person][shift_type]
             if unavailability_matrix[person][shift_index]:
                 persons_cost += OFF_DAY_FACTOR * math.sqrt(shift_cost) * NUM_OF_SHIFTS_PER_PERSON
-            persons_cost += (shift_cost / (math.log(personal_pref_matrix[person][shift_type] + 1) + 1)) * duplicate_factor
+            persons_cost += (shift_cost / (math.log((personal_pref_matrix[person][shift_type]**(SHIFT_RANKING_MODE + 1)) + 1) + 1)) * duplicate_factor
 
             shift_types[person][shift_type] += 1
             shift_diff = shift_index - last_shift_index[person]
@@ -436,7 +459,7 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
                persons_cost += (CONSECUTIVE_SHIFT_FACTOR + conc_shifts[person])
     
             if shift_diff < 4:
-                conc_shifts[person] += 1
+                conc_shifts[person] += 5
             else:
                 conc_shifts[person] = 0     
 
@@ -485,10 +508,14 @@ def mixedGender_cost(solution, gender_array, num_of_shifts):
 
 def offDay_cost(solution, unavailability_matrix):
     total_cost = 0
+    obstruct_count = 0
     for shift_index, shift in enumerate(solution):
         for person in shift:
             if unavailability_matrix[person][shift_index]:
-                total_cost += OFF_DAY_FACTOR   # Penalize the cases when a person is assigned to an unavailable shift
+                obstruct_count += 1
+                total_cost += OFF_DAY_FACTOR * ((obstruct_count * OFF_DAYS_MODE) + 1)  # Penalize the cases when a person is assigned to an unavailable shift
+    if (random.random() < 0.01):
+      print("Off day cost: ", total_cost, obstruct_count)
     return total_cost
 
 def unavailability(shift_index, unavailability_matrix, person):
@@ -586,16 +613,18 @@ def transform_data(people_data, shifts_data):
     num_of_shifts = len(shifts_data["shift_date_data"])
     num_people = len(people_data["name_data"])
     num_of_shift_types = len(shifts_data["shift_time_data"])
+    preference_matrix = create_preference_matrix(people_data["preference_data"], num_people)
     people_transformed_data = {
         "name_array": people_data["name_data"],
         "person_capacity_array": create_persons_capacity_array(people_data["capacity_data"], num_people),
-        "preference_matrix": create_preference_matrix(people_data["preference_data"], num_people),
+        "preference_matrix": preference_matrix,
         "unavailability_matrix": create_unavailability_matrix(people_data["unavailability_data"], num_of_shifts, num_people),
         "off_shifts_matrix": create_unavailability_matrix(people_data["off_shifts_data"], num_of_shifts, num_people),
         "preferred_shift_matrix": create_preferred_shift_matrix(people_data["shift_preference_data"], num_of_shift_types, num_people),
         "preferred_shift_category_array": create_preferred_shift_category_array(people_data["preferred_shift_category_data"], num_people),
         "gender_array": create_gender_array(people_data["gender_data"], num_people),
-        "experience_array": create_experience_array(people_data["experience_data"], num_people)
+        "experience_array": create_experience_array(people_data["experience_data"], num_people),
+        "total_friends": calcTotalFriends(preference_matrix),
     }
 
     shifts_transformed_data = {
@@ -616,7 +645,6 @@ if __name__ == "__main__":
     shift_time_list = shifts_transformed_data["shift_time_array"]
     name_list = people_transformed_data["name_array"]
     dates_list = shifts_transformed_data["shift_date_array"]
-
     if activate_parallelization:
         best_solution, best_cost, init_cost = run_parallel_simulated_annealing(num_of_parallel_threads, people_transformed_data, shifts_transformed_data)
     else:
@@ -628,5 +656,5 @@ if __name__ == "__main__":
     print(f"Best solution with names: {best_solution_with_names}")
     print(f"Initial cost: {init_cost}")
     print(f"Best cost: {best_cost}")
-    createFile(best_solution_with_names, shift_time_list, dates_list)
+    createFile([sorted(sublist) for sublist in best_solution_with_names], shift_time_list, dates_list)
    
