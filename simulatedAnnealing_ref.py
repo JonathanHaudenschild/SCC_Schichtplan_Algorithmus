@@ -10,7 +10,7 @@ import time
 import concurrent.futures
 from functools import partial
 
-FRIENDS_MODE = 1
+FRIENDS_MODE = 2
 SHIFT_RANKING_MODE = 0
 OFF_DAYS_MODE = 1
 
@@ -22,7 +22,7 @@ ONE_SIDED_GENDER_FACTOR = 5
 SHIFT_CATEGORY_FACTOR = 5
 OFF_DAY_FACTOR = 5
 SHIFT_RANKING_FACTOR = 1
-CONSECUTIVE_SHIFT_FACTOR = 5
+CONSECUTIVE_SHIFT_FACTOR = 7
 # These are constants representing different levels of preference for or against working with certain partners.
 # Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
 # Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
@@ -184,9 +184,9 @@ def process_excel(file_path):
     # Each tuple contains a ranking and a corresponding tuple of shift type indices.
     # This assigns a priority  or preference order to different shift types,
     shift_type_ranking_list = [
-        (1, (2,)), # The shift type at index 2 is assigned a ranking of 1
+        (1, (0,)), # The shift type at index 2 is assigned a ranking of 1
         (3, (1, 3)), # The shift types at indices 1 and 3 are assigned a ranking of 3
-        (9, (0,)), # The shift type at index 0 is assigned a ranking of 9
+        (9, (2,)), # The shift type at index 0 is assigned a ranking of 9
         # Add more shift type rankings here
     ]
   
@@ -202,25 +202,31 @@ def process_excel(file_path):
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
-cooling_rate = 0.9999  # cooling rate
+cooling_rate = 0.99995  # cooling rate
 activate_parallelization = True  # activate parallelization
-num_of_parallel_threads = 3  # number of parallel threads
+num_of_parallel_threads = 6  # number of parallel threads
 
 ############################################################################################################## 
 # DO NOT CHANGE ANYTHING BELOW THIS LINE
 ##############################################################################################################
 
-def generate_initial_solution(x, y, shift_capacity_matrix, person_capacity_array):
+def generate_initial_solution(x, y, shift_capacity_matrix, person_capacity_array, max_attempts=10000):
     solution = [set() for _ in range(x)]
+    attempts = 0
     for person in range(y):
         assigned_shifts = set()
-        while len(assigned_shifts) < person_capacity_array[person]:
+        while ((len(assigned_shifts) < person_capacity_array[person]) and (attempts < max_attempts)):
             shift = random.randint(0, x - 1)
             if len(solution[shift]) < shift_capacity_matrix[1][shift][1] and shift not in assigned_shifts:
                 # Higher probability of adding a person if the shift has less than the minimum people
                 if len(solution[shift]) < shift_capacity_matrix[0][shift][1]  or random.random() < 0.30:
                     solution[shift].add(person)
                     assigned_shifts.add(shift)
+            attempts += 1
+        
+        if attempts >= max_attempts:
+            print("Warning: Failed to generate a valid initial solution after " + str(max_attempts) + " attempts.")
+            break
     return solution
 
 
@@ -416,7 +422,7 @@ def cost_function(solution, people_data, shifts_data):
     pref_cost = preference_cost(solution, people_data["preference_matrix"], people_data["total_friends"])
     exp_cost = mixedExperience_cost(solution, people_data["experience_array"], num_of_shifts)
     oday_cost = offDay_cost(solution, people_data["off_shifts_matrix"])
-    rank_cost = shift_ranking_cost(solution, shifts_data["ranking_array"], people_data["preferred_shift_matrix"], people_data["unavailability_matrix"], num_people, num_of_shift_types)
+    rank_cost = shift_ranking_cost(solution, shifts_data["ranking_array"], people_data["preferred_shift_matrix"], people_data["off_shifts_matrix"], num_people, num_of_shift_types, shifts_data["shift_type_array"])
     shift_category_cost = shift_category_com_cost(solution, shifts_data["shift_category_array"], people_data["preferred_shift_category_array"])
     gender_cost = mixedGender_cost(solution, people_data["gender_array"], num_of_shifts)
 
@@ -434,10 +440,10 @@ def preference_cost(solution, preference_matrix, total_friends):
                     if preference_matrix[person1][person2] < 0:
                         match_friends += 1
                     total_cost += preference_matrix[person1][person2] 
-    total_cost += (140 - match_friends) * FRIENDS_MODE
+    # total_cost += (140 - match_friends) ** FRIENDS_MODE
     return total_cost
 
-def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailability_matrix, num_people, num_of_shift_types):
+def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailability_matrix, num_people, num_of_shift_types, ranking_type_array):
     shift_costs = [0] * num_people
     shift_types = [[1] * num_of_shift_types for _ in range(num_people)]
     last_shift_index = [0] * num_people
@@ -450,25 +456,24 @@ def shift_ranking_cost(solution, ranking_array, personal_pref_matrix, unavailabi
             duplicate_factor = shift_types[person][shift_type]
             if unavailability_matrix[person][shift_index]:
                 persons_cost += OFF_DAY_FACTOR * math.sqrt(shift_cost) * NUM_OF_SHIFTS_PER_PERSON
-            persons_cost += (shift_cost / (math.log((personal_pref_matrix[person][shift_type]**(SHIFT_RANKING_MODE + 1)) + 1) + 1)) * duplicate_factor
-
-            shift_types[person][shift_type] += 1
+            persons_cost += shift_cost * duplicate_factor
+            shift_types[person][shift_type] += 1 * ([t[0] for t in ranking_type_array if shift_type in t[1]][0] - personal_pref_matrix[person][shift_type])
             shift_diff = shift_index - last_shift_index[person]
-        
+            
+            
             if conc_shifts[person] > 1:
-               persons_cost += (CONSECUTIVE_SHIFT_FACTOR + conc_shifts[person])
+               persons_cost += (CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person])
     
             if shift_diff < 4:
-                conc_shifts[person] += 5
+                conc_shifts[person] += 9
             else:
                 conc_shifts[person] = 0     
 
             last_shift_index[person] = shift_index
             shift_costs[person] += persons_cost
-
     deviation = statistics.stdev(shift_costs)
     mean = statistics.mean(shift_costs)
-    return deviation * mean * SHIFT_RANKING_FACTOR
+    return deviation * (mean) * SHIFT_RANKING_FACTOR
 
 def shift_category_com_cost(solution, shift_category_array, pref_shift_category_array):
     total_cost = 0
@@ -514,8 +519,6 @@ def offDay_cost(solution, unavailability_matrix):
             if unavailability_matrix[person][shift_index]:
                 obstruct_count += 1
                 total_cost += OFF_DAY_FACTOR * ((obstruct_count * OFF_DAYS_MODE) + 1)  # Penalize the cases when a person is assigned to an unavailable shift
-    if (random.random() < 0.01):
-      print("Off day cost: ", total_cost, obstruct_count)
     return total_cost
 
 def unavailability(shift_index, unavailability_matrix, person):
@@ -559,7 +562,7 @@ def showProgressIndicator(current_iteration, total_iterations, start_time, new_c
     hours, remainder = divmod(remaining_time, 3600)
     minutes, seconds = divmod(remainder, 60)
 
-    print(f"Progress: {progress * 100:.2f}% | Estimated time remaining: {hours:.0f}h {minutes:.0f}m {seconds:.0f}s | Cost Improvement: {round(((init_cost-new_cost)/init_cost)*100,0)}%  ", end='\r' )
+    print(f"Progress: {progress * 100:.2f}% | Estimated time remaining: {hours:.0f}h {minutes:.0f}m {seconds:.0f}s | Cost Improvement: {round(((init_cost - new_cost) / init_cost) * 100)}%  ", end='\r' )
 
 def createFile(solution, shift_name_list, dates_list):
      # Create a new Excel workbook and select the active worksheet
@@ -632,7 +635,8 @@ def transform_data(people_data, shifts_data):
         "shift_time_array": shifts_data["shift_time_data"],
         "shift_capacity_matrix": create_shift_capacity_matrix(shifts_data["shift_capacity_data"], num_of_shifts),
         "ranking_array": create_ranking_array(shifts_data["shift_ranking_data"], shifts_data["shift_type_ranking_data"], num_of_shifts, num_of_shift_types),
-        "shift_category_array": create_shift_category_array(shifts_data["shift_category_data"], num_of_shifts)
+        "shift_category_array": create_shift_category_array(shifts_data["shift_category_data"], num_of_shifts),
+        "shift_type_array": shifts_data["shift_type_ranking_data"]
     }
     return people_transformed_data, shifts_transformed_data
 
