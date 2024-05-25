@@ -23,7 +23,7 @@ ONE_SIDED_GENDER_FACTOR = 1
 SHIFT_CATEGORY_FACTOR = 1
 OFF_DAY_FACTOR = 200
 SHIFT_RANKING_FACTOR = 1
-CONSECUTIVE_SHIFT_FACTOR = 1
+CONSECUTIVE_SHIFT_FACTOR = 3
 # These are constants representing different levels of preference for or against working with certain partners.
 # Negative values are used for preferred partners (friends), with a larger absolute value indicating a stronger preference.
 # Positive values are used for non-preferred partners (enemies), with a larger value indicating a stronger preference against.
@@ -318,7 +318,7 @@ def process_excel(file_path):
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000  # initial temperature
-cooling_rate = 0.99999  # cooling rate
+cooling_rate = 0.99997  # cooling rate
 activate_parallelization = True  # activate parallelization
 num_of_parallel_threads = 10  # number of parallel threads
 
@@ -805,7 +805,7 @@ def shift_ranking_cost(
     ranking_type_array,
 ):
     individual_costs = [0] * num_people
-    shift_types = [[1] * num_of_shift_types for _ in range(num_people)]
+    # shift_types = [[1] * num_of_shift_types for _ in range(num_people)]
     last_shift_index = [-1] * num_people
     conc_shifts = [0] * num_people
 
@@ -821,21 +821,21 @@ def shift_ranking_cost(
             persons_cost += (
                 [t[0] for t in ranking_type_array if shift_type in t[1]][0]
                 * personal_pref_matrix[person][shift_type] * shift_cost
-            
             )
+            
             if last_shift_index[person] != -1:
                 shift_diff = shift_index - last_shift_index[person]
 
                 if conc_shifts[person] > 1:
                     persons_cost += CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person]
-
-                if shift_diff < (minimum_array[person]):
-                    conc_shifts[person] += 3
-                else:
+                
+                if shift_diff > (minimum_array[person] + random.randint(0, 1)) :
                     conc_shifts[person] = 0
+                else:
+                    conc_shifts[person] += 1
 
             last_shift_index[person] = shift_index
-            individual_costs[person] += persons_cost
+            individual_costs[person] += persons_cost / 10
 
     return individual_costs
 
@@ -1081,7 +1081,7 @@ def transform_data(people_data, shifts_data):
 def check_person_costs(solution, people_data, shifts_data):
     individual_costs = individual_cost(solution, people_data, shifts_data)
 
-    off_day_costs = offDay_cost(solution, people_data["unavailability_matrix"])
+    off_day_costs = offDay_cost(solution, people_data["off_shifts_matrix"])
     pref_costs = preference_cost(
         solution,
         people_data["preference_matrix"],
