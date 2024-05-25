@@ -52,8 +52,11 @@ def process_excel(file_path):
         "Geschlecht",
         "Erfahrung",
         "Minimum",
+        "SV",
+        "SV-Erfahrung",
+        "SV-Schichtanzahl",
     ]
-    shifts_column_names = ["date", "time", "min", "max", "Schichtart"]
+    shifts_column_names = ["date", "time", "min", "max", "Schichtart", "SV-min", "SV-max"]
     # Read excel file
     workbook = openpyxl.load_workbook(file_path, data_only=True)
     # Get the first sheet of the workbook
@@ -189,6 +192,30 @@ def process_excel(file_path):
         )
         if minimum is not None
     ]
+    
+    sv_data = [
+        (int(index), int(sv))
+        for index, sv in zip(
+            people_raw_data["index"], people_raw_data[people_column_names[12]]
+        )
+        if sv is not None
+    ]
+    
+    sv_experience_data = [
+        (int(index), int(sv_experience))
+        for index, sv_experience in zip(
+            people_raw_data["index"], people_raw_data[people_column_names[13]]
+        )
+        if sv_experience is not None
+    ]
+    
+    sv_capacity_data = [
+        (int(index), int(sv_capacity))
+        for index, sv_capacity in zip(
+            people_raw_data["index"], people_raw_data[people_column_names[14]]
+        )
+        if sv_capacity is not None
+    ]
 
     people_data = {
         "name_data": name_data,
@@ -201,6 +228,9 @@ def process_excel(file_path):
         "gender_data": gender_data,
         "experience_data": experience_data,
         "minimum_data": minimum_data,
+        "sv_data": sv_data,
+        "sv_experience_data": sv_experience_data,
+        "sv_capacity_data": sv_capacity_data,
     }
 
     # Initialize an empty dictionary to hold column data
@@ -271,26 +301,42 @@ def process_excel(file_path):
         )
         if shift_category is not None and shift_category != ""
     ]
+    
+    shift_sv_min_data = [
+        (int(index), int(sv_min))
+        for index, sv_min in zip(
+            shifts_raw_data["index"], shifts_raw_data[shifts_column_names[5]]
+        )
+        if sv_min is not None
+    ]
+    
+    shift_sv_max_data = [
+        (int(index), int(sv_max))
+        for index, sv_max in zip(
+            shifts_raw_data["index"], shifts_raw_data[shifts_column_names[6]]
+        )
+        if sv_max is not None
+    ]
 
     # Creating a list of tuples to represent shift rankings.
     # Each tuple contains a ranking and a corresponding tuple of shift indices.
     # This assigns a priority or preference order to different shifts
     shift_ranking_list = [
         (
-            0,
+            1,
             (0, 1, 2, 3),
         ),  # The shifts at indices 0, 1, 2, and 3 are assigned a ranking of 1
         (
-            1,
-            (4, 5, 6, 7, 20, 21, 22, 23),
+            3,
+            (4, 5, 6, 7),
         ),  # The shifts at indices 4, 5, 6, 7, 20, 21, 22, and 23 are assigned a ranking of 3
         (
-            5,
-            (8, 9, 10, 11),
+            9,
+            (8, 9, 10, 11, 22, 23),
         ),  # The shifts at indices 8, 9, 10, and 11 are assigned a ranking of 6
         (
-            15,
-            (12, 13, 14, 15, 16, 17, 18, 19),
+            27,
+            (12, 13, 14, 15, 16, 17, 18, 19, 20, 21),
         ),  # The shifts at indices 12, 13, 14, 15, 16, 17, 18, and 19 are assigned a ranking of 9
         # Add more shift rankings here
     ]
@@ -312,6 +358,8 @@ def process_excel(file_path):
         "shift_ranking_data": shift_ranking_list,
         "shift_type_ranking_data": shift_type_ranking_list,
         "shift_category_data": shift_category_data,
+        "shift_sv_min_data": shift_sv_min_data,
+        "shift_sv_max_data": shift_sv_max_data
     }
     return people_data, shifts_data
 
@@ -633,6 +681,8 @@ def create_preferred_shift_matrix(pref_shift_list, num_of_shift_types, num_peopl
 
 
 def create_unavailability_matrix(unavailability_list, num_of_shifts, num_people):
+    
+    print(unavailability_list, num_of_shifts, num_people)
     unavailability_matrix = [
         [0 for _ in range(num_of_shifts)] for _ in range(num_people)
     ]
@@ -652,7 +702,19 @@ def create_shift_capacity_matrix(shift_capacity_list, num_of_shifts):
 
 def cost_function(solution, people_data, shifts_data):
     num_of_shifts = len(shifts_data["shift_date_array"])
-
+    
+    # Calculate individual shift ranking costs
+    rank_costs = shift_ranking_cost(
+        solution,
+        shifts_data["ranking_array"],
+        people_data["preferred_shift_matrix"],
+        people_data["off_shifts_matrix"],
+        people_data["minimum_array"],
+        len(people_data["name_array"]),
+        len(shifts_data["shift_time_array"]),
+        shifts_data["shift_type_array"],
+    )
+    
     # Calculate individual costs
     individual_costs = individual_cost(solution, people_data, shifts_data)
 
@@ -662,20 +724,27 @@ def cost_function(solution, people_data, shifts_data):
         statistics.stdev(individual_costs.values()) if len(individual_costs) > 1 else 0
     )
 
+    # Introduce a balance factor to penalize high deviation
+    balance_factor = 15  # Adjust this factor as needed
+    
+    
+    mean_rank_costs = statistics.mean(rank_costs)
+    deviation_rank_costs = statistics.stdev(rank_costs)
+    rank_balance_cost = deviation_rank_costs * balance_factor
+
     # Calculate mixed experience and gender costs
     exp_cost = mixedExperience_cost(
         solution, people_data["experience_array"], num_of_shifts
     )
     gender_cost = mixedGender_cost(solution, people_data["gender_array"], num_of_shifts)
 
-    # Introduce a balance factor to penalize high deviation
-    balance_factor = 15  # Adjust this factor as needed
-    balance_cost = deviation_individual_cost * balance_factor
+    individual_balance_cost = deviation_individual_cost * balance_factor
     # Total cost combines individual costs, experience cost, gender cost, and balance cost
     total_cost = (
         mean_individual_cost
-        + deviation_individual_cost
-        + balance_cost
+        + individual_balance_cost
+        + mean_rank_costs
+        + rank_balance_cost
         + gender_cost
         + exp_cost
     )
@@ -701,7 +770,7 @@ def individual_cost(solution, people_data, shifts_data):
     for person, cost in enumerate(off_day_costs):
         individual_costs[person] += cost
 
-    # Calculate individual shift ranking costs
+    # # Calculate individual shift ranking costs
     rank_costs = shift_ranking_cost(
         solution,
         shifts_data["ranking_array"],
@@ -712,8 +781,13 @@ def individual_cost(solution, people_data, shifts_data):
         len(shifts_data["shift_time_array"]),
         shifts_data["shift_type_array"],
     )
+    
     for person, cost in enumerate(rank_costs):
         individual_costs[person] += cost
+    
+    
+    # for person, cost in enumerate(rank_costs):
+    #     individual_costs[person] += cost
 
     # # Calculate individual shift category costs
     # shift_category_costs = shift_category_com_cost(
@@ -814,14 +888,18 @@ def shift_ranking_cost(
         shift_cost = ranking_array[shift_index]
         for person in shift:
             persons_cost = 0
+            
             # duplicate_factor = shift_types[person][shift_type]
-
-            # persons_cost +=  shift_types[person][shift_type]
-            # shift_types[person][shift_type] += ([t[0] for t in ranking_type_array if shift_type in t[1]][0] * personal_pref_matrix[person][shift_type])
-            persons_cost += (
-                [t[0] for t in ranking_type_array if shift_type in t[1]][0]
-                * personal_pref_matrix[person][shift_type] * shift_cost
-            )
+            # Determine the ranking type factor
+            # rank_type_factor = [t[0] for t in ranking_type_array if shift_type in t[1]][0]
+            
+            # Calculate the personal preference cost
+            personal_preference_cost = personal_pref_matrix[person][shift_type]
+            
+            # Calculate the total shift cost for the person
+            persons_cost += shift_cost * personal_preference_cost
+            
+            
             
             if last_shift_index[person] != -1:
                 shift_diff = shift_index - last_shift_index[person]
@@ -835,7 +913,7 @@ def shift_ranking_cost(
                     conc_shifts[person] += 1
 
             last_shift_index[person] = shift_index
-            individual_costs[person] += persons_cost / 10
+            individual_costs[person] += persons_cost
 
     return individual_costs
 
@@ -1025,6 +1103,8 @@ def createFile(solution, shift_name_list, dates_list):
 
 def transform_data(people_data, shifts_data):
     num_of_shifts = len(shifts_data["shift_date_data"])
+    
+    print(num_of_shifts)
     num_people = len(people_data["name_data"])
     num_of_shift_types = len(shifts_data["shift_time_data"])
     preference_matrix = create_preference_matrix(
