@@ -66,6 +66,7 @@ def transform_data(people_data, shifts_data):
 
 def create_preference_matrix(preference_list, num_people):
     preference_matrix = [[0 for _ in range(num_people)] for _ in range(num_people)]
+    print(preference_list)
     for person1, person2, preference in preference_list:
         preference_matrix[person1][person2] = preference
         preference_matrix[person2][person1] = preference

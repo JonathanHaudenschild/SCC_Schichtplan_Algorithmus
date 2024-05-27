@@ -7,21 +7,15 @@ from colorhash import ColorHash
 import math
 
 
-def convert_to_solution_matrix(solution):
-    return [shift["normal"].union(shift["sv"]) for shift in solution]
-
-
 def replace_numbers_with_names(solution, index_name_list):
     name_solution = []
     for shift in solution:
-        name_shift = {"normal": set(), "sv": set()}
-        for shift_type in ["normal", "sv"]:
-            for number in shift[shift_type]:
-                name = next(name for index, name in index_name_list if index == number)
-                name_shift[shift_type].add(name)
+        name_shift = set()
+        for number in shift:
+            name = next(name for index, name in index_name_list if index == number)
+            name_shift.add(name)
         name_solution.append(name_shift)
     return name_solution
-
 
 def showProgressIndicator(
     current_iteration, total_iterations, start_time, new_cost, init_cost
@@ -34,19 +28,10 @@ def showProgressIndicator(
     minutes, seconds = divmod(remainder, 60)
 
     print(
-        f"Progress: {progress * 100:.2f}% | Estimated time remaining: {hours:.0f}h {minutes:.0f}m {seconds:.0f}s | Cost Improvement: {round(((init_cost - new_cost) / init_cost) * 100)}%  ",
+        f"Progress: {progress * 100:.2f}% | Estimated time remaining: {hours:.0f}h {minutes:.0f}m {seconds:.0f}s | Cost Improvement: {round(((init_cost - new_cost) / init_cost) * 100)}%  | Current Cost: {new_cost:.1f}",
         end="\r",
     )
 
-def split_shift_data(shift_data):
-    normal_solution = []
-    sv_solution = []
-
-    for shift in shift_data:
-        normal_solution.append(shift['normal'])
-        sv_solution.append(shift['sv'])
-
-    return normal_solution, sv_solution
 
 
 def createFile(best_solution, name_list, individual_costs, shift_name_list, dates_list):
@@ -84,34 +69,15 @@ def createFile(best_solution, name_list, individual_costs, shift_name_list, date
 
         # Sort and write normal shift names
         normal_shift_names = sorted(
-            [next(name for index, name in name_list if index == person) for person in shift["normal"]]
+            [
+                next(name for index, name in name_list if index == person)
+                for person in shift
+            ]
         )
         for name in normal_shift_names:
-            index = next(index for index, name_list_name in name_list if name_list_name == name)
-            cell = worksheet.cell(row=row_index, column=col_index + 1)
-            cell.value = f"{name} ({individual_costs[index]})"
-            if name not in name_colors:
-                color = ColorHash(name).hex
-                color = "FF" + color[1:]
-                name_colors[name] = PatternFill(
-                    start_color=color, end_color=color, fill_type="solid"
-                )
-            cell.fill = name_colors[name]
-            cell.font = white_font
-            row_index += 1
-
-        # Write "sv" header
-        sv_header_cell = worksheet.cell(row=row_index, column=col_index + 1)
-        sv_header_cell.value = "SV"
-        sv_header_cell.font = dark_font
-        row_index += 1
-
-        # Sort and write supervisor shift names
-        sv_shift_names = sorted(
-            [next(name for index, name in name_list if index == person) for person in shift["sv"]]
-        )
-        for name in sv_shift_names:
-            index = next(index for index, name_list_name in name_list if name_list_name == name)
+            index = next(
+                index for index, name_list_name in name_list if name_list_name == name
+            )
             cell = worksheet.cell(row=row_index, column=col_index + 1)
             cell.value = f"{name} ({individual_costs[index]})"
             if name not in name_colors:
@@ -129,9 +95,9 @@ def createFile(best_solution, name_list, individual_costs, shift_name_list, date
             max_row = row_index
 
     # Add row numbers for the shifts
-    for row in range(4, max_row):
+    for row in range(5, max_row):
         cell = worksheet.cell(row=row, column=1)
-        cell.value = row - 3
+        cell.value = row - 4
         cell.font = dark_font
 
     # Get the current time
