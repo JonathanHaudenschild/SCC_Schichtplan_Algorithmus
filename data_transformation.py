@@ -1,6 +1,24 @@
 
+from datetime import datetime, timezone
+
+
 NUM_OF_SHIFTS_PER_PERSON = 5
 NUM_OF_SHIFTS_PER_SV = 2
+
+
+def datetime_to_timestamp(dt):
+    """
+    Convert a datetime object to a singular integer representing the total seconds since the epoch.
+    """
+    return int(dt.replace(tzinfo=timezone.utc).timestamp())
+
+def timestamp_to_datetime(timestamp):
+    """
+    Convert a singular integer representing the total seconds since the epoch back to a datetime object.
+    """
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc)
+
+
 
 def transform_data(people_data, shifts_data):
     num_of_shifts = len(shifts_data["shift_date_data"])
@@ -66,7 +84,6 @@ def transform_data(people_data, shifts_data):
 
 def create_preference_matrix(preference_list, num_people):
     preference_matrix = [[0 for _ in range(num_people)] for _ in range(num_people)]
-    print(preference_list)
     for person1, person2, preference in preference_list:
         preference_matrix[person1][person2] = preference
         preference_matrix[person2][person1] = preference

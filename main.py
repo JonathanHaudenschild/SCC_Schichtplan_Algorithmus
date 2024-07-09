@@ -1,26 +1,24 @@
-from functools import partial
 
-from excel_processing import process_excel
+from excel_processing import process_excel, createFile, load_excel_and_create_solution
 from data_transformation import transform_data
 from simulated_annealing import run_parallel_simulated_annealing, simulated_annealing
 from cost_calculation import (
-    EXPERIENCE_FACTOR,
     cost_function,
-    individual_cost,
-    mixedExperience_cost,
-    mixedGender_cost,
 )
-from utilities import replace_numbers_with_names, createFile
+from utilities import replace_numbers_with_names
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000
-cooling_rate = 0.99997
-activate_parallelization = False
-num_of_parallel_threads = 8
+cooling_rate = 0.999997
+activate_parallelization = True
+num_of_parallel_threads = 14
 max_iterations_without_improvement = 1000
+excel_file_path = "SCC_SCHICHTPLAN_FINAL.xlsx"
+input_solution_path = "SCC_SCHICHTPLAN_2024_B.xlsx"
 
-if __name__ == "__main__":
-    people_data, shifts_data = process_excel("SCC_SCHICHTPLAN_FINAL_SV.xlsx")
+
+def run_simulation():
+    people_data, shifts_data = process_excel(excel_file_path )
     people_transformed_data, shifts_transformed_data = transform_data(
         people_data, shifts_data
     )
@@ -28,7 +26,6 @@ if __name__ == "__main__":
     shift_time_list = shifts_transformed_data["shift_time_array"]
     name_list = people_transformed_data["name_array"]
     dates_list = shifts_transformed_data["shift_date_array"]
-    num_of_shifts = len(dates_list)
 
     print("Starting simulated annealing")
 
@@ -41,7 +38,7 @@ if __name__ == "__main__":
             cooling_rate,
             max_iterations_without_improvement,
             shift_time_list,
-            dates_list
+            dates_list,
         )
     else:
         best_solution, best_cost, init_cost = simulated_annealing(
@@ -51,15 +48,15 @@ if __name__ == "__main__":
             cooling_rate,
             max_iterations_without_improvement,
             shift_time_list,
-            dates_list
+            dates_list,
         )
-        
+
     if best_solution is None:
         print("No valid solution found")
         exit()
 
     # Check the cost of each person
-    total_cost, individual_costs = cost_function(
+    total_cost, individual_costs, cost_details = cost_function(
         best_solution, people_transformed_data, shifts_transformed_data, True
     )
 
@@ -74,4 +71,26 @@ if __name__ == "__main__":
         individual_costs,
         shift_time_list,
         dates_list,
+        cost_details,
     )
+
+
+def calculate_cost_from_excel():
+    people_data, shifts_data = process_excel(excel_file_path )
+    people_transformed_data, shifts_transformed_data = transform_data(
+        people_data, shifts_data
+    )
+    
+    input_path = input_solution_path
+    dates_list = shifts_transformed_data["shift_date_array"]
+
+    name_list = people_transformed_data["name_array"]
+    shift_types = [0, 1] 
+    solution = load_excel_and_create_solution(input_path, dates_list, name_list, shift_types)
+    cost_function(solution, people_transformed_data, shifts_transformed_data, True)
+
+
+if __name__ == "__main__":
+    
+    for i in range(7):
+        run_simulation()

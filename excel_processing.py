@@ -1,4 +1,7 @@
 import openpyxl
+from datetime import datetime
+from openpyxl.styles import PatternFill, Font
+from colorhash import ColorHash
 
 
 def process_excel(file_path):
@@ -187,7 +190,7 @@ def process_excel(file_path):
         )
         if sv_capacity is not None
     ]
-    
+
     people_data = {
         "name_data": name_data,
         "capacity_data": capacity_data,
@@ -305,17 +308,17 @@ def process_excel(file_path):
             (0, 1, 2, 3),
         ),  # The shifts at indices 0, 1, 2, and 3 are assigned a ranking of 1
         (
-            3,
+            2,
             (4, 5, 6, 7),
-        ),  # The shifts at indices 4, 5, 6, 7, 20, 21, 22, and 23 are assigned a ranking of 3
+        ),  # The shifts at indices 4, 5, 6, 7, 20, 21, 22, and 23 are assigned a ranking of 2
         (
-            9,
+            3,
             (8, 9, 10, 11, 22, 23),
-        ),  # The shifts at indices 8, 9, 10, and 11 are assigned a ranking of 6
+        ),  # The shifts at indices 8, 9, 10, and 11 are assigned a ranking of 3
         (
-            27,
+            4,
             (12, 13, 14, 15, 16, 17, 18, 19, 20, 21),
-        ),  # The shifts at indices 12, 13, 14, 15, 16, 17, 18, and 19 are assigned a ranking of 9
+        ),  # The shifts at indices 12, 13, 14, 15, 16, 17, 18, and 19 are assigned a ranking of 4
         # Add more shift rankings here
     ]
 
@@ -339,3 +342,171 @@ def process_excel(file_path):
         "sv_shift_capacity_data": sv_shift_capacity_data,
     }
     return people_data, shifts_data
+
+
+def createFile(
+    best_solution,
+    name_list,
+    individual_costs,
+    shift_name_list,
+    dates_list,
+    output_buffer,
+):
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Shifts"
+
+    # Write shift names as headers
+    for col_index, _ in enumerate(best_solution):
+        shift_name = shift_name_list[col_index % len(shift_name_list)][1]
+        cell = worksheet.cell(row=1, column=col_index * 2 + 2)
+        cell.value = col_index
+        for dates in dates_list:
+            if dates[0] == col_index:
+                day_name = dates[1]
+                cell1 = worksheet.cell(row=2, column=col_index * 2 + 2)
+                cell1.value = day_name
+        cell2 = worksheet.cell(row=3, column=col_index * 2 + 2)
+        cell2.value = shift_name
+
+    name_colors = {}
+    white_font = Font(color="FFFFFF")
+    dark_font = Font(color="000000")
+
+    # Track the maximum row needed to accommodate the longest shift
+    max_row = 4
+
+    for col_index, shift in enumerate(best_solution, start=1):
+        row_index = 4
+
+        for shift_type in shift:
+            # Write shift type header
+            shift_type_header_cell = worksheet.cell(row=row_index, column=col_index * 2)
+            shift_type_header_cell.value = shift_type
+            shift_type_header_cell.font = dark_font
+            row_index += 1
+
+            # Sort and write shift names for the shift type
+            shift_names = sorted(
+                [
+                    next(name for index, name in name_list if index == person)
+                    for person in shift[shift_type]
+                ]
+            )
+            for name in shift_names:
+                index = next(
+                    index
+                    for index, name_list_name in name_list
+                    if name_list_name == name
+                )
+                name_cell = worksheet.cell(row=row_index, column=col_index * 2)
+                name_cell.value = name
+                if name not in name_colors:
+                    color = ColorHash(name).hex
+                    color = "FF" + color[1:]
+                    name_colors[name] = PatternFill(
+                        start_color=color, end_color=color, fill_type="solid"
+                    )
+                name_cell.fill = name_colors[name]
+                name_cell.font = white_font
+
+                cost_cell = worksheet.cell(row=row_index, column=col_index * 2 + 1)
+                cost_cell.fill = name_colors[name]
+                cost_cell.value = individual_costs[index]
+                cost_cell.font = white_font
+
+                row_index += 1
+
+        # Update the max row if necessary
+        if row_index > max_row:
+            max_row = row_index
+
+    # Add row numbers for the shifts
+    for row in range(5, max_row):
+        cell = worksheet.cell(row=row, column=1)
+        cell.value = row - 4
+        cell.font = dark_font
+
+    # Create a new worksheet for the cost details
+    cost_details_sheet = workbook.create_sheet(title="Cost Details")
+
+    # Write the cost details to the new worksheet, split at ":" and "="
+    cost_details = output_buffer.split("\n")
+    for row_index, line in enumerate(cost_details, start=1):
+        parts = [part.strip() for part in line.replace("=", ":").split(":")]
+        for col_index, part in enumerate(parts, start=1):
+            cell = cost_details_sheet.cell(row=row_index, column=col_index)
+            # Try to convert to integer or float
+            try:
+                if "." in part:
+                    cell.value = float(part)
+                else:
+                    cell.value = int(part)
+            except ValueError:
+                cell.value = part
+
+    # Get the current time
+    now = datetime.now()
+    now_str = now.strftime("%H-%M-%S")
+
+    # Save the workbook with the formatted time in the filename
+    workbook.save(now_str + "_shifts.xlsx")
+
+def convert_names_to_indices(shift_data, name_list):
+    converted_shift_data = {}
+    for shift_index in shift_data:
+        converted_shift_data[shift_index] = {}
+        for shift_type in shift_data[shift_index]:
+            converted_shift_data[shift_index][shift_type] = [
+                next(index for index, name in name_list if name == person_name)
+                for person_name in shift_data[shift_index][shift_type]
+            ]
+    return converted_shift_data
+
+def reconstruct_solution_matrix(converted_shift_data, num_shifts, num_shift_types):
+    solution = [
+        {shift_type: set() for shift_type in range(num_shift_types)}
+        for _ in range(num_shifts)
+    ]
+    for shift_index in converted_shift_data:
+        for shift_type in converted_shift_data[shift_index]:
+            solution[shift_index][shift_type] = set(converted_shift_data[shift_index][shift_type])
+    return solution
+
+
+
+def load_excel_and_create_solution(file_path, dates_list, name_list, shift_types):
+    workbook = openpyxl.load_workbook(file_path)
+    worksheet = workbook["Shifts_RAW"]
+
+    num_shifts = len(dates_list)
+    # Read the shift data from the worksheet
+    solution_matrix  = [
+        {shift_type: set() for shift_type in shift_types}
+        for _ in range(num_shifts)
+    ]
+    
+    current_shift_type = None
+    shift_index = -1
+
+    for col in range(1, worksheet.max_column + 1, 2): 
+        shift_index += 1
+        current_shift_type = None
+        for row in range(1, worksheet.max_row + 1):
+            cell_value = worksheet.cell(row=row, column=col).value
+
+            if cell_value is None:
+                continue
+
+            if cell_value in shift_types:
+                current_shift_type = cell_value
+            elif current_shift_type is not None:
+                name = cell_value
+                index = next((i for i, name_tuple in enumerate(name_list) if name_tuple[1] == name), None)
+                if index is not None:
+                    solution_matrix[shift_index][current_shift_type].add(index)
+         
+
+    return solution_matrix
+
+

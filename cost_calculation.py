@@ -1,25 +1,33 @@
 import random
 import statistics
-import math
+from io import StringIO
 
 
-EXPERIENCE_FACTOR = 1
-ONE_SIDED_GENDER_FACTOR = 1
+EXPERIENCE_FACTOR = 1000
+ONE_SIDED_GENDER_FACTOR = 1000
 SHIFT_CATEGORY_FACTOR = 1
-OFF_DAY_FACTOR = 300
-SHIFT_RANKING_FACTOR = 10
-CONSECUTIVE_SHIFT_FACTOR = 3
+OFF_DAY_FACTOR = 1000
+SHIFT_RANKING_FACTOR = 100
+CONSECUTIVE_SHIFT_FACTOR = 5
 FRIEND_FACTOR = 1000
-ENEMY_FACTOR = 2000
+ENEMY_FACTOR = 20000
 
 
 def cost_function(solution, people_data, shifts_data, print_costs=False):
     num_of_shifts = len(shifts_data["shift_date_array"])
 
+    experience_array = people_data["experience_array"]
+    sv_experience_array = people_data["sv_experience_array"]
+
     # Calculate individual costs
-    individual_costs, rank_costs, pref_costs, off_day_costs, pref_and_off_day_costs = individual_cost(
-        solution, people_data, shifts_data
-    )
+    (
+        individual_costs,
+        rank_costs,
+        pref_costs,
+        off_day_costs,
+        pref_and_off_day_costs,
+        shift_type_experience_costs,
+    ) = individual_cost(solution, people_data, shifts_data)
 
     # Calculate the mean and standard deviation of individual costs
     mean_individual_cost = statistics.mean(individual_costs.values())
@@ -28,7 +36,7 @@ def cost_function(solution, people_data, shifts_data, print_costs=False):
     )
 
     # Introduce a balance factor to penalize high deviation
-    balance_factor = 25  # Adjust this factor as needed
+    balance_factor = 50  # Adjust this factor as needed
 
     mean_rank_costs = statistics.mean(rank_costs)
     deviation_rank_costs = statistics.stdev(rank_costs)
@@ -42,59 +50,58 @@ def cost_function(solution, people_data, shifts_data, print_costs=False):
         EXPERIENCE_FACTOR,
     )
     gender_cost = mixedGender_cost(
-        solution, people_data["gender_array"], num_of_shifts, 1
+        solution, people_data["gender_array"], num_of_shifts, ONE_SIDED_GENDER_FACTOR
     )
-
-    # sv_exp_cost = mixedExperience_cost(
-    #     sv_solution,
-    #     people_data["sv_experience_array"],
-    #     num_of_shifts,
-    #     5,
-    # )
-
-    # sv_gender_cost = mixedGender_cost(
-    #     sv_solution, people_data["gender_array"], num_of_shifts, 5
-    # )
 
     individual_balance_cost = deviation_individual_cost * balance_factor
 
     # Total cost combines individual costs, experience cost, gender cost, and balance cost
     total_cost = (
-        sum(pref_and_off_day_costs.values())
+        +sum(individual_costs.values())
         + rank_balance_cost
         + individual_balance_cost
-        # + gender_cost
-        # + exp_cost
-        # + sv_exp_cost
-        # + sv_gender_cost
+        + gender_cost
+        + exp_cost
     )
 
+    output_buffer = StringIO()
     if print_costs:
         for person in range(len(people_data["name_array"])):
-            print(f"Person {person}: Total Cost = {individual_costs[person]}")
-            print(f"    Preference Cost: {pref_costs[person]}")
-            print(f"    Off-Day Cost: {off_day_costs[person]}")
-            print(f"    Shift Ranking Cost: {rank_costs[person]}")
-        print(f"Total Cost: {sum(individual_costs.values()), total_cost}")
-        print(f"Mean Individual Cost: {mean_individual_cost}")
-        print(f"Deviation Individual Cost: {deviation_individual_cost}")
-        print(f"Sum of Off-Day Costs: {sum(off_day_costs)}")
-        print(f"Sum of Preference Costs: {sum(pref_costs)}")
-        print(
-            f"Experience cost: {exp_cost}",
-            f"Genders cost: {gender_cost}",
+            output_buffer.write(f"Person {person}\n")
+            output_buffer.write(f"    Total Cost: {individual_costs[person]}\n")
+            output_buffer.write(f"    Preference Cost: {pref_costs[person]}\n")
+            output_buffer.write(f"    Off-Day Cost: {off_day_costs[person]}\n")
+            output_buffer.write(f"    Shift Ranking Cost: {rank_costs[person]}\n")
+        output_buffer.write(f"Total Cost: {total_cost}\n")
+        output_buffer.write(f"Experience cost: {exp_cost}\n")
+        output_buffer.write(f"Genders cost: {gender_cost}\n")
+        output_buffer.write(
+            f"Sum of Individual Costs: {sum(individual_costs.values())}\n"
+        )
+        output_buffer.write(f"Mean Individual Cost: {mean_individual_cost}\n")
+        output_buffer.write(f"Deviation Individual Cost: {deviation_individual_cost}\n")
+        output_buffer.write(f"Sum of Off-Day Costs: {sum(off_day_costs)}\n")
+        output_buffer.write(
+            f"No. of people having no off days: {off_day_costs.count(OFF_DAY_FACTOR)}\n"
+        )
+        output_buffer.write(f"Sum of Preference Costs: {sum(pref_costs)}\n")
+        output_buffer.write(f"Sum of Shift Ranking Costs: {sum(rank_costs)}\n")
+        output_buffer.write(
+            f"Sum of Shift Type Experience Costs: {sum(shift_type_experience_costs)}\n"
         )
 
-    return total_cost, individual_costs
+        print(output_buffer.getvalue())
+
+    return total_cost, individual_costs, output_buffer.getvalue()
 
 
-def individual_cost(normal_solution, people_data, shifts_data):
+def individual_cost(solution, people_data, shifts_data):
     num_people = len(people_data["name_array"])
     individual_costs = {person: 0 for person in range(num_people)}
     pref_and_off_day_costs = {person: 0 for person in range(num_people)}
 
     pref_costs = preference_cost(
-        normal_solution,
+        solution,
         people_data["preference_matrix"],
         people_data["total_friends"],
         people_data["person_capacity_array"],
@@ -102,35 +109,38 @@ def individual_cost(normal_solution, people_data, shifts_data):
     for person, cost in enumerate(pref_costs):
         individual_costs[person] += cost
 
-    off_day_costs = offDay_cost(normal_solution, people_data["off_shifts_matrix"])
-    # off_day_costs = offDay_cost(sv_solution, people_data["off_shifts_matrix"])
+    off_day_costs = offDay_cost(solution, people_data["off_shifts_matrix"])
     for person, cost in enumerate(off_day_costs):
-        individual_costs[person] += cost
-
-
-    for person, cost in enumerate(off_day_costs):
-        for person, cost2 in enumerate(pref_costs):
-            individual_costs[person] += abs(cost - cost2)
+        adjustment_factor = 1 + (
+            individual_costs[person] ** (1 / 10)
+        )  # Adding 1 to avoid division by zero
+        individual_costs[person] += cost * adjustment_factor
 
     rank_costs = shift_ranking_cost(
-        normal_solution,
+        solution,
         shifts_data["ranking_array"],
         people_data["preferred_shift_matrix"],
-        people_data["off_shifts_matrix"],
-        people_data["minimum_array"],
         num_people,
         len(shifts_data["shift_time_array"]),
-        shifts_data["shift_type_array"],
+        people_data,
     )
-
     for person, cost in enumerate(rank_costs):
         individual_costs[person] += cost
+
+    shift_type_experience_costs = shift_type_experience_cost(
+        solution, num_people, people_data["sv_experience_array"]
+    )
+
+    for person, cost in enumerate(shift_type_experience_costs):
+        individual_costs[person] += cost
+
     return (
         individual_costs,
         rank_costs,
         pref_costs,
         off_day_costs,
         pref_and_off_day_costs,
+        shift_type_experience_costs,
     )
 
 
@@ -151,31 +161,32 @@ def preference_cost(
         0
     ] * num_people  # Track how many shifts each person has without a friend
 
-    # Count the number of times each person works with their friends
     for shift in solution:
-        for person1 in shift:
-            for person2 in shift:
+        combined_shift = set().union(*shift.values())
+        for person1 in combined_shift:
+            for person2 in combined_shift:
                 if person1 != person2 and preference_matrix[person1][person2] < 0:
                     friend_shift_count[person1] += 1
 
-    # Calculate the preference cost
-    for shift in solution:
-        for person1 in shift:
+    for shift_index, shift in enumerate(solution):
+        combined_shift = set().union(
+            *shift.values()
+        )  # Combine all shift types into one set
+
+        for person1 in combined_shift:
             has_friend_in_shift = False
-            for person2 in shift:
+            for person2 in combined_shift:
                 if person1 != person2:
                     if preference_matrix[person1][person2] < 0:
                         has_friend_in_shift = True
                         friend_shift_count[person2] -= 1  # Decrement friend shift count
 
-                    if preference_matrix[person1][person2] > 0:
+                    if preference_matrix[person1][person2] > 0 and shift_index > 9:
                         individual_costs[person1] += (
                             preference_matrix[person1][person2] * enemy_factor
                         )
 
-            # Penalize if person1 has friends but none in the shift, and the friend still has shift capacity left
             if total_friends[person1] > 0 and not has_friend_in_shift:
-                # Check if any friend still has shift capacity left
                 any_friend_has_capacity = False
                 for friend, capacity in enumerate(person_capacity_array):
                     if (
@@ -183,18 +194,16 @@ def preference_cost(
                         and capacity > friend_shift_count[friend]
                     ):
                         any_friend_has_capacity = True
-                        break  # Only need to find one friend with capacity
+                        break
 
                 if any_friend_has_capacity:
                     shifts_without_friend[person1] += 1
                     penalty = friend_factor * (
                         2 ** (shifts_without_friend[person1] - 1)
-                    )  # Exponential increase
+                    )
                     individual_costs[person1] += penalty
             else:
-                shifts_without_friend[person1] = (
-                    0  # Reset if they have a friend in the shift
-                )
+                shifts_without_friend[person1] = 0
 
     return individual_costs
 
@@ -202,9 +211,10 @@ def preference_cost(
 def offDay_cost(solution, unavailability_matrix, off_day_factor=OFF_DAY_FACTOR):
     individual_costs = [0] * len(unavailability_matrix)
     for shift_index, shift in enumerate(solution):
-        for person in shift:
-            if unavailability_matrix[person][shift_index]:
-                individual_costs[person] = off_day_factor
+        for shift_type in shift:
+            for person in shift[shift_type]:
+                if unavailability_matrix[person][shift_index]:
+                    individual_costs[person] = off_day_factor
     return individual_costs
 
 
@@ -212,43 +222,104 @@ def shift_ranking_cost(
     solution,
     ranking_array,
     personal_pref_matrix,
-    unavailability_matrix,
-    minimum_array,
     num_people,
-    num_of_shift_types,
-    ranking_type_array,
+    num_of_shift_seq,
+    people_data,
 ):
     individual_costs = [0] * num_people
     last_shift_index = [-1] * num_people
+    shift_accumulation = [[0] * num_of_shift_seq for _ in range(num_people)]
     conc_shifts = [0] * num_people
 
     for shift_index, shift in enumerate(solution):
-        shift_type = shift_index % num_of_shift_types
-        shift_cost = ranking_array[shift_index]
-        for person in shift:
-            persons_cost = 0
-            personal_preference_cost = personal_pref_matrix[person][shift_type]
-            persons_cost += shift_cost * (personal_preference_cost - 1)
+        shift_seq = shift_index % num_of_shift_seq
+        for shift_type, shift_group in shift.items():
+            shift_cost = ranking_array[shift_index]
+            for person in shift_group:
+                persons_cost = 0
+                personal_preference_cost = personal_pref_matrix[person][shift_seq]
+                persons_cost += shift_cost * (personal_preference_cost**2)
 
-            if last_shift_index[person] != -1:
-                shift_diff = shift_index - last_shift_index[person]
-                last_shift_type = last_shift_index[person] % num_of_shift_types
+                if last_shift_index[person] != -1:
+                    shift_diff = shift_index - last_shift_index[person]
+                    last_shift__seq = last_shift_index[person] % num_of_shift_seq
 
-                if last_shift_type == shift_type:
-                    persons_cost += personal_preference_cost * SHIFT_RANKING_FACTOR
+                    if last_shift__seq == shift_seq:
+                        persons_cost += (
+                            (personal_preference_cost + 1)
+                            * SHIFT_RANKING_FACTOR
+                            * shift_accumulation[person][shift_seq]
+                        )
+                        shift_accumulation[person][shift_seq] += 1
 
-                if conc_shifts[person] > 1:
-                    persons_cost += CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person]
+                    if conc_shifts[person] > 1:
+                        persons_cost += CONSECUTIVE_SHIFT_FACTOR * conc_shifts[person]
 
-                if shift_diff < 4:
-                    conc_shifts[person] += 1
-                else:
-                    conc_shifts[person] = 0
+                    if shift_diff < 4:
+                        conc_shifts[person] += 1
+                    else:
+                        conc_shifts[person] = 0
 
-            last_shift_index[person] = shift_index
-            individual_costs[person] += persons_cost
+                last_shift_index[person] = shift_index
+
+                # individual_costs[person] += shift_type_weighted_cost(
+                #     person, [people_data["person_capacity_array"],people_data["sv_capacity_array"]],
+                #     shift_type, shift_index, people_data["sv_experience_array"]
+                # )
+
+                individual_costs[person] += persons_cost
 
     return individual_costs
+
+
+def shift_type_experience_cost(solution, num_people, sv_experience_array):
+    individual_costs = [0] * num_people
+
+    # Track the last shift type assigned to each person
+    first_shift_type_assigned = [-1] * num_people
+
+    for shift_index, shift in enumerate(solution):
+        for shift_type in sorted(shift.keys()):  # Iterate through shift types in order
+            total_experience = 0
+            for person in shift[shift_type]:
+                # Check if the person has been assigned to a higher shift type before a lower one
+                if (
+                    first_shift_type_assigned[person] > shift_type
+                    and sv_experience_array[person] == 0
+                ):
+                    individual_costs[person] += 10000
+
+                if shift_type == 1:
+                    total_experience += sv_experience_array[person]
+
+                if first_shift_type_assigned[person] == -1:
+                    first_shift_type_assigned[person] = shift_type
+            if total_experience == 0 and shift_type == 1:
+                individual_costs[person] += 20000
+
+    return individual_costs
+
+
+def shift_type_weighted_cost(
+    person,
+    person_shift_type_capacity_arrays,
+    shift_type,
+    shift_index,
+    shift_type_experience_array,
+):
+    cost = 0
+
+    if person_shift_type_capacity_arrays[1][person] > 0:
+        if shift_type == 1:
+            if shift_type_experience_array[1] == 0:
+                if shift_index > 10:
+                    cost += 100
+
+        if shift_type == 0:
+            if shift_index <= 10:
+                cost -= 100
+
+    return cost
 
 
 def shift_category_com_cost(
@@ -286,16 +357,14 @@ def mixedExperience_cost(
     shift_experience = [0] * num_of_shifts
 
     for shift_index, shift in enumerate(solution):
-        if len(shift) > 0:
-            mean_experience = sum(experience_array[person] for person in shift) / len(
-                shift
-            )
-            shift_experience[shift_index] = mean_experience
-        else:
-            shift_experience[shift_index] = 0
+        for shift_type in shift:
+            shift_experience[shift_index] += sum(
+                experience_array[person] for person in shift[shift_type]
+            ) / len(shift[shift_type])
 
-    for shift in shift_experience:
-        total_cost += abs(shift - statistics.mean(experience_array)) * experience_factor
+    experience_deviation = statistics.stdev(shift_experience)
+
+    total_cost = experience_deviation * experience_factor
     return total_cost
 
 
@@ -309,16 +378,13 @@ def mixedGender_cost(
     shift_gender = [0] * num_of_shifts
 
     for shift_index, shift in enumerate(solution):
-        if len(shift) > 0:
-            gender_mix = sum(gender_array[person] for person in shift) / len(shift)
-            shift_gender[shift_index] = gender_mix
-        else:
-            shift_gender[shift_index] = 0
+        for shift_type in shift:
+            shift_gender[shift_index] += sum(
+                gender_array[person] for person in shift[shift_type]
+            ) / len(shift[shift_type])
 
-    for shift in shift_gender:
-        total_cost += (
-            abs(shift - statistics.mean(gender_array)) * one_sided_gender_factor
-        )
+    gender_deviation = statistics.stdev(shift_gender)
+    total_cost = gender_deviation * one_sided_gender_factor
     return total_cost
 
 

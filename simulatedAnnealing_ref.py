@@ -681,8 +681,6 @@ def create_preferred_shift_matrix(pref_shift_list, num_of_shift_types, num_peopl
 
 
 def create_unavailability_matrix(unavailability_list, num_of_shifts, num_people):
-    
-    print(unavailability_list, num_of_shifts, num_people)
     unavailability_matrix = [
         [0 for _ in range(num_of_shifts)] for _ in range(num_people)
     ]
@@ -1103,8 +1101,6 @@ def createFile(solution, shift_name_list, dates_list):
 
 def transform_data(people_data, shifts_data):
     num_of_shifts = len(shifts_data["shift_date_data"])
-    
-    print(num_of_shifts)
     num_people = len(people_data["name_data"])
     num_of_shift_types = len(shifts_data["shift_time_data"])
     preference_matrix = create_preference_matrix(

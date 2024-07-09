@@ -6,10 +6,9 @@ from functools import partial
 import concurrent.futures
 
 from cost_calculation import cost_function, individual_cost
-from utilities import showProgressIndicator, createFile
+from utilities import showProgressIndicator
 
 from hard_constraints import get_neighbor, generate_initial_solution
-
 
 def run_parallel_simulated_annealing(
     num_instances,
@@ -59,6 +58,7 @@ def simulated_annealing(
     name_list = people_data["name_array"]
     person_capacity_array = people_data["person_capacity_array"]
     sv_capacity_array = people_data["sv_capacity_array"]
+    experience_array = people_data["experience_array"]
     sv_experience_array = people_data["sv_experience_array"]
     unavailability_matrix = people_data["unavailability_matrix"]
     minimum_array = people_data["minimum_array"]
@@ -66,24 +66,38 @@ def simulated_annealing(
     shift_sv_capacity_matrix = shifts_data["shift_sv_capacity_matrix"]
     preference_matrix = people_data["preference_matrix"]
 
+    shift_type_capacity_matrices = [
+        shift_capacity_matrix,
+        shift_sv_capacity_matrix,
+    ]
+
+    person_shift_type_capacity_arrays = [
+        person_capacity_array,
+        sv_capacity_array,
+    ]
+
+    person_experience_arrays = [experience_array, sv_experience_array]
+
     num_of_shifts = len(shifts_data["shift_date_array"])
     num_people = len(name_list)
     current_solution = generate_initial_solution(
-        num_of_shifts, num_people, shift_capacity_matrix, person_capacity_array,
-        unavailability_matrix, minimum_array, preference_matrix
+        num_of_shifts,
+        num_people,
+        shift_type_capacity_matrices,
+        person_shift_type_capacity_arrays,
+        unavailability_matrix,
+        minimum_array,
+        preference_matrix,
     )
-    
 
-
-    current_cost, individual_costs = cost_function(current_solution, people_data, shifts_data)
-    deviation_individual_cost = statistics.stdev(
-      individual_costs.values()
+    current_cost, individual_costs, cost_details = cost_function(
+        current_solution, people_data, shifts_data
     )
+    deviation_individual_cost = statistics.stdev(individual_costs.values())
 
     init_cost = current_cost
     temperature = initial_temperature
     iterations_without_improvement = 0
-
 
     total_iterations = math.ceil(
         math.log(1 / initial_temperature) / math.log(cooling_rate)
@@ -97,11 +111,12 @@ def simulated_annealing(
         new_solution = get_neighbor(
             current_solution,
             unavailability_matrix,
-            shift_capacity_matrix,
+            shift_type_capacity_matrices,
+            person_shift_type_capacity_arrays,
             minimum_array,
-            preference_matrix
+            preference_matrix,
         )
-        new_cost, new_individual_costs = cost_function(
+        new_cost, new_individual_costs, cost_details  = cost_function(
             new_solution, people_data, shifts_data
         )
         new_deviation_individual_cost = statistics.stdev(new_individual_costs.values())
@@ -130,7 +145,7 @@ def simulated_annealing(
                 current_iteration, total_iterations, start_time, new_cost, init_cost
             )
 
-        if current_iteration % 10000 == 0:
+        if current_iteration % 50000 == 0:
             cost_function(current_solution, people_data, shifts_data, True)
     return current_solution, current_cost, init_cost
 
