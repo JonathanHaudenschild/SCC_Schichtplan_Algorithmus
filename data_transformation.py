@@ -1,9 +1,11 @@
-
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 
 NUM_OF_SHIFTS_PER_PERSON = 5
 NUM_OF_SHIFTS_PER_SV = 2
+
+
+create_dict_from_list = lambda data: {id: value for id, value in data}
 
 
 def datetime_to_timestamp(dt):
@@ -12,192 +14,128 @@ def datetime_to_timestamp(dt):
     """
     return int(dt.replace(tzinfo=timezone.utc).timestamp())
 
-def timestamp_to_datetime(timestamp):
-    """
-    Convert a singular integer representing the total seconds since the epoch back to a datetime object.
-    """
-    return datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
-
-
-def transform_data(people_data, shifts_data):
-    num_of_shifts = len(shifts_data["shift_date_data"])
-    num_people = len(people_data["name_data"])
-    num_of_shift_types = len(shifts_data["shift_time_data"])
-    preference_matrix = create_preference_matrix(
-        people_data["preference_data"], num_people
-    )
-
-    people_transformed_data = {
-        "name_array": people_data["name_data"],
-        "person_capacity_array": create_persons_capacity_array(
-            people_data["capacity_data"], num_people
-        ),
-        "preference_matrix": preference_matrix,
-        "unavailability_matrix": create_unavailability_matrix(
-            people_data["unavailability_data"], num_of_shifts, num_people
-        ),
-        "off_shifts_matrix": create_unavailability_matrix(
-            people_data["off_shifts_data"], num_of_shifts, num_people
-        ),
-        "preferred_shift_matrix": create_preferred_shift_matrix(
-            people_data["shift_preference_data"], num_of_shift_types, num_people
-        ),
-        "preferred_shift_category_array": create_preferred_shift_category_array(
-            people_data["preferred_shift_category_data"], num_people
-        ),
-        "gender_array": create_gender_array(people_data["gender_data"], num_people),
-        "experience_array": create_experience_array(
-            people_data["experience_data"], num_people
-        ),
-        "minimum_array": create_minimum_array(people_data["minimum_data"], num_people),
-        "total_friends": create_total_friends_array(
-            people_data["preference_data"], num_people
-        ),
-        "sv_array": create_sv_array(people_data["sv_data"], num_people),
-        "sv_experience_array": create_sv_experience_array(people_data["sv_experience_data"], num_people),
-        "sv_capacity_array": create_sv_capacity_array(people_data["sv_capacity_data"], num_people)
-    }
-
-    shifts_transformed_data = {
-        "shift_date_array": shifts_data["shift_date_data"],
-        "shift_time_array": shifts_data["shift_time_data"],
-        "shift_capacity_matrix": create_shift_capacity_matrix(
-            shifts_data["shift_capacity_data"], num_of_shifts
-        ),
-        "ranking_array": create_ranking_array(
-            shifts_data["shift_ranking_data"],
-            shifts_data["shift_type_ranking_data"],
-            num_of_shifts,
-            num_of_shift_types,
-        ),
-        "shift_category_array": create_shift_category_array(
-            shifts_data["shift_category_data"], num_of_shifts
-        ),
-        "shift_type_array": shifts_data["shift_type_ranking_data"],
-        "shift_sv_capacity_matrix": create_shift_sv_capacity_matrix(
-            shifts_data["sv_shift_capacity_data"], num_of_shifts
-        )
-    }
-    return people_transformed_data, shifts_transformed_data
-
-
-def create_preference_matrix(preference_list, num_people):
-    preference_matrix = [[0 for _ in range(num_people)] for _ in range(num_people)]
-    for person1, person2, preference in preference_list:
-        preference_matrix[person1][person2] = preference
-        preference_matrix[person2][person1] = preference
-    return preference_matrix
-
-
-def create_persons_capacity_array(capacity_list, num_people):
-    capacity_array = [NUM_OF_SHIFTS_PER_PERSON] * num_people
-    for capacity in capacity_list:
-        capacity_array[capacity[0]] = capacity[1]
-    return capacity_array
-
-
-def create_preferred_shift_matrix(pref_shift_list, num_of_shift_types, num_people):
-    matrix = [[1] * num_of_shift_types for _ in range(num_people)]
-    for person, shift_values in pref_shift_list:
-        matrix[person] = list(shift_values)
-    return matrix
-
-
-def create_preferred_shift_category_array(pref_shift_category_list, num_people):
-    pref_shift_category_array = [0] * num_people
-    for pref_shift_category in pref_shift_category_list:
-        pref_shift_category_array[pref_shift_category[0]] = pref_shift_category[1]
-    return pref_shift_category_array
-
-
-def create_experience_array(experience_list, num_people):
-    experience_array = [1] * num_people
-    for experience in experience_list:
-        experience_array[experience[0]] = experience[1]
-    return experience_array
-
-
-def create_minimum_array(minimum_list, num_people):
-    minimum_array = [0] * num_people
-    for minimum in minimum_list:
-        minimum_array[minimum[0]] = minimum[1]
-    return minimum_array
-
-
-def create_gender_array(gender_list, num_people):
-    gender_array = [0] * num_people
-    for gender in gender_list:
-        gender_array[gender[0]] = gender[1]
-    return gender_array
-
-
-def create_shift_category_array(shift_category_list, num_of_shifts):
-    shift_category_array = [0] * num_of_shifts
-    for shift_category in shift_category_list:
-        shift_category_array[shift_category[0]] = shift_category[1]
-    return shift_category_array
-
-
-def create_unavailability_matrix(unavailability_list, num_of_shifts, num_people):
-    unavailability_matrix = [
-        [0 for _ in range(num_of_shifts)] for _ in range(num_people)
+def convert_datetimes(data):
+    return [
+        (id, (datetime_to_timestamp(start), datetime_to_timestamp(end)))
+        for id, (start, end) in data
     ]
-    for person, shifts in unavailability_list:
-        for shift in shifts:
-            unavailability_matrix[person][shift] = 1
-    return unavailability_matrix
 
 
-def create_shift_capacity_matrix(shift_capacity_list, num_of_shifts):
-    shift_capacity_matrix = [[0 for _ in range(num_of_shifts)] for _ in range(2)]
-    for shift, capacity in shift_capacity_list:
-        shift_capacity_matrix[0][shift] = capacity[0]
-        shift_capacity_matrix[1][shift] = capacity[1]
-    return shift_capacity_matrix
+def time_to_seconds_since_midnight(ts):
+    """
+    Convert a time object to the total seconds since midnight.
+    """
+    if isinstance(ts, (int, float)): 
+        dt = datetime.fromtimestamp(ts, tz=timezone.utc)
+    else:
+        dt = ts
+    return dt.hour * 3600 + dt.minute * 60 + dt.second
 
 
-def create_ranking_array(
-    shift_ranking_list, shift_type_ranking_list, num_of_shifts, num_of_shift_types
-):
-    cost_array = [0] * num_of_shifts
-    for cost, shifts in shift_ranking_list:
-        for shift_index in shifts:
-            for type_cost, shifts in shift_type_ranking_list:
-                for shift in shifts:
-                    if shift_index % num_of_shift_types == shift:
-                        cost_array[shift_index] = type_cost * cost
-    return cost_array
+def seconds_since_midnight_to_time(seconds):
+    """
+    Convert total seconds since midnight back to a time object.
+    """
+    return (datetime.min + timedelta(seconds=seconds)).time()
 
 
-def create_total_friends_array(preference_list, num_people):
-    total_friends_array = [0] * num_people
-    for person1, person2, preference in preference_list:
-        if preference < 0:
-            total_friends_array[person1] += 1
+def convert_time(data):
+    return [(id, time_to_seconds_since_midnight(time)) for id, time in data]
+
+
+def transform_unavailabilty_data(unavailability_data):
+    return [
+        (
+            id,
+            [
+                (datetime_to_timestamp(start), datetime_to_timestamp(end))
+                for start, end in dates
+            ],
+        )
+        for id, dates in unavailability_data
+    ]
+
+
+def transform_shift_preference_data(shift_preference_data):
+    print(shift_preference_data)
+
+    return [
+        (
+            id,
+            [
+                (
+                    [
+                        (
+                            time_to_seconds_since_midnight(date[0][0]),
+                            time_to_seconds_since_midnight(date[0][1]),
+                        )
+                    ],
+                    date[1],
+                )
+                for date in dates
+            ],
+        )
+        for id, dates in shift_preference_data
+    ]
+
+
+def transform_people_data(people_data):
+    preference_dict = create_dict_from_list(people_data["preference_data"])
+    people_transformed_data = {
+        "name_dict": create_dict_from_list(people_data["name_data"]),
+        "person_capacity_dict": create_dict_from_list(people_data["capacity_data"]),
+        "unavailability_dict": create_dict_from_list(
+            transform_unavailabilty_data(people_data["unavailability_data"])
+        ),
+        "off_shifts_dict": create_dict_from_list(
+            transform_unavailabilty_data(people_data["day_off_data"])
+        ),
+        "gender_dict": create_dict_from_list(people_data["gender_data"]),
+        "experience_dict": create_dict_from_list(people_data["experience_data"]),
+        "minimum_break_dict": create_dict_from_list(
+            convert_time(people_data["minimum_break_data"])
+        ),
+        "preference_dict": preference_dict,
+        "people_shift_types_dict": create_dict_from_list(
+            people_data["shift_types_data"]
+        ),
+        "shift_preference_dict": create_dict_from_list(
+            transform_shift_preference_data(people_data["shift_preference_data"])
+        ),
+        "total_friends": (create_total_friends_array(preference_dict)),
+    }
+
+    return people_transformed_data
+
+
+def transform_shifts_data(shifts_data):
+    shifts_transformed_data = {
+        "shift_time_dict": create_dict_from_list(
+            convert_datetimes(shifts_data["shift_time_data"])
+        ),
+        "shift_capacity_dict": create_dict_from_list(
+            shifts_data["shift_capacity_data"]
+        ),
+        "shift_type_dict": create_dict_from_list(shifts_data["shift_type_data"]),
+        "restrict_shift_type_dict": create_dict_from_list(
+            shifts_data["restrict_shift_type_data"]
+        ),
+        "shift_priority_dict": create_dict_from_list(
+            shifts_data["shift_priority_data"]
+        ),
+        "shift_cost_dict": create_dict_from_list(shifts_data["shift_cost_data"]),
+    }
+
+    return shifts_transformed_data
+
+
+def create_total_friends_array(preference_list):
+    total_friends_array = {}
+
+    for person, preferences in preference_list.items():
+        total_friends_array[person] = 0
+        if preferences[1] < 0:
+            total_friends_array[person] += 1
+
     return total_friends_array
-
-def create_sv_array(sv_list, num_people):
-    sv_array = [0] * num_people
-    for sv in sv_list:
-        sv_array[sv[0]] = sv[1]
-    return sv_array
-
-def create_sv_experience_array(sv_experience_list, num_people):
-    sv_experience_array = [0] * num_people
-    for sv_experience in sv_experience_list:
-        sv_experience_array[sv_experience[0]] = sv_experience[1]
-    return sv_experience_array
-
-def create_sv_capacity_array(sv_capacity_list, num_people):
-    sv_capacity_array = [0] * num_people
-    for sv_capacity in sv_capacity_list:
-        sv_capacity_array[sv_capacity[0]] = sv_capacity[1]
-    return sv_capacity_array
-
-def create_shift_sv_capacity_matrix(shift_sv_list, num_of_shifts):
-    shift_sv_capacity_matrix = [[0 for _ in range(num_of_shifts)] for _ in range(2)]
-    for shift, capacity in shift_sv_list:
-        shift_sv_capacity_matrix[0][shift] = capacity[0]
-        shift_sv_capacity_matrix[1][shift] = capacity[1]
-    return shift_sv_capacity_matrix

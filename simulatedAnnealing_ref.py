@@ -526,7 +526,7 @@ def simulated_annealing(
     # If a seed is provided, use it to initialize the random module
     if seed is not None:
         random.seed(seed)
-    name_list = people_data["name_array"]
+    name_list = people_data["name_dict"]
     person_capacity_array = people_data["person_capacity_array"]
     unavailability_matrix = people_data["unavailability_matrix"]
     minimum_array = people_data["minimum_array"]
@@ -708,7 +708,7 @@ def cost_function(solution, people_data, shifts_data):
         people_data["preferred_shift_matrix"],
         people_data["off_shifts_matrix"],
         people_data["minimum_array"],
-        len(people_data["name_array"]),
+        len(people_data["name_dict"]),
         len(shifts_data["shift_time_array"]),
         shifts_data["shift_type_array"],
     )
@@ -750,7 +750,7 @@ def cost_function(solution, people_data, shifts_data):
 
 
 def individual_cost(solution, people_data, shifts_data):
-    num_people = len(people_data["name_array"])
+    num_people = len(people_data["name_dict"])
     individual_costs = {person: 0 for person in range(num_people)}
 
     # Calculate individual preference costs
@@ -1170,7 +1170,7 @@ def check_person_costs(solution, people_data, shifts_data):
         people_data["preferred_shift_matrix"],
         people_data["off_shifts_matrix"],
         people_data["minimum_array"],
-        len(people_data["name_array"]),
+        len(people_data["name_dict"]),
         len(shifts_data["shift_time_array"]),
         shifts_data["shift_type_array"],
     )
@@ -1180,7 +1180,7 @@ def check_person_costs(solution, people_data, shifts_data):
     #     people_data["preferred_shift_category_array"],
     # )
 
-    for person in range(len(people_data["name_array"])):
+    for person in range(len(people_data["name_dict"])):
         print(f"Person {person}: Total Cost = {individual_costs[person]}")
         print(f"    Preference Cost: {pref_costs[person]}")
         print(f"    Off-Day Cost: {off_day_costs[person]}")
@@ -1198,7 +1198,7 @@ if __name__ == "__main__":
         people_data, shifts_data
     )
     shift_time_list = shifts_transformed_data["shift_time_array"]
-    name_list = people_transformed_data["name_array"]
+    name_list = people_transformed_data["name_dict"]
     dates_list = shifts_transformed_data["shift_date_array"]
     if activate_parallelization:
         best_solution, best_cost, init_cost = run_parallel_simulated_annealing(
