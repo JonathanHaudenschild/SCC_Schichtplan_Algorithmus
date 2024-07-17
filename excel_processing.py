@@ -125,28 +125,28 @@ def extract_shift_preferences(data, column_name):
 
 
 def extract_preferences(data):
-    def parse_values(id, values, flag):
+    def parse_values(values, flag):
+        if isinstance(values, str):
+            values = values.split(",")
+        elif isinstance(values, (int, float)):
+            values = [values]
         return [
-            (id, (j.strip(), flag))
-            for j in str(values).split(",")
-            if j.strip() and j.replace(".", "", 1)
+            (int(float(j)), flag)
+            for j in values
+            if isinstance(j, (int, float))
+            or (isinstance(j, str) and j.strip().replace(".", "", 1).isdigit())
         ]
 
-    friends_data = [
-        item
-        for id, values in zip(data["id"], data["Freunde"])
-        if values
-        for item in parse_values(id, values, -1)
-    ]
+    result = []
+    for id, friends, enemies in zip(data["id"], data["Freunde"], data["Feinde"]):
+        preferences = []
+        if friends:
+            preferences.extend(parse_values(friends, -1))
+        if enemies:
+            preferences.extend(parse_values(enemies, 1))
+        result.append((id, preferences))
 
-    enemies_data = [
-        item
-        for id, values in zip(data["id"], data["Feinde"])
-        if values
-        for item in parse_values(id, values, 1)
-    ]
-
-    return friends_data + enemies_data
+    return result
 
 
 def extract_availability_data(data, column_name):

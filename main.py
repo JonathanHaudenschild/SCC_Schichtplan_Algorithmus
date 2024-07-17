@@ -19,19 +19,9 @@ input_solution_path = "SCC_SCHICHTPLAN_2024_B.xlsx"
 def run_simulation():
     people_data, shifts_data = process_excel(excel_file_path)
 
-    # print ("Shifts data: ", shifts_data)
     shifts_transformed_data = transform_shifts_data(shifts_data)
     people_transformed_data = transform_people_data(people_data)
     
-    # print("Shifts shifts_transformed_data: ", shifts_transformed_data)
-
-    print("People people_transformed_data: ", people_transformed_data)
-    # return
-
-    # shift_time_list = shifts_transformed_data["shift_time_array"]
-    # name_list = people_transformed_data["name_array"]
-    # dates_list = shifts_transformed_data["shift_date_array"]
-
     print("Starting simulated annealing")
 
     if activate_parallelization:
@@ -57,9 +47,9 @@ def run_simulation():
         exit()
 
     # Check the cost of each person
-    total_cost, individual_costs, cost_details = cost_function(
-        best_solution, people_transformed_data, shifts_transformed_data, True
-    )
+    # total_cost, individual_costs, cost_details = cost_function(
+    #     best_solution, people_transformed_data, shifts_transformed_data, True
+    # )
     name_list = people_transformed_data["name_dict"]
     best_solution_with_names = replace_numbers_with_names(best_solution, name_list)
     print(f"Best solution with names: {best_solution_with_names}")

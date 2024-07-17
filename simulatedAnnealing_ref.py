@@ -1045,7 +1045,7 @@ def showProgressIndicator(
     )
 
 
-def createFile(solution, shift_name_list, dates_list):
+def create_file(solution, shift_name_list, dates_list):
     # Create a new Excel workbook and select the active worksheet
     workbook = openpyxl.Workbook()
     worksheet = workbook.active

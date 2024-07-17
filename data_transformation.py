@@ -26,7 +26,7 @@ def time_to_seconds_since_midnight(ts):
     """
     Convert a time object to the total seconds since midnight.
     """
-    if isinstance(ts, (int, float)): 
+    if isinstance(ts, (int, float)):
         dt = datetime.fromtimestamp(ts, tz=timezone.utc)
     else:
         dt = ts
@@ -81,7 +81,6 @@ def transform_shift_preference_data(shift_preference_data):
 
 
 def transform_people_data(people_data):
-    preference_dict = create_dict_from_list(people_data["preference_data"])
     people_transformed_data = {
         "name_dict": create_dict_from_list(people_data["name_data"]),
         "person_capacity_dict": create_dict_from_list(people_data["capacity_data"]),
@@ -96,14 +95,13 @@ def transform_people_data(people_data):
         "minimum_break_dict": create_dict_from_list(
             convert_time(people_data["minimum_break_data"])
         ),
-        "preference_dict": preference_dict,
+        "preference_dict": create_dict_from_list(people_data["preference_data"]),
         "people_shift_types_dict": create_dict_from_list(
             people_data["shift_types_data"]
         ),
         "shift_preference_dict": create_dict_from_list(
             transform_shift_preference_data(people_data["shift_preference_data"])
         ),
-        "total_friends": (create_total_friends_array(preference_dict)),
     }
 
     return people_transformed_data

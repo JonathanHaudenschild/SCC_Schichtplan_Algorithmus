@@ -52,12 +52,11 @@ def simulated_annealing(
     if seed is not None:
         random.seed(seed)
 
-    current_schedule = generate_initial_solution(shifts_data, people_data)
+    current_schedule, current_assigned_shifts = generate_initial_solution(shifts_data, people_data)
     # Check the cost of each person
     total_cost, individual_costs, cost_details = cost_function(
-        current_schedule, people_data, shifts_data, True
+        current_schedule, current_assigned_shifts, people_data, shifts_data, True
     )
-    print(current_schedule)
     create_file(
         current_schedule,
         individual_costs,
@@ -66,10 +65,9 @@ def simulated_annealing(
         cost_details,
     )
     
-    return
 
     current_cost, individual_costs, cost_details = cost_function(
-        current_schedule, people_data, shifts_data
+        current_schedule, current_assigned_shifts, people_data, shifts_data
     )
     deviation_individual_cost = statistics.stdev(individual_costs.values())
     
@@ -88,13 +86,14 @@ def simulated_annealing(
         temperature > 1
         and iterations_without_improvement < max_iterations_without_improvement
     ):
-        new_solution = get_neighbor(
+        new_schedule, new_assigned_shifts = get_neighbor(
             current_schedule,
+            current_assigned_shifts,
             shifts_data,
             people_data,
         )
         new_cost, new_individual_costs, cost_details  = cost_function(
-            new_solution, people_data, shifts_data
+            new_schedule, new_assigned_shifts,  people_data, shifts_data
         )
         new_deviation_individual_cost = statistics.stdev(new_individual_costs.values())
 
@@ -108,7 +107,7 @@ def simulated_annealing(
             )
             > random.random()
         ):
-            current_solution = new_solution
+            current_solution = new_schedule
             current_cost = new_cost
             deviation_individual_cost = new_deviation_individual_cost
             iterations_without_improvement = 0
