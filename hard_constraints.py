@@ -241,6 +241,9 @@ def is_valid_assignment(
     ):
         return False
 
+    if not check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
+        return False
+
     # Check if the person should not be scheduled with someone they have a conflict with
     if isEnemy(person_id, schedule[new_shift_id], people_data["preference_dict"]):
         return False
@@ -453,7 +456,7 @@ def swap_or_move_shift(
         len(shift_b) < shift_capacity_dict.get(person_b_shift_id)[0]
         or (
             len(shift_b) < shift_capacity_dict.get(person_b_shift_id)[1]
-            and random.random() < 0.33
+            and random.random() < 0.66
         )
     ):
         # Temporarily assign the person to the shift
@@ -463,10 +466,10 @@ def swap_or_move_shift(
         new_assigned_shifts[person_a_id].append(person_b_shift_id)
 
         if is_valid_assignment(
-            new_schedule,
+            new_schedule.copy(),
             person_b_shift_id,
             person_a_id,
-            new_assigned_shifts[person_a_id],
+            new_assigned_shifts.copy()[person_a_id],
             people_data,
             shifts_data,
         ):
@@ -490,17 +493,17 @@ def swap_or_move_shift(
         new_assigned_shifts[person_b_id].append(person_a_shift_id)
 
         if is_valid_assignment(
-            new_schedule,
+            new_schedule.copy(),
             person_b_shift_id,
             person_a_id,
-            new_assigned_shifts[person_a_id],
+            new_assigned_shifts.copy()[person_a_id],
             people_data,
             shifts_data,
         ) and is_valid_assignment(
-            new_schedule,
+            new_schedule.copy(),
             person_a_shift_id,
             person_b_id,
-            new_assigned_shifts[person_b_id],
+            new_assigned_shifts.copy()[person_b_id],
             people_data,
             shifts_data,
         ):
@@ -523,16 +526,16 @@ def get_neighbor(
 
     while attempts < max_attempts:
         new_schedule, new_assigned_shifts = swap_or_move_shift(
-            schedule,
-            assigned_shifts,
+            schedule.copy(),
+            assigned_shifts.copy(),
             people_data,
             shifts_data,
         )
-        if new_schedule:
+        if new_schedule and new_assigned_shifts:
             return new_schedule, new_assigned_shifts
         else:
             attempts += 1
-        
+
     # Return the original solution if no valid neighbor is found after max_attempts
     print("No valid neighbor found after", max_attempts, "attempts")
     return None, None
@@ -541,10 +544,10 @@ def get_neighbor(
 def isEnemy(person, shift, preference_dict):
     if person not in preference_dict:
         return False
-    
+
     # Create a set of enemies for the person
     enemies = {p[0] for p in preference_dict[person] if p[1] == 1}
-    
+
     # Check if any person in the shift is an enemy
     return any(other_person in enemies for other_person in shift)
 
@@ -613,6 +616,28 @@ def check_unavailability(shift_time_dict, shift_id, unavailability_dict, person)
         if not (shift_end <= unavailability_start or shift_start >= unavailability_end):
             return False
     return True
+
+
+def check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
+    mandatory_periods = people_data["mandatory_dict"].get(person_id, [])
+    
+    # Set to keep track of mandatory periods that have been satisfied
+    satisfied_periods = set()
+
+    for shift_id in assigned_shifts_person:
+        shift_start, shift_end = shifts_data["shift_time_dict"].get(shift_id, (None, None))
+        if shift_start is None or shift_end is None:
+            continue  # Skip if shift times are not found
+
+        for mandatory_start, mandatory_end in mandatory_periods:
+            if shift_start >= mandatory_start and shift_end <= mandatory_end:
+                satisfied_periods.add((mandatory_start, mandatory_end))
+                
+    # If all mandatory periods are satisfied, return True
+    if len(satisfied_periods) >= len(mandatory_periods):
+        return True
+
+    return False
 
 
 def check_min_break(person_shifts, person, people_data, shifts_data):

@@ -44,7 +44,7 @@ def convert_time(data):
     return [(id, time_to_seconds_since_midnight(time)) for id, time in data]
 
 
-def transform_unavailabilty_data(unavailability_data):
+def transform_times_data(unavailability_data):
     return [
         (
             id,
@@ -85,10 +85,13 @@ def transform_people_data(people_data):
         "name_dict": create_dict_from_list(people_data["name_data"]),
         "person_capacity_dict": create_dict_from_list(people_data["capacity_data"]),
         "unavailability_dict": create_dict_from_list(
-            transform_unavailabilty_data(people_data["unavailability_data"])
+            transform_times_data(people_data["unavailability_data"])
+        ),
+        "mandatory_dict": create_dict_from_list(
+            transform_times_data(people_data["mandatory_data"])
         ),
         "off_shifts_dict": create_dict_from_list(
-            transform_unavailabilty_data(people_data["day_off_data"])
+            transform_times_data(people_data["day_off_data"])
         ),
         "gender_dict": create_dict_from_list(people_data["gender_data"]),
         "experience_dict": create_dict_from_list(people_data["experience_data"]),

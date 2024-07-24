@@ -11,6 +11,7 @@ from utilities import showProgressIndicator
 
 from hard_constraints import get_neighbor, generate_initial_solution
 
+import copy
 
 
 def run_parallel_simulated_annealing(
@@ -52,26 +53,24 @@ def simulated_annealing(
     if seed is not None:
         random.seed(seed)
 
-    current_schedule, current_assigned_shifts = generate_initial_solution(shifts_data, people_data)
+    current_schedule, current_assigned_shifts = generate_initial_solution(
+        shifts_data, people_data
+    )
     # Check the cost of each person
-    total_cost, individual_costs, cost_details = cost_function(
+    total_cost, total_cost_breakdown, cost_details = cost_function(
         current_schedule, current_assigned_shifts, people_data, shifts_data, True
     )
     create_file(
         current_schedule,
-        individual_costs,
+        total_cost_breakdown,
         people_data,
         shifts_data,
         cost_details,
     )
-    
 
-    current_cost, individual_costs, cost_details = cost_function(
+    current_cost, total_cost_breakdown, cost_details = cost_function(
         current_schedule, current_assigned_shifts, people_data, shifts_data
     )
-    deviation_individual_cost = statistics.stdev(individual_costs.values())
-    
-
 
     init_cost = current_cost
     temperature = initial_temperature
@@ -86,50 +85,46 @@ def simulated_annealing(
         temperature > 1
         and iterations_without_improvement < max_iterations_without_improvement
     ):
+
         new_schedule, new_assigned_shifts = get_neighbor(
             current_schedule,
             current_assigned_shifts,
             shifts_data,
             people_data,
         )
-        new_cost, new_individual_costs, cost_details  = cost_function(
-            new_schedule, new_assigned_shifts,  people_data, shifts_data
+        new_cost, new_cost_breakdown, cost_details = cost_function(
+            new_schedule, new_assigned_shifts, people_data, shifts_data
         )
-        new_deviation_individual_cost = statistics.stdev(new_individual_costs.values())
 
         if (
             acceptance_probability(
                 current_cost,
                 new_cost,
                 temperature,
-                deviation_individual_cost,
-                new_deviation_individual_cost,
             )
             > random.random()
         ):
-            current_solution = new_schedule
+            current_schedule = new_schedule
+            current_assigned_shifts = new_assigned_shifts
             current_cost = new_cost
-            deviation_individual_cost = new_deviation_individual_cost
             iterations_without_improvement = 0
         else:
             iterations_without_improvement += 1
 
         temperature *= cooling_rate
         current_iteration += 1
-        if current_iteration % 333 == 0:
+        if current_iteration % 100 == 0:
             showProgressIndicator(
                 current_iteration, total_iterations, start_time, new_cost, init_cost
             )
 
         if current_iteration % 50000 == 0:
-            cost_function(current_solution, people_data, shifts_data, True)
-    return current_solution, current_cost, init_cost
+            cost_function(new_schedule, new_assigned_shifts, people_data, shifts_data, True)
+    return current_schedule, current_assigned_shifts, current_cost, init_cost
 
 
-def acceptance_probability(
-    old_cost, new_cost, temperature, deviation_old, deviation_new
-):
-    if new_cost < old_cost or deviation_new < deviation_old:
+def acceptance_probability(old_cost, new_cost, temperature):
+    if new_cost < old_cost:
         return 1
     else:
         return math.exp(-(abs(new_cost - old_cost) / temperature))
