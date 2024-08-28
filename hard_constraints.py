@@ -61,6 +61,16 @@ def choose_shift(schedule, person_id, assigned_shifts, people_data, shifts_data)
                 assigned_shift_types[assigned_shift_type] = 1
         return assigned_shift_types
 
+    # Validate inputs
+    if person_id not in people_data["people_shift_types_dict"]:
+        raise ValueError(f"Person ID {person_id} not found in people data.")
+
+    if not isinstance(assigned_shifts, list):
+        raise TypeError("assigned_shifts should be a list.")
+
+    if not isinstance(schedule, dict) or not isinstance(shifts_data, dict):
+        raise TypeError("schedule and shifts_data should be dictionaries.")
+
     # Get the preferred shift types for the person
     person_shift_types = people_data["people_shift_types_dict"].get(person_id, {})
 
@@ -90,6 +100,12 @@ def choose_shift(schedule, person_id, assigned_shifts, people_data, shifts_data)
         and person_id not in schedule[shift_id]
     }
 
+    # Handle case where no valid shifts are found
+    if not valid_shifts:
+        
+        print(f"No valid shifts found for person ID {person_id}.")
+        return None
+
     def calculate_individual_shift_score(shift_id):
         """
         Calculate the score for a shift based on different criteria.
@@ -110,6 +126,7 @@ def choose_shift(schedule, person_id, assigned_shifts, people_data, shifts_data)
             < person_shift_types.get(shift_type, [0, 0, 0])[2]
         ):
             score += 100  # Higher score for restricted shifts
+            
 
         # Criteria 2: Minimum capacity of person
         if (
@@ -117,17 +134,22 @@ def choose_shift(schedule, person_id, assigned_shifts, people_data, shifts_data)
             and assigned_shift_types.get(shift_type, 0)
             < person_shift_types[shift_type][1]
         ):
-            score += 5  # Higher score if below minimum capacity of person
+            score += 15  # Higher score if below minimum capacity of person    
 
         # Criteria 3: Shift priority
-        score += shifts_data["shift_priority_dict"].get(shift_id, 0)
+        score += shifts_data["shift_priority_dict"].get(shift_id, 0) * 10
 
         # Criteria 4: Below minimum capacity of shift
         if (
             len(schedule.get(shift_id, []))
             < shifts_data["shift_capacity_dict"][shift_id][0]
         ):
-            score += 2  # Higher score if below minimum capacity of shift
+            score += 15  # Higher score if below minimum capacity of shift
+            
+        
+        # Criteria 5: Add a random chance to avoid local optima
+        if random.random() < 0.2:
+            score += random.randint(1, 25) # Random score between 1 and 100
 
         return score
 
@@ -143,6 +165,9 @@ def choose_shift(schedule, person_id, assigned_shifts, people_data, shifts_data)
     # Extract shift IDs and their corresponding scores
     shift_ids = [shift_id for shift_id, score in ranked_shifts]
     scores = [score for shift_id, score in ranked_shifts]
+
+    if sum (scores) == 0:
+        return random.choice(shift_ids)
 
     # Use scores as weights to randomly choose a shift
     chosen_shift = random.choices(shift_ids, weights=scores, k=1)[0]
@@ -251,7 +276,6 @@ def is_valid_assignment(
     # If all checks pass, the assignment is valid
     return True
 
-
 def create_schedule(schedule, people_data, shifts_data):
     """
     Create a schedule by assigning shifts to people based on provided data.
@@ -263,10 +287,11 @@ def create_schedule(schedule, people_data, shifts_data):
 
     Returns:
     - dict: The final schedule after attempting to assign shifts to all people.
+    - dict: The dictionary tracking assigned shifts for each person.
     """
 
-    # List of all people to be assigned shifts
     people = list(people_data["name_dict"].keys())
+    people_history = []  # Stack to store history for backtracking
     attempts = 0
     max_attempts = 100000  # Maximum number of attempts to avoid infinite loops
     assigned_shifts = {}  # Dictionary to track shifts assigned to each person
@@ -285,13 +310,12 @@ def create_schedule(schedule, people_data, shifts_data):
         )
 
         if success:
-            # Update schedule and history if assignment was successful
+            people_history.append((schedule.copy(), assigned_shifts.copy(), people.copy()))  # Save the current state
             schedule = new_schedule
             assigned_shifts[person_id] = shifts_of_person
             attempts = 0  # Reset attempts after a successful assignment
         else:
-            # Add person back to the list for another attempt
-            people.append(person_id)
+            people.append(person_id)  # Add person back for another attempt
 
             # Remove the person from all shifts they were assigned to in this attempt
             for shift_id in schedule:
@@ -299,6 +323,12 @@ def create_schedule(schedule, people_data, shifts_data):
                     schedule[shift_id].remove(person_id)
 
             attempts += 1  # Increment attempt counter
+
+            # If we've exceeded a reasonable number of attempts, backtrack
+            if attempts > max_attempts // 10 and people_history:
+                print("Backtracking to a previous state...")
+                schedule, assigned_shifts, people = people_history.pop()
+                attempts = 0  # Reset attempts after backtracking
 
     if attempts >= max_attempts:
         print("Failed to assign shifts to all people after", max_attempts, "attempts")
@@ -620,19 +650,21 @@ def check_unavailability(shift_time_dict, shift_id, unavailability_dict, person)
 
 def check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
     mandatory_periods = people_data["mandatory_dict"].get(person_id, [])
-    
+
     # Set to keep track of mandatory periods that have been satisfied
     satisfied_periods = set()
 
     for shift_id in assigned_shifts_person:
-        shift_start, shift_end = shifts_data["shift_time_dict"].get(shift_id, (None, None))
+        shift_start, shift_end = shifts_data["shift_time_dict"].get(
+            shift_id, (None, None)
+        )
         if shift_start is None or shift_end is None:
             continue  # Skip if shift times are not found
 
         for mandatory_start, mandatory_end in mandatory_periods:
             if shift_start >= mandatory_start and shift_end <= mandatory_end:
                 satisfied_periods.add((mandatory_start, mandatory_end))
-                
+
     # If all mandatory periods are satisfied, return True
     if len(satisfied_periods) >= len(mandatory_periods):
         return True
@@ -641,25 +673,20 @@ def check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data)
 
 
 def check_min_break(person_shifts, person, people_data, shifts_data):
-
-    shift_time_dict = shifts_data["shift_time_dict"].copy()
     if not person_shifts:
-        return True
-    # for shift in person_shifts:
-    #     if shift not in shifts_data["shift_time_dict"]:
-    #         return False
-    person_shifts = [
-        (
-            shift_time_dict[shift][0],
-            shift_time_dict[shift][1],
-        )
-        for shift in person_shifts
-    ]
+        return True  # If no shifts are assigned, there's no break violation
 
-    person_shifts.sort()
+    # Retrieve the start and end times of the shifts
+    shift_time_dict = shifts_data["shift_time_dict"]
+    person_shifts = sorted(
+        [(shift_time_dict[shift][0], shift_time_dict[shift][1]) for shift in person_shifts]
+    )
 
     min_break = people_data["minimum_break_dict"].get(person, 0)
+    
+    # Check the break between consecutive shifts
     for i in range(1, len(person_shifts)):
         if person_shifts[i][0] - person_shifts[i - 1][1] < min_break:
             return False
+
     return True

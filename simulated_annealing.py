@@ -4,7 +4,7 @@ import time
 import statistics
 from functools import partial
 import concurrent.futures
-from excel_processing import process_excel, create_file, load_excel_and_create_solution
+from excel_processing import create_file, load_excel_and_create_solution
 
 from cost_calculation import cost_function, individual_cost
 from utilities import showProgressIndicator
@@ -35,11 +35,28 @@ def run_parallel_simulated_annealing(
             cooling_rate,
             max_iterations_without_improvement,
         )
-        for result in executor.map(annealing_function, seeds):
-            best_solutions.append(result)
 
-    best_solutions.sort(key=lambda x: x[1])
-    return best_solutions[0][0], best_solutions[0][1], best_solutions[0][2]
+        futures = {executor.submit(annealing_function, seed): seed for seed in seeds}
+
+        for future in concurrent.futures.as_completed(futures):
+            seed = futures[future]
+            try:
+                result = future.result()
+                best_solutions.append(result)
+            except Exception as e:
+                print(f"An error occurred with seed {seed}: {e}")
+
+    if best_solutions:
+        best_solutions.sort(key=lambda x: x[2])
+        return (
+            best_solutions[0][0],
+            best_solutions[0][1],
+            best_solutions[0][2],
+            best_solutions[0][3],
+        )
+    else:
+        print("No valid solutions found.")
+        return None, None, None, None
 
 
 def simulated_annealing(
@@ -119,7 +136,9 @@ def simulated_annealing(
             )
 
         if current_iteration % 50000 == 0:
-            cost_function(new_schedule, new_assigned_shifts, people_data, shifts_data, True)
+            cost_function(
+                new_schedule, new_assigned_shifts, people_data, shifts_data, True
+            )
     return current_schedule, current_assigned_shifts, current_cost, init_cost
 
 

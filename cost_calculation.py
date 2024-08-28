@@ -1,18 +1,21 @@
 import random
 import statistics
 from io import StringIO
-
+from datetime import time
+import math
 from data_transformation import time_to_seconds_since_midnight
 
 
 EXPERIENCE_FACTOR = 1000
 GENDER_DISTRIBUTION_FACTOR = 1000
 SHIFT_CATEGORY_FACTOR = 1
+SHIFT_TYPE_FACTOR = 1000
 OFF_DAY_FACTOR = 1000
-SHIFT_RANKING_FACTOR = 10
+SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 5
 FRIEND_FACTOR = 1000
 ENEMY_FACTOR = 20000
+NIGHT_SHIFT_FACTOR = 200
 
 
 DEFAULT_MIN_AMOUNT_SHIFT = 4
@@ -53,20 +56,22 @@ def cost_function(
     )
 
     # # Introduce a balance factor to penalize high deviation
-    balance_factor = 50  # Adjust this factor as needed
-    individual_balance_cost = deviation_individual_cost * balance_factor
-    
+    balance_factor = 2 # Adjust this factor as needed
+    individual_balance_cost = deviation_individual_cost ** balance_factor
+
     # Calculate mixed experience and gender costs
     gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
-    experience_cost = mixed_experience_cost(schedule, people_data, shifts_data)
+    # experience_cost = mixed_experience_cost(schedule, people_data, shifts_data)
+
+    priority_cost = shift_priority_cost(schedule, shifts_data)
 
     # Total cost combines individual costs, experience cost, gender cost, and balance cost
     total_cost = (
         +sum(individual_costs.values())
-        # + rank_balance_cost
+        + priority_cost
         + individual_balance_cost
         + gender_cost
-        + experience_cost
+        # + experience_cost
     )
 
     output_buffer = StringIO()
@@ -79,7 +84,7 @@ def cost_function(
             # output_buffer.write(f"    Shift Ranking Cost: {rank_costs[person]}\n")
             output_buffer.write(f" Cost Breakdown: {total_cost_breakdown[person]}\n")
         output_buffer.write(f"Total Cost: {total_cost}\n")
-        output_buffer.write(f"Experience cost: {experience_cost}\n")
+        # output_buffer.write(f"Experience cost: {experience_cost}\n")
         output_buffer.write(f"Genders cost: {gender_cost}\n")
         output_buffer.write(
             f"Sum of Individual Costs: {sum(individual_costs.values())}\n"
@@ -133,14 +138,83 @@ def individual_cost(
     individual_costs += off_day_costs
     cost_breakdown["off_day_cost"] = off_day_costs
 
-    rank_costs = shift_ranking_cost(
+    time_frame_costs = time_frame_cost(
         schedule, person_id, assigned_shifts_person, people_data, shifts_data
     )
 
-    individual_costs += rank_costs
-    cost_breakdown["shift_ranking_cost"] = rank_costs
+    individual_costs += time_frame_costs
+    cost_breakdown["time_frame_costs"] = time_frame_costs
+
+    shift_type_costs = shift_type_cost(
+        schedule, person_id, assigned_shifts_person, people_data, shifts_data
+    )
+
+    individual_costs += shift_type_costs
+    cost_breakdown["shift_type_cost"] = shift_type_costs
 
     return individual_costs, cost_breakdown
+
+
+
+def shift_priority_cost(schedule, shifts_data):
+    cost = 0
+    for shift_id, shift in schedule.items():
+        shift_priority = shifts_data["shift_priority_dict"].get(shift_id, 1)
+        if len(shift) < shifts_data["shift_capacity_dict"][shift_id][0]:
+            cost += shift_priority**2
+    return cost
+
+
+def shift_type_cost(
+    schedule, person_id, assigned_shifts_person, people_data, shifts_data
+):
+    def retrieve_shift_types(assigned_shifts, shift_type_dict):
+        """
+        Calculate the number of assigned shift types for a person.
+
+        Args:
+        - assigned_shifts (list): List of shifts already assigned to the person.
+        - shift_type_dict (dict): Mapping from shift ID to shift type.
+
+        Returns:
+        - dict: A dictionary with the count of each shift type assigned to the person.
+        """
+        assigned_shift_types = {}
+        for assigned_shift in assigned_shifts:
+            assigned_shift_type = shift_type_dict.get(assigned_shift, 0)
+            assigned_shift_types[assigned_shift_type] = assigned_shift_types.get(assigned_shift_type, 0) + 1
+        return assigned_shift_types
+
+    # If person_shift_types is empty, act as a "joker" and don't apply any penalties
+    person_shift_types = people_data["people_shift_types_dict"].get(person_id, {})
+    if not person_shift_types:
+        return 0  # No cost since all shift types are acceptable
+
+    cost = 0
+
+    # Calculate the number of each shift type already assigned to the person
+    assigned_shift_types = retrieve_shift_types(
+        assigned_shifts_person, shifts_data["shift_type_dict"]
+    )
+
+    # Apply penalties based on shift type preferences
+    for person_shift_type, (_, min_required,  max_allowed) in person_shift_types.items():
+        assigned_count = assigned_shift_types.get(person_shift_type, 0)
+
+        # Penalty if the assigned shifts are less than the minimum required
+        if min_required > 0 and assigned_count < min_required:
+            cost += SHIFT_TYPE_FACTOR
+
+        # Penalty if the assigned shifts exceed the maximum allowed
+        if max_allowed > 0 and assigned_count > max_allowed:
+            cost += SHIFT_TYPE_FACTOR
+            
+        
+        if min_required == 0 and max_allowed == 0:
+            if person_shift_type not in assigned_shift_types:
+                cost += SHIFT_TYPE_FACTOR * 2
+
+    return cost
 
 
 def preference_cost(
@@ -229,7 +303,7 @@ def off_day_cost(
     return off_day_cost
 
 
-def shift_ranking_cost(
+def time_frame_cost(
     schedule,
     person_id,
     assigned_shifts_person,
@@ -237,22 +311,23 @@ def shift_ranking_cost(
     shifts_data,
     ranking_factor=SHIFT_RANKING_FACTOR,
 ):
-    shift_ranking_cost = 0
+    time_frame_cost = 0
 
     # General shift costs from shifts_data
     shift_costs = shifts_data["shift_cost_dict"]
-    
-    ## calc avg shift cost for all shifts
-    avg_shift_cost = sum(shift_costs.values()) / len(shift_costs)
-    
+
+    avg_shift_cost = 0
+
+    if len(shift_costs) > 0:
+        ## calc avg shift cost for all shifts
+        avg_shift_cost = sum(shift_costs.values()) / len(shift_costs)
+
     ## expected cost for a person with 4 shifts
     expected_cost = avg_shift_cost * DEFAULT_MIN_AMOUNT_SHIFT
-    
-    
+
     night_shift_count = 0
 
     for shift_id in assigned_shifts_person:
-
 
         # Retrieve personal shift preferences for the person
         personal_shift_preference = people_data["shift_preference_dict"].get(
@@ -278,15 +353,23 @@ def shift_ranking_cost(
                     shift_start_sec <= pref_start and shift_end_sec >= pref_end
                 ):
                     # check if the shift is a night shift
-                    if shift_start_sec >= time_to_seconds_since_midnight("01:00:00") or shift_end_sec <= time_to_seconds_since_midnight("07:00:00"):
+                    if shift_start_sec >= time_to_seconds_since_midnight(
+                        time(23, 0, 0)
+                    ) or shift_end_sec <= time_to_seconds_since_midnight(time(7, 0, 0)):
                         night_shift_count += 1
                     preference_cost = cost
                     break
 
         # Add the squared preference cost multiplied by the general shift cost
-        shift_ranking_cost += (shift_costs.get(shift_id, 0) + (shift_costs.get(shift_id, 0) * (preference_cost**2))) * ranking_factor
+        time_frame_cost += (
+            shift_costs.get(shift_id, 0) + (preference_cost**2)
+        ) * ranking_factor
+        
+    
+    if night_shift_count > 1:
+        time_frame_cost += (len(assigned_shifts_person) / night_shift_count) * NIGHT_SHIFT_FACTOR
 
-    return shift_ranking_cost
+    return time_frame_cost
 
 
 def mixed_experience_cost(
@@ -318,12 +401,17 @@ def mixed_gender_dist_cost(
 ):
     total_gender_dist_cost = []
 
+    if people_data["gender_dict"] is None or people_data["gender_dict"] == {}:
+        return 0
+
     for shift_id, shift in schedule.items():
         shift_gender_dist = 0
         for person_id in shift:
-            shift_gender_dist += people_data["gender_dict"][person_id]
-        shift_gender_dist /= len(shift)
-        total_gender_dist_cost.append(shift_gender_dist)
+            if people_data["gender_dict"][person_id] is not None:
+                shift_gender_dist += people_data["gender_dict"][person_id]
+        if len(shift) > 0:
+            shift_gender_dist /= len(shift)
+            total_gender_dist_cost.append(shift_gender_dist)
 
     gender_dist_deviation = statistics.stdev(total_gender_dist_cost)
 

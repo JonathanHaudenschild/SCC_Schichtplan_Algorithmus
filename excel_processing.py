@@ -79,25 +79,38 @@ def extract_shift_types(data, column_name):
 
 def extract_times(data, column_name):
     def parse_off_time(value):
-        # Remove surrounding parentheses and split by "), ("
-        periods = value.strip("()").split("), (")
-        result = []
-        for period in periods:
-            # Split by ", " to separate the two date-time strings
-            start, end = period.split(", ")
-            # Convert the date-time strings to datetime objects
-            start_dt = datetime.strptime(start, "%d/%m/%Y %H:%M:%S")
-            end_dt = datetime.strptime(end, "%d/%m/%Y %H:%M:%S")
-            # Add the tuple of datetime objects to the result list
-            result.append((start_dt, end_dt))
-        return result
+        try:
+            # Remove surrounding parentheses and split by "), ("
+            periods = value.strip("()").split("), (")
+            result = []
+            for period in periods:
+                try:
+                    # Split by ", " to separate the two date-time strings
+                    start, end = period.split(", ")
+                    # Convert the date-time strings to datetime objects
+                    start_dt = datetime.strptime(start, "%d/%m/%Y %H:%M:%S")
+                    end_dt = datetime.strptime(end, "%d/%m/%Y %H:%M:%S")
+                    # Add the tuple of datetime objects to the result list
+                    result.append((start_dt, end_dt))
+                except ValueError as ve:
+                    print(f"Error parsing period '{period}': {ve}")
+                    continue  # Skip this period if there's an error
+            return result
+        except Exception as e:
+            print(f"Error parsing value '{value}': {e}")
+            return []  # Return an empty list if the entire value can't be parsed
 
-    return [
-        (id, parse_off_time(value))
-        for id, value in zip(data["id"], data[column_name])
-        if value
-    ]
+    extracted_data = []
+    for id, value in zip(data["id"], data[column_name]):
+        if value:
+            try:
+                times = parse_off_time(value)
+                extracted_data.append((id, times))
+            except Exception as e:
+                print(f"Error processing id '{id}' with value '{value}': {e}")
+                continue  # Skip this row if there's an error
 
+    return extracted_data
 
 def extract_shift_preferences(data, column_name):
     def parse_shift_pref(value):
@@ -226,7 +239,6 @@ def process_people_data(file_path):
 
     capacity_data = extract_min_max(people_raw_data, "min-shifts", "max-shifts", int, 0)
     gender_data = extract_data(people_raw_data, "gender", int)
-    experience_data = extract_data(people_raw_data, "experience", int)
     shift_types_data = extract_shift_types(people_raw_data, "shift-types")
     minimum_break_data = extract_data(
         people_raw_data, "minimum_break", convert_time, "12:00:00"
@@ -251,7 +263,6 @@ def process_people_data(file_path):
         "preference_data": preference_data,
         "shift_preference_data": shift_preference_data,
         "gender_data": gender_data,
-        "experience_data": experience_data,
         "mandatory_data": mandatory_data,
     }
 
@@ -279,17 +290,24 @@ def create_file(
     name_list = people_data["name_dict"]
 
     col_index = 1
+    
+    if best_schedule is None:
+        print("No valid solution found")
+        exit()
     # Write shift names as headers
     for shift in best_schedule:
         shift_name = shifts_data["shift_time_dict"].get(shift)
         cell = worksheet.cell(row=1, column=col_index * 2 + 2)
         cell.value = col_index
 
+        # Convert the timestamps to datetime objects
+        start_datetime = timestamp_to_datetime(shift_name[0])
+        end_datetime = timestamp_to_datetime(shift_name[1])
         cell2 = worksheet.cell(row=3, column=col_index * 2 + 2)
         cell2.value = (
-            timestamp_to_datetime(shift_name[0]).strftime("%d/%m/%Y")
+            start_datetime.strftime("%A, %d/%m/%Y %H:%M:%S")  # Format includes weekday, date, and time
             + " - "
-            + timestamp_to_datetime(shift_name[1]).strftime("%d/%m/%Y")
+            + end_datetime.strftime("%A, %d/%m/%Y %H:%M:%S")  # Format includes weekday, date, and time
         )
 
         col_index += 1
@@ -328,7 +346,7 @@ def create_file(
 
             cost_cell = worksheet.cell(row=row_index, column=col_index + 1)
             cost_cell.fill = name_colors[name]
-            cost_cell.value = total_cost_breakdown.get(name, 0)
+            # cost_cell.value = total_cost_breakdown.get(name, 0)
             cost_cell.font = white_font
 
         # Update the max row if necessary

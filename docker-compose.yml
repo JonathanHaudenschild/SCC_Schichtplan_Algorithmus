@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: scc_python_scheduler
+    container_name: scc_python_scheduler_container
+    volumes:
+      - ./output:/app/output  # Mount the local 'output' directory to '/app/output' in the container
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - subbotnik_network # Connects to the same network as the database
+
+networks:
+  subbotnik_network:
+    external: true  # Indicates that the network is managed outside of this Docker Compose file

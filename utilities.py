@@ -25,5 +25,5 @@ def showProgressIndicator(
 
     print(
         f"Progress: {progress * 100:.2f}% | Estimated time remaining: {hours:.0f}h {minutes:.0f}m {seconds:.0f}s | Cost Improvement: {round(((init_cost - new_cost) / init_cost) * 100)}%  | Current Cost: {new_cost:.1f}",
-        end="\r",
+        flush=True,  # Ensures output is flushed immediately
     )
