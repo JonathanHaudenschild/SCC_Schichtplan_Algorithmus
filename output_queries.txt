@@ -1,0 +1,4420 @@
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    
+
+        INSERT INTO shift_supporter_project 
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+        VALUES (0, true, true, %s, %s, false)
+    
+
+        INSERT INTO shift_supporter_project_event 
+        (version, created_at, created_by_id, shift_supporter_project_id, state) 
+        VALUES (0, %s, 3, %s, 'ASSIGNED')
+    

@@ -9,6 +9,9 @@ work_type_mapping = {
     "steward": 6,
     "bottleDeposit": 7,
     "other": 8,
+    "fence": 9,
+    "parking": 10,
+    "entrance": 11,
 }
 
 # Example of a helper function

@@ -366,18 +366,18 @@ def create_file(
 
     # Write the cost details to the new worksheet, split at ":" and "="
     cost_details = cost_details.split("\n")
-    for row_index, line in enumerate(cost_details, start=1):
-        parts = [part.strip() for part in line.replace("=", ":").split(":")]
-        for col_index, part in enumerate(parts, start=1):
-            cell = cost_details_sheet.cell(row=row_index, column=col_index)
-            # Try to convert to integer or float
-            try:
-                if "." in part:
-                    cell.value = float(part)
-                else:
-                    cell.value = int(part)
-            except ValueError:
-                cell.value = part
+    # for row_index, line in enumerate(cost_details, start=1):
+    #     parts = [part.strip() for part in line.replace("=", ":").split(":")]
+    #     for col_index, part in enumerate(parts, start=1):
+    #         cell = cost_details_sheet.cell(row=row_index, column=col_index)
+    #         # Try to convert to integer or float
+    #         try:
+    #             if "." in part:
+    #                 cell.value = float(part)
+    #             else:
+    #                 cell.value = int(part)
+    #         except ValueError:
+    #             cell.value = part
 
     # Get the current time
     now = datetime.now()

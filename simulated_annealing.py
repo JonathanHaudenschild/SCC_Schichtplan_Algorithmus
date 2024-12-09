@@ -9,9 +9,11 @@ from excel_processing import create_file, load_excel_and_create_solution
 from cost_calculation import cost_function, individual_cost
 from utilities import showProgressIndicator
 
-from hard_constraints import get_neighbor, generate_initial_solution
+from hard_constraints import get_neighbor
 
-import copy
+from logger import logging
+
+from create_init import generate_initial_solution
 
 
 def run_parallel_simulated_annealing(
@@ -73,10 +75,13 @@ def simulated_annealing(
     current_schedule, current_assigned_shifts = generate_initial_solution(
         shifts_data, people_data
     )
-    # Check the cost of each person
-    total_cost, total_cost_breakdown, cost_details = cost_function(
-        current_schedule, current_assigned_shifts, people_data, shifts_data, True
+
+
+    current_cost, total_cost_breakdown, cost_details = cost_function(
+        current_schedule, current_assigned_shifts, people_data, shifts_data
     )
+
+
     create_file(
         current_schedule,
         total_cost_breakdown,
@@ -84,11 +89,7 @@ def simulated_annealing(
         shifts_data,
         cost_details,
     )
-
-    current_cost, total_cost_breakdown, cost_details = cost_function(
-        current_schedule, current_assigned_shifts, people_data, shifts_data
-    )
-
+    
     init_cost = current_cost
     temperature = initial_temperature
     iterations_without_improvement = 0
@@ -97,7 +98,9 @@ def simulated_annealing(
         math.log(1 / initial_temperature) / math.log(cooling_rate)
     )
     start_time = time.time()
+    last_progress_time = start_time
     current_iteration = 0
+    
     while (
         temperature > 1
         and iterations_without_improvement < max_iterations_without_improvement
@@ -130,15 +133,19 @@ def simulated_annealing(
 
         temperature *= cooling_rate
         current_iteration += 1
-        if current_iteration % 100 == 0:
+        # Check if 5 seconds have passed since the last progress indicator
+        current_time = time.time()
+        if current_time - last_progress_time >= 5:
             showProgressIndicator(
                 current_iteration, total_iterations, start_time, new_cost, init_cost
             )
-
-        if current_iteration % 50000 == 0:
-            cost_function(
-                new_schedule, new_assigned_shifts, people_data, shifts_data, True
+            
+        if current_time - last_progress_time >= 30:
+            logging.info(
+                f"Progress: {current_iteration / total_iterations * 100:.2f}% | Current Cost: {new_cost:.1f}"
             )
+        
+
     return current_schedule, current_assigned_shifts, current_cost, init_cost
 
 

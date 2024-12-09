@@ -2,9 +2,9 @@ import random
 import statistics
 from io import StringIO
 from datetime import time
-import math
 from data_transformation import time_to_seconds_since_midnight
-
+from logger import logging
+from error_handling import raise_not_found_error
 
 EXPERIENCE_FACTOR = 1000
 GENDER_DISTRIBUTION_FACTOR = 1000
@@ -15,7 +15,7 @@ SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 5
 FRIEND_FACTOR = 1000
 ENEMY_FACTOR = 20000
-NIGHT_SHIFT_FACTOR = 200
+NIGHT_SHIFT_FACTOR = 10000
 
 
 DEFAULT_MIN_AMOUNT_SHIFT = 4
@@ -41,9 +41,6 @@ def cost_function(
     - str: The cost details
     """
 
-    if not schedule:
-        return 0, {}, ""
-
     # Calculate individual costs
     individual_costs, total_cost_breakdown = total_individual_cost(
         schedule, assigned_shifts, people_data, shifts_data
@@ -56,8 +53,8 @@ def cost_function(
     )
 
     # # Introduce a balance factor to penalize high deviation
-    balance_factor = 2 # Adjust this factor as needed
-    individual_balance_cost = deviation_individual_cost ** balance_factor
+    balance_factor = 50  # Adjust this factor as needed
+    individual_balance_cost = deviation_individual_cost * balance_factor
 
     # Calculate mixed experience and gender costs
     gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
@@ -73,12 +70,13 @@ def cost_function(
         + gender_cost
         # + experience_cost
     )
+    
 
     output_buffer = StringIO()
-    if print_costs:
+    if print_costs and False:
         for person in people_data["name_dict"]:
-            output_buffer.write(f"Person {person}\n")
-            output_buffer.write(f"    Total Cost: {individual_costs[person]}\n")
+            output_buffer.write(f"{person}\n")
+            output_buffer.write(f"Total Cost: {individual_costs[person]}\n")
             # output_buffer.write(f"    Preference Cost: {pref_costs[person]}\n")
             # output_buffer.write(f"    Off-Day Cost: {off_day_costs[person]}\n")
             # output_buffer.write(f"    Shift Ranking Cost: {rank_costs[person]}\n")
@@ -110,6 +108,10 @@ def total_individual_cost(schedule, assigned_shifts, people_data, shifts_data):
     total_individual_costs = {person: 0 for person in people_data["name_dict"]}
     total_cost_breakdown = {person: {} for person in people_data["name_dict"]}
     for person_id in people_data["name_dict"]:
+        
+        if(person_id not in assigned_shifts):
+            raise_not_found_error(f"Person {person_id} not in assigned shifts")
+        
         individual_costs, cost_breakdown = individual_cost(
             schedule, person_id, assigned_shifts[person_id], people_data, shifts_data
         )
@@ -149,11 +151,46 @@ def individual_cost(
         schedule, person_id, assigned_shifts_person, people_data, shifts_data
     )
 
+
     individual_costs += shift_type_costs
     cost_breakdown["shift_type_cost"] = shift_type_costs
+    
+    mandatory_costs = check_mandatory(
+        assigned_shifts_person, person_id, people_data, shifts_data
+    )
+    
+    individual_costs += mandatory_costs
+    cost_breakdown["mandatory_costs"] = mandatory_costs
 
     return individual_costs, cost_breakdown
 
+def check_occurance():
+    
+    return
+
+
+def check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
+    mandatory_periods = people_data["mandatory_dict"].get(person_id, [])
+
+    # Set to keep track of mandatory periods that have been satisfied
+    satisfied_periods = set()
+
+    for shift_id in assigned_shifts_person:
+        shift_start, shift_end = shifts_data["shift_time_dict"].get(
+            shift_id, (None, None)
+        )
+        if shift_start is None or shift_end is None:
+            continue  # Skip if shift times are not found
+
+        for mandatory_start, mandatory_end in mandatory_periods:
+            if shift_start >= mandatory_start and shift_end <= mandatory_end:
+                satisfied_periods.add((mandatory_start, mandatory_end))
+
+    # If all mandatory periods are satisfied, return True
+    if len(satisfied_periods) >= len(mandatory_periods):
+        return 0
+
+    return 5000000
 
 
 def shift_priority_cost(schedule, shifts_data):
@@ -161,7 +198,7 @@ def shift_priority_cost(schedule, shifts_data):
     for shift_id, shift in schedule.items():
         shift_priority = shifts_data["shift_priority_dict"].get(shift_id, 1)
         if len(shift) < shifts_data["shift_capacity_dict"][shift_id][0]:
-            cost += shift_priority**2
+            cost += shift_priority**50
     return cost
 
 
@@ -182,7 +219,9 @@ def shift_type_cost(
         assigned_shift_types = {}
         for assigned_shift in assigned_shifts:
             assigned_shift_type = shift_type_dict.get(assigned_shift, 0)
-            assigned_shift_types[assigned_shift_type] = assigned_shift_types.get(assigned_shift_type, 0) + 1
+            assigned_shift_types[assigned_shift_type] = (
+                assigned_shift_types.get(assigned_shift_type, 0) + 1
+            )
         return assigned_shift_types
 
     # If person_shift_types is empty, act as a "joker" and don't apply any penalties
@@ -198,7 +237,7 @@ def shift_type_cost(
     )
 
     # Apply penalties based on shift type preferences
-    for person_shift_type, (_, min_required,  max_allowed) in person_shift_types.items():
+    for person_shift_type, (_, min_required, max_allowed) in person_shift_types.items():
         assigned_count = assigned_shift_types.get(person_shift_type, 0)
 
         # Penalty if the assigned shifts are less than the minimum required
@@ -208,8 +247,7 @@ def shift_type_cost(
         # Penalty if the assigned shifts exceed the maximum allowed
         if max_allowed > 0 and assigned_count > max_allowed:
             cost += SHIFT_TYPE_FACTOR
-            
-        
+
         if min_required == 0 and max_allowed == 0:
             if person_shift_type not in assigned_shift_types:
                 cost += SHIFT_TYPE_FACTOR * 2
@@ -343,6 +381,12 @@ def time_frame_cost(
         shift_start_sec = time_to_seconds_since_midnight(shift_start)
         shift_end_sec = time_to_seconds_since_midnight(shift_end)
 
+        # check if the shift is a night shift
+        if shift_start_sec >= time_to_seconds_since_midnight(
+            time(22, 0, 0)
+        ) or shift_end_sec <= time_to_seconds_since_midnight(time(7, 0, 0)):
+            night_shift_count += 1
+
         # Initialize preference cost for the shift
         preference_cost = 0
 
@@ -352,11 +396,7 @@ def time_frame_cost(
                 if (shift_start_sec >= pref_start and shift_end_sec <= pref_end) or (
                     shift_start_sec <= pref_start and shift_end_sec >= pref_end
                 ):
-                    # check if the shift is a night shift
-                    if shift_start_sec >= time_to_seconds_since_midnight(
-                        time(23, 0, 0)
-                    ) or shift_end_sec <= time_to_seconds_since_midnight(time(7, 0, 0)):
-                        night_shift_count += 1
+
                     preference_cost = cost
                     break
 
@@ -364,10 +404,11 @@ def time_frame_cost(
         time_frame_cost += (
             shift_costs.get(shift_id, 0) + (preference_cost**2)
         ) * ranking_factor
-        
-    
+
     if night_shift_count > 1:
-        time_frame_cost += (len(assigned_shifts_person) / night_shift_count) * NIGHT_SHIFT_FACTOR
+        time_frame_cost += (
+            len(assigned_shifts_person) / night_shift_count
+        ) * NIGHT_SHIFT_FACTOR
 
     return time_frame_cost
 

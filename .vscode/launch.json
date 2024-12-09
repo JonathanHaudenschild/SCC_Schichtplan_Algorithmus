@@ -6,7 +6,8 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/main.py",  // Ensure this path points to your main.py file
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

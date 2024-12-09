@@ -11,18 +11,20 @@ import os
 import mysql.connector
 from dotenv import load_dotenv
 
+from prevent_sleep import PreventSleep
 
-PROJECT_ID = 16
-PERIODS = ['during']
-STATES = ['CONFIRMED']
-SHIFTS_START = '2024-09-05 10:00:00'
-SHIFTS_END = '2024-09-08 23:59:59'
+
+PROJECT_ID = 15
+PERIODS = ['during', 'during_after']
+STATES = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT']
+SHIFTS_START = '2024-06-26 10:00:00'
+SHIFTS_END = '2024-06-30 23:59:59'
 
 
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 1000
-cooling_rate = 0.9999
+cooling_rate = 0.999
 use_db = True
 use_excel = False
 activate_parallelization = False
@@ -79,8 +81,7 @@ def run_simulation():
         print("Please specify whether to use the database or the excel file")
         exit()
     
-    print("Processing data", people_data,
-          shifts_data)
+
 
     shifts_transformed_data = transform_shifts_data(shifts_data)
     people_transformed_data = transform_people_data(people_data)
@@ -158,4 +159,12 @@ def run_simulation():
 if __name__ == "__main__":
 
     # for i in range(7):
-    run_simulation()
+    prevent_sleep = PreventSleep()
+    try:
+        print("Preventing the system from sleeping...")
+        prevent_sleep.start()
+        run_simulation()
+    except KeyboardInterrupt:
+        print("Exiting and allowing the system to sleep.")
+    finally:
+        prevent_sleep.stop()

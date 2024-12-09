@@ -1,5 +1,6 @@
 from datetime import datetime, time
 import math
+import os
 
 # Import the work_type_mapping and the helper function
 from subbotnik_helpers import (
@@ -15,6 +16,7 @@ def process_supporter_data(db_connection, project_id, states, periods):
     # SQL query to retrieve supporter data
     supporters_query = f"""
         SELECT sp.id as supporterProjectId,
+               sp.supporter_id as supporter_id,
                sg.name as groupName,
                p.start_at as periodStart,
                ifnull(ewd.date, p.end_at) as periodEnd,
@@ -51,10 +53,12 @@ def process_supporter_data(db_connection, project_id, states, periods):
     preference_data = []
     unavailability_data = []
     shift_preference_data = []
+    mandatory_data = []
 
     for row in rows:
         (
             supporterProjectId,
+            supporter_id,
             groupName,
             periodStart,
             periodEnd,
@@ -65,25 +69,49 @@ def process_supporter_data(db_connection, project_id, states, periods):
         ) = row
 
         # name_data corresponds to supporterProjectId
-        name_data.append((supporterProjectId, supporterProjectId))
+        name_data.append((supporterProjectId, supporter_id))
 
         # capacity_data corresponds to shiftsNeeded
-        shiftsNeeded = 2
+        shiftsNeeded = 3
+        if periodName == "during":
+            shiftsNeeded = 3
+        elif periodName == "during_after":
+            shiftsNeeded = 2
+
         capacity_data.append((supporterProjectId, (shiftsNeeded, shiftsNeeded)))
 
         # shift_types_data construction
         shift_type_dict = {}
 
-        if workTypes is not None:
-            # Add steward shifts if applicable
-            if "steward" in workTypes:
-                mapped_work_type = work_type_mapping[workType]
-                shift_type_dict[mapped_work_type] = (0, shiftsNeeded, shiftsNeeded)
+        # Check if steward needs to be added to workTypes
+        steward_check_query = """
+            SELECT id
+            FROM supporter_project
+            WHERE steward_form_received = true
+              AND project_id != 15
+              AND project_id >= 12
+              AND supporter_id  = %s
+        """
+        cursor.execute(steward_check_query, (supporter_id,))
+        steward_result = cursor.fetchall()
 
-            # Add bottleDeposit shifts if applicable
-            if "bottleDeposit" in workTypes:
-                mapped_work_type = work_type_mapping[workType]
-                shift_type_dict[mapped_work_type] = (0, shiftsNeeded, shiftsNeeded)
+        # Add "steward" to workTypes if the condition is met
+        if steward_result:
+            if workTypes:
+                workTypes += ",steward"
+            else:
+                workTypes = "steward"
+
+        # if workTypes is not None:
+        #     # Add steward shifts if applicable
+        #     if "steward" in workTypes:
+        #         mapped_work_type = work_type_mapping["steward"]
+        #         shift_type_dict[mapped_work_type] = (0, shiftsNeeded, shiftsNeeded)
+
+        #     # Add bottleDeposit shifts if applicable
+        #     if "bottleDeposit" in workTypes:
+        #         mapped_work_type = work_type_mapping["bottleDeposit"]
+        #         shift_type_dict[mapped_work_type] = (0, shiftsNeeded, shiftsNeeded)
 
         # Add work types
         if workTypes:
@@ -119,12 +147,18 @@ def process_supporter_data(db_connection, project_id, states, periods):
         start_of_time = datetime(1970, 1, 1)
         end_of_time = datetime(9999, 12, 31, 23, 59, 59)
 
+        start_of_time_during_after = datetime(2024, 6, 30, 12, 0, 0)
+
         unavailability_periods = []
-        if periodStart:
+        if periodStart and periodName == "during":
             unavailability_periods.append((start_of_time, periodStart))
+        elif periodStart and periodName == "during_after":
+            unavailability_periods.append((start_of_time, start_of_time_during_after))
         if periodEnd:
             unavailability_periods.append((periodEnd, end_of_time))
 
+        unavailability_periods.append((dayOffStart, dayOffEnd))
+        
         unavailability_data.append((supporterProjectId, unavailability_periods))
 
         # Add to shift_preference_data
@@ -134,14 +168,21 @@ def process_supporter_data(db_connection, project_id, states, periods):
         ]
         shift_preference_data.append((supporterProjectId, preferences))
 
-    print(name_data)
-    print(capacity_data)
-    print(shift_types_data)
-    print(day_off_data)
-    print(minimum_break_data)
-    print(preference_data)
-    print(unavailability_data)
-    print(shift_preference_data)
+        if periodName == "during_after":
+            # Add to mandatory_data
+            monday_shift = (
+                datetime(2024, 6, 30, 12, 0, 0),
+                datetime(2024, 7, 1, 6, 0, 0),
+            )
+            mandatory_data.append((supporterProjectId, monday_shift))
+
+    # print(capacity_data)
+    # print(shift_types_data)
+    # print(day_off_data)
+    # print(minimum_break_data)
+    # print(preference_data)
+    # print(unavailability_data)
+    # print(shift_preference_data)
 
     # Returning the data in the required format
     return {
@@ -155,7 +196,7 @@ def process_supporter_data(db_connection, project_id, states, periods):
         "shift_preference_data": shift_preference_data,  # Default data
         "gender_data": [],  # Default data
         "experience_data": [],  # Default data
-        "mandatory_data": [],  # Default data
+        "mandatory_data": mandatory_data,  # Default data
     }
 
 
@@ -196,6 +237,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
     restrict_shift_type_data = []
     shift_cost_data = []
 
+    total_potential_slots = 0
     for row in rows:
         (
             shiftId,
@@ -213,22 +255,27 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
         # shift_time_data
         shift_time_data.append((shiftId, (startAt, endAt)))
 
+
         # shift_capacity_data (slots used as min and max)
         if overloadable:
             shift_capacity_data.append(
-                (shiftId, (0, math.ceil(slots + (slots * 0.0))))
+                (shiftId, (0, math.ceil(slots + (slots * 0.5))))
             )  # 10% overload
+            total_potential_slots += math.ceil(slots + (slots * 0.5))
         else:
             shift_capacity_data.append((shiftId, (slots, slots)))
+            total_potential_slots += slots
 
         # shift_type_data
         if stewards:
             restrict_shift_type_data.append((shiftId, True))
-            shift_type_data.append((shiftId, work_type_mapping[stewards]))
+            shift_type_data.append((shiftId, work_type_mapping["steward"]))
         elif bottleDeposit:
             restrict_shift_type_data.append((shiftId, True))
-            shift_type_data.append((shiftId, work_type_mapping[bottleDeposit]))
+            shift_type_data.append((shiftId, work_type_mapping["bottleDeposit"]))
         elif workType:
+            if work_type_mapping[workType] == 6:
+                restrict_shift_type_data.append((shiftId, True))
             shift_type_data.append((shiftId, work_type_mapping[workType]))
 
         # shift_priority_data
@@ -236,6 +283,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
     # No equivalent in your example for restrict_shift_type or shift_cost_data
     # Assuming these fields are not necessary or not applicable in this context
+
 
     return {
         "shift_time_data": shift_time_data,
@@ -283,8 +331,8 @@ def write_to_db(db_connection, project_id, schedule):
     # Insert new entries
     insert_shift_supporter_query = """
         INSERT INTO shift_supporter_project 
-        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
-        VALUES (0, true, true, %s, %s, false)
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp, status) 
+        VALUES (0, true, true, %s, %s, false, 'FINAL')
     """
 
     insert_event_query = """
@@ -301,3 +349,45 @@ def write_to_db(db_connection, project_id, schedule):
             cursor.execute(insert_event_query, (current_time, last_id))
 
     db_connection.commit()
+
+    # Prepare the output file
+    output_file = "db_changes.txt"
+
+    try:
+        # Open the file in write mode
+        with open(output_file, "w") as f:
+            print(f"Writing to file: {output_file}")
+            # Loop through the schedule and generate SQL insert statements
+            for shift_id, supporter_ids in schedule.items():
+                for supporter_id in supporter_ids:
+                    # SQL for shift_supporter_project insert
+                    insert_shift_supporter_query_text = f"""
+    INSERT INTO shift_supporter_project 
+    (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
+    VALUES (0, true, true, {shift_id}, {supporter_id}, false);
+    """
+                    f.write(insert_shift_supporter_query_text)
+                    print(
+                        f"Wrote shift supporter insert for shift_id: {shift_id}, supporter_id: {supporter_id}"
+                    )
+
+                    # Simulate getting the last inserted ID
+                    last_id_text = "LAST_INSERT_ID()"
+
+                    # Get the current timestamp in string format
+                    current_time_text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                    # SQL for shift_supporter_project_event insert
+                    insert_event_query_text = f"""
+    INSERT INTO shift_supporter_project_event 
+    (version, created_at, created_by_id, shift_supporter_project_id, state) 
+    VALUES (0, '{current_time_text}', 3, {last_id_text}, 'ASSIGNED');
+    """
+                    f.write(insert_event_query_text)
+                    print(f"Wrote event insert for shift_id: {shift_id}")
+
+        print(f"SQL insert statements have been successfully written to {output_file}.")
+        print(f"Full path of the output file: {os.path.abspath(output_file)}")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")

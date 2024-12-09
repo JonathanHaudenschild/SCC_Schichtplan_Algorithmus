@@ -13,5 +13,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Specify the command to run the application
-CMD ["python", "main.py"]
+#Specify the command to run the application with unbuffered output
+CMD ["python", "-u", "main.py"]

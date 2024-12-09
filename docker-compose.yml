@@ -8,7 +8,7 @@ services:
     image: scc_python_scheduler
     container_name: scc_python_scheduler_container
     volumes:
-      - ./output:/app/output  # Mount the local 'output' directory to '/app/output' in the container
+      - "C:/Users/Jonat/OneDrive/Documents/Personal/Programming_Projects/SCC_Schichtplan_Algorithmus/output:/app/output"  # Map local 'output' folder to '/app/output' in the container
     environment:
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
@@ -16,8 +16,8 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
     networks:
-      - subbotnik_network # Connects to the same network as the database
+      - subbotnik-api_default # Connects to the same network as the database
 
 networks:
-  subbotnik_network:
+  subbotnik-api_default:
     external: true  # Indicates that the network is managed outside of this Docker Compose file

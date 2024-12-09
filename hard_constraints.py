@@ -1,10 +1,7 @@
 import random
 import time
 import copy
-
-
-DEFAULT_MIN_AMOUNT_SHIFT = 4
-DEFAULT_MAX_AMOUNT_SHIFT = 5
+from logger import logging
 
 
 def get_random_element(d, weights=None):
@@ -25,153 +22,6 @@ def get_random_element(d, weights=None):
     else:
         raise TypeError("Input must be a list, dictionary, or set")
 
-
-def choose_shift(schedule, person_id, assigned_shifts, people_data, shifts_data):
-    """
-    Choose a shift for a person based on their preferences and the current schedule.
-
-    Args:
-    - schedule (dict): The current state of the schedule.
-    - person_id (int/float): The ID of the person to assign a shift to.
-    - assigned_shifts (list): List of shifts already assigned to the person.
-    - people_data (dict): Data about people including their preferences and capacities.
-    - shifts_data (dict): Data about shifts including capacities and priorities.
-
-    Returns:
-    - str: The ID of the chosen shift.
-    """
-
-    def calculate_assigned_shift_types(assigned_shifts, shift_type_dict):
-        """
-        Calculate the number of assigned shift types for a person.
-
-        Args:
-        - assigned_shifts (list): List of shifts already assigned to the person.
-        - shift_type_dict (dict): Mapping from shift ID to shift type.
-
-        Returns:
-        - dict: A dictionary with the count of each shift type assigned to the person.
-        """
-        assigned_shift_types = {}
-        for assigned_shift in assigned_shifts:
-            assigned_shift_type = shift_type_dict.get(assigned_shift, 0)
-            if assigned_shift_type in assigned_shift_types:
-                assigned_shift_types[assigned_shift_type] += 1
-            else:
-                assigned_shift_types[assigned_shift_type] = 1
-        return assigned_shift_types
-
-    # Validate inputs
-    if person_id not in people_data["people_shift_types_dict"]:
-        raise ValueError(f"Person ID {person_id} not found in people data.")
-
-    if not isinstance(assigned_shifts, list):
-        raise TypeError("assigned_shifts should be a list.")
-
-    if not isinstance(schedule, dict) or not isinstance(shifts_data, dict):
-        raise TypeError("schedule and shifts_data should be dictionaries.")
-
-    # Get the preferred shift types for the person
-    person_shift_types = people_data["people_shift_types_dict"].get(person_id, {})
-
-    # Calculate the number of each shift type already assigned to the person
-    assigned_shift_types = calculate_assigned_shift_types(
-        assigned_shifts, shifts_data["shift_type_dict"]
-    )
-
-    # Filter out shifts exceeding their maximum capacity, unless capacity is unlimited and filter out shifts that exceed the person's maximum capacity for that shift type and filter out shifts that the person is already assigned to
-    valid_shifts = {
-        shift_id: shifts_data["shift_type_dict"][shift_id]
-        for shift_id in schedule
-        if (
-            len(schedule[shift_id]) < shifts_data["shift_capacity_dict"][shift_id][1]
-            or shifts_data["shift_capacity_dict"][shift_id][1] == 0
-        )
-        and (
-            assigned_shift_types.get(shifts_data["shift_type_dict"][shift_id], 0)
-            < person_shift_types.get(
-                shifts_data["shift_type_dict"][shift_id], [0, 0, 0]
-            )[2]
-            or person_shift_types.get(
-                shifts_data["shift_type_dict"][shift_id], [0, 0, 0]
-            )[2]
-            == 0
-        )
-        and person_id not in schedule[shift_id]
-    }
-
-    # Handle case where no valid shifts are found
-    if not valid_shifts:
-        
-        print(f"No valid shifts found for person ID {person_id}.")
-        return None
-
-    def calculate_individual_shift_score(shift_id):
-        """
-        Calculate the score for a shift based on different criteria.
-
-        Args:
-        - shift_id (str): The ID of the shift to score.
-
-        Returns:
-        - int: The calculated score for the shift.
-        """
-        shift_type = shifts_data["shift_type_dict"][shift_id]
-        score = 0
-
-        # Criteria 1: Restriction
-        if (
-            shifts_data["restrict_shift_type_dict"].get(shift_id)
-            and assigned_shift_types.get(shift_type, 0)
-            < person_shift_types.get(shift_type, [0, 0, 0])[2]
-        ):
-            score += 100  # Higher score for restricted shifts
-            
-
-        # Criteria 2: Minimum capacity of person
-        if (
-            shift_type in person_shift_types
-            and assigned_shift_types.get(shift_type, 0)
-            < person_shift_types[shift_type][1]
-        ):
-            score += 15  # Higher score if below minimum capacity of person    
-
-        # Criteria 3: Shift priority
-        score += shifts_data["shift_priority_dict"].get(shift_id, 0) * 10
-
-        # Criteria 4: Below minimum capacity of shift
-        if (
-            len(schedule.get(shift_id, []))
-            < shifts_data["shift_capacity_dict"][shift_id][0]
-        ):
-            score += 15  # Higher score if below minimum capacity of shift
-            
-        
-        # Criteria 5: Add a random chance to avoid local optima
-        if random.random() < 0.2:
-            score += random.randint(1, 25) # Random score between 1 and 100
-
-        return score
-
-    # Calculate the score for each valid shift
-    shift_scores = {
-        shift_id: calculate_individual_shift_score(shift_id)
-        for shift_id in valid_shifts
-    }
-
-    # Sort shifts based on their score
-    ranked_shifts = sorted(shift_scores.items(), key=lambda item: item[1], reverse=True)
-
-    # Extract shift IDs and their corresponding scores
-    shift_ids = [shift_id for shift_id, score in ranked_shifts]
-    scores = [score for shift_id, score in ranked_shifts]
-
-    if sum (scores) == 0:
-        return random.choice(shift_ids)
-
-    # Use scores as weights to randomly choose a shift
-    chosen_shift = random.choices(shift_ids, weights=scores, k=1)[0]
-    return chosen_shift
 
 
 def is_valid_assignment(
@@ -266,8 +116,8 @@ def is_valid_assignment(
     ):
         return False
 
-    if not check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
-        return False
+    # if not check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
+    #     return False
 
     # Check if the person should not be scheduled with someone they have a conflict with
     if isEnemy(person_id, schedule[new_shift_id], people_data["preference_dict"]):
@@ -276,181 +126,8 @@ def is_valid_assignment(
     # If all checks pass, the assignment is valid
     return True
 
-def create_schedule(schedule, people_data, shifts_data):
-    """
-    Create a schedule by assigning shifts to people based on provided data.
-
-    Args:
-    - schedule (dict): The initial empty or partially filled schedule.
-    - people_data (dict): Data about people including their preferences and capacities.
-    - shifts_data (dict): Data about shifts including capacities and priorities.
-
-    Returns:
-    - dict: The final schedule after attempting to assign shifts to all people.
-    - dict: The dictionary tracking assigned shifts for each person.
-    """
-
-    people = list(people_data["name_dict"].keys())
-    people_history = []  # Stack to store history for backtracking
-    attempts = 0
-    max_attempts = 100000  # Maximum number of attempts to avoid infinite loops
-    assigned_shifts = {}  # Dictionary to track shifts assigned to each person
-
-    while people and attempts < max_attempts:
-        person_id = people.pop()
-
-        # Attempt to assign shifts to the current person
-        new_schedule, shifts_of_person, success = assign_shifts_person(
-            assigned_shifts.get(person_id, []).copy(),
-            schedule.copy(),
-            person_id,
-            people_data,
-            shifts_data,
-            shifts_data["shift_time_dict"].copy(),
-        )
-
-        if success:
-            people_history.append((schedule.copy(), assigned_shifts.copy(), people.copy()))  # Save the current state
-            schedule = new_schedule
-            assigned_shifts[person_id] = shifts_of_person
-            attempts = 0  # Reset attempts after a successful assignment
-        else:
-            people.append(person_id)  # Add person back for another attempt
-
-            # Remove the person from all shifts they were assigned to in this attempt
-            for shift_id in schedule:
-                if person_id in schedule[shift_id]:
-                    schedule[shift_id].remove(person_id)
-
-            attempts += 1  # Increment attempt counter
-
-            # If we've exceeded a reasonable number of attempts, backtrack
-            if attempts > max_attempts // 10 and people_history:
-                print("Backtracking to a previous state...")
-                schedule, assigned_shifts, people = people_history.pop()
-                attempts = 0  # Reset attempts after backtracking
-
-    if attempts >= max_attempts:
-        print("Failed to assign shifts to all people after", max_attempts, "attempts")
-        return None, None
-
-    return schedule, assigned_shifts
 
 
-def assign_shifts_person(
-    assigned_shifts_history,
-    schedule,
-    person_id,
-    people_data,
-    shifts_data,
-    filtered_shifts,
-):
-    """
-    Recursively assign shifts to a person based on their preferences and capacities.
-
-    Args:
-    - assigned_shifts_history (list): List of shifts already assigned to the person.
-    - schedule (dict): The current state of the schedule.
-    - person_id (int/float): The ID of the person to assign shifts to.
-    - people_data (dict): Data about people including their preferences and capacities.
-    - shifts_data (dict): Data about shifts including capacities and priorities.
-    - filtered_shifts (dict): Shifts filtered by time.
-
-    Returns:
-    - tuple: Updated schedule, updated assigned shifts history, and success flag.
-    """
-
-    # Get the maximum capacity of shifts for the person
-    person_capacity = people_data["person_capacity_dict"].get(
-        person_id, (DEFAULT_MIN_AMOUNT_SHIFT, DEFAULT_MAX_AMOUNT_SHIFT)
-    )[1]
-
-    # If the person has reached or exceeded their capacity, return success
-    if len(assigned_shifts_history) >= person_capacity:
-        return schedule, assigned_shifts_history, True
-
-    # Choose a shift for the person to be assigned to
-    shift_id = choose_shift(
-        schedule,  # Pass the current schedule
-        person_id,  # Pass the person ID
-        assigned_shifts_history,  # Pass the current shift history for the person
-        people_data,  # Pass the people data
-        shifts_data,  # Pass the shifts data
-    )
-
-    # If no valid shift is found, return failure
-    if not shift_id:
-        return schedule, assigned_shifts_history, False
-
-        # Temporarily assign the person to the shift
-    schedule[shift_id].append(person_id)
-    assigned_shifts_history.append(shift_id)
-
-    # Check if the assignment is valid
-    if is_valid_assignment(
-        schedule,  # Pass the updated schedule
-        shift_id,  # Pass the shift ID
-        person_id,  # Pass the person ID
-        assigned_shifts_history,  # Pass the updated shift history
-        people_data,  # Pass the people data
-        shifts_data,  # Pass the shifts data
-    ):
-        # Remove the assigned shift from the filtered shifts
-        filtered_shifts.pop(shift_id, None)
-
-        # Recursively assign remaining shifts
-        return assign_shifts_person(
-            assigned_shifts_history,  # Pass the updated shift history
-            schedule,  # Pass the updated schedule
-            person_id,  # Pass the person ID
-            people_data,  # Pass the people data
-            shifts_data,  # Pass the shifts data
-            filtered_shifts,  # Pass the updated filtered shifts
-        )
-    else:
-        # If the assignment is not valid, rollback the changes
-        schedule[shift_id].remove(person_id)
-        assigned_shifts_history.pop()
-
-    return schedule, assigned_shifts_history, False
-
-
-def generate_initial_solution(shifts_data, people_data):
-    """
-    Generate an initial solution for the schedule by assigning shifts to people.
-
-    Args:
-    - shifts_data (dict): Data about shifts including capacities and priorities.
-    - people_data (dict): Data about people including their preferences and capacities.
-
-    Returns:
-    - dict: The final schedule after attempting to assign shifts to all people, or None if unsuccessful.
-    """
-
-    # get the start time
-    st = time.time()
-
-    # Initialize the schedule with empty lists for each shift
-    schedule = {shift_id: [] for shift_id in shifts_data["shift_time_dict"]}
-
-    # Create the schedule by assigning shifts to people
-    schedule, assigned_shifts = create_schedule(
-        schedule,
-        people_data,
-        shifts_data,
-    )
-
-    # Check if a valid schedule was generated
-    if schedule:
-        print("Solution generated successfully", schedule)
-    else:
-        print("Failed to generate a valid initial solution...")
-    # get the end time
-    et = time.time()
-    # get the execution time
-    elapsed_time = et - st
-    print("(Creating init Schedule) Execution time:", elapsed_time, "seconds")
-    return schedule, assigned_shifts
 
 
 def swap_or_move_shift(
@@ -476,9 +153,13 @@ def swap_or_move_shift(
 
     shift_a = schedule[person_a_shift_id]
     shift_b = schedule[person_b_shift_id]
+    
+    logging.info(f"Person A: {person_a_id}, Shift A: {person_a_shift_id} and Person B: {person_b_id}, Shift B: {person_b_shift_id}")
 
     new_schedule = copy.deepcopy(schedule)
     new_assigned_shifts = copy.deepcopy(assigned_shifts)
+    
+
 
     shift_capacity_dict = shifts_data["shift_capacity_dict"]
 
@@ -679,11 +360,14 @@ def check_min_break(person_shifts, person, people_data, shifts_data):
     # Retrieve the start and end times of the shifts
     shift_time_dict = shifts_data["shift_time_dict"]
     person_shifts = sorted(
-        [(shift_time_dict[shift][0], shift_time_dict[shift][1]) for shift in person_shifts]
+        [
+            (shift_time_dict[shift][0], shift_time_dict[shift][1])
+            for shift in person_shifts
+        ]
     )
 
     min_break = people_data["minimum_break_dict"].get(person, 0)
-    
+
     # Check the break between consecutive shifts
     for i in range(1, len(person_shifts)):
         if person_shifts[i][0] - person_shifts[i - 1][1] < min_break:
