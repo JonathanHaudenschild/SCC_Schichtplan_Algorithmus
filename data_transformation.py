@@ -120,7 +120,7 @@ def calculate_total_capacity_needed(person_capacity_dict, people_shift_types_dic
 
     return total_capacity
 
-def transform_times_data(unavailability_data):
+def transform_times_data(unavailability_periods):
     earliest_date = datetime(1970, 1, 1)  # Use UNIX epoch as the earliest date
     latest_date = datetime(
         9999, 12, 31, 23, 59, 59
@@ -128,7 +128,7 @@ def transform_times_data(unavailability_data):
 
     transformed_data = []
 
-    for id, dates in unavailability_data:
+    for id, dates in unavailability_periods:
         try:
             if dates is None:
                 continue  # Skip if dates is None or not a list
@@ -164,7 +164,7 @@ def transform_times_data(unavailability_data):
     return transformed_data
 
 
-def transform_shift_preference_data(shift_preference_data):
+def transform_time_preferences(time_preferences):
     return [
         (
             id,
@@ -181,38 +181,38 @@ def transform_shift_preference_data(shift_preference_data):
                 for date in dates
             ],
         )
-        for id, dates in shift_preference_data
+        for id, dates in time_preferences
     ]
 
 
 def transform_people_data(people_data):
-    person_capacity_dict = create_dict_from_list(people_data["capacity_data"])
+    person_capacity_dict = create_dict_from_list(people_data["capacity_limits"])
     people_shift_types_dict = create_dict_from_list(people_data["shift_types_data"])
     people_transformed_data = {
         "name_dict": create_dict_from_list(people_data["name_data"]),
         "person_capacity_dict": person_capacity_dict,
-        "unavailability_dict": create_dict_from_list(
-            transform_times_data(people_data["unavailability_data"])
+        "unavailability_periods_dict": create_dict_from_list(
+            transform_times_data(people_data["unavailability_periods"])
         ),
-        "mandatory_dict": create_dict_from_list(
-            transform_times_data(people_data["mandatory_data"])
+        "mandatory_coverage_periods_dict": create_dict_from_list(
+            transform_times_data(people_data["mandatory_coverage_periods"])
         ),
         "off_shifts_dict": create_dict_from_list(
-            transform_times_data(people_data["day_off_data"])
+            transform_times_data(people_data["day_off_requests"])
         ),
         "gender_dict": create_dict_from_list(people_data["gender_data"]),
-        # "experience_dict": create_dict_from_list(people_data["experience_data"]),
-        "minimum_break_dict": create_dict_from_list(
-            convert_time(people_data["minimum_break_data"])
+        # "experience_dict": create_dict_from_list(people_data["experience_level"]),
+        "minimum_break_duration_dict": create_dict_from_list(
+            convert_time(people_data["minimum_break_duration"])
         ),
-        "preference_dict": create_dict_from_list(people_data["preference_data"]),
+        "collaboration_preferences_dict": create_dict_from_list(people_data["collaboration_preferences"]),
         "people_shift_types_dict": people_shift_types_dict,
-        "shift_preference_dict": create_dict_from_list(
-            transform_shift_preference_data(people_data["shift_preference_data"])
+        "time_preferences_dict": create_dict_from_list(
+            transform_time_preferences(people_data["time_preferences"])
         ),
         "total_capacity": calculate_total_capacity_needed(
             person_capacity_dict, people_shift_types_dict
-        ),
+        )
     }
 
     return people_transformed_data
@@ -220,7 +220,7 @@ def transform_people_data(people_data):
 
 def transform_shifts_data(shifts_data):
     shift_type_dict = create_dict_from_list(shifts_data["shift_type_data"])
-    shift_capacity_dict = create_dict_from_list(shifts_data["shift_capacity_data"])
+    shift_capacity_dict = create_dict_from_list(shifts_data["shift_capacity_limits"])
     shifts_transformed_data = {
         "shift_time_dict": create_dict_from_list(
             convert_datetimes(shifts_data["shift_time_data"])

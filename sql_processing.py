@@ -1,6 +1,7 @@
 from datetime import datetime, time
 import math
 import os
+from enum import Enum
 
 # Import the work_type_mapping and the helper function
 from subbotnik_helpers import (
@@ -8,6 +9,14 @@ from subbotnik_helpers import (
     get_work_type_name,
     get_shift_importance_integer,
 )
+
+class ShiftOccurance(Enum):
+    DAILY = 1
+    WEEKLY = 2
+    MONTHLY = 3
+    YEARLY = 4
+    WEEKENDS = 5
+    NDays = 6
 
 
 def process_supporter_data(db_connection, project_id, states, periods):
@@ -46,14 +55,14 @@ def process_supporter_data(db_connection, project_id, states, periods):
 
     # Preparing the data lists
     name_data = []
-    capacity_data = []
+    capacity_limits = []
     shift_types_data = []
-    day_off_data = []
-    minimum_break_data = []
-    preference_data = []
-    unavailability_data = []
-    shift_preference_data = []
-    mandatory_data = []
+    day_off_requests = []
+    minimum_break_duration = []
+    collaboration_preferences = []
+    unavailability_periods = []
+    time_preferences = []
+    mandatory_coverage_periods = []
 
     for row in rows:
         (
@@ -71,14 +80,14 @@ def process_supporter_data(db_connection, project_id, states, periods):
         # name_data corresponds to supporterProjectId
         name_data.append((supporterProjectId, supporter_id))
 
-        # capacity_data corresponds to shiftsNeeded
+        # capacity_limits corresponds to shiftsNeeded
         shiftsNeeded = 3
         if periodName == "during":
             shiftsNeeded = 3
         elif periodName == "during_after":
             shiftsNeeded = 2
 
-        capacity_data.append((supporterProjectId, (shiftsNeeded, shiftsNeeded)))
+        capacity_limits.append((supporterProjectId, (shiftsNeeded, shiftsNeeded)))
 
         # shift_types_data construction
         shift_type_dict = {}
@@ -128,75 +137,79 @@ def process_supporter_data(db_connection, project_id, states, periods):
 
         shift_types_data.append((supporterProjectId, shift_type_dict))
 
-        # day_off_data corresponds to dayOffStart and dayOffEnd
-        day_off_data.append((supporterProjectId, (dayOffStart, dayOffEnd)))
+        # day_off_requests corresponds to dayOffStart and dayOffEnd
+        day_off_requests.append((supporterProjectId, (dayOffStart, dayOffEnd)))
 
-        # minimum_break_data - standard 12 hours
-        minimum_break_data.append((supporterProjectId, time(12, 0, 0)))
+        # minimum_break_duration - standard 12 hours
+        minimum_break_duration.append((supporterProjectId, time(12, 0, 0)))
 
-        # preference_data - pick others with the same groupName
+        # collaboration_preferences - pick others with the same groupName
         cursor.execute(
             "SELECT id FROM supporter_project WHERE supporter_group_id IN (SELECT id FROM supporter_group WHERE name = %s)",
             (groupName,),
         )
         same_group_ids = [result[0] for result in cursor.fetchall()]
         preferences = [(gid, -1) for gid in same_group_ids if gid != supporterProjectId]
-        preference_data.append((supporterProjectId, preferences))
+        collaboration_preferences.append((supporterProjectId, preferences))
 
-        # unavailability_data - periods before periodStart or after periodEnd
+        # unavailability_periods - periods before periodStart or after periodEnd
         start_of_time = datetime(1970, 1, 1)
         end_of_time = datetime(9999, 12, 31, 23, 59, 59)
 
         start_of_time_during_after = datetime(2024, 6, 30, 12, 0, 0)
 
-        unavailability_periods = []
+        unavailability = []
         if periodStart and periodName == "during":
-            unavailability_periods.append((start_of_time, periodStart))
+            unavailability.append((start_of_time, periodStart))
         elif periodStart and periodName == "during_after":
-            unavailability_periods.append((start_of_time, start_of_time_during_after))
+            unavailability.append((start_of_time, start_of_time_during_after))
         if periodEnd:
-            unavailability_periods.append((periodEnd, end_of_time))
+            unavailability.append((periodEnd, end_of_time))
 
-        unavailability_periods.append((dayOffStart, dayOffEnd))
+        unavailability.append((dayOffStart, dayOffEnd))
         
-        unavailability_data.append((supporterProjectId, unavailability_periods))
+        unavailability_periods.append((supporterProjectId, unavailability))
 
-        # Add to shift_preference_data
+        # Add to time_preferences
         preferences = [
-            ((time(20, 0, 0), time(6, 0, 0)), 10),
-            ((time(6, 0, 0), time(20, 0, 0)), 0),
+            ((time(8, 0, 0), time(12, 0, 0)), 7),
+            ((time(22, 0, 0), time(8, 0, 0)), 15),
+            ((time(18, 0, 0), time(22, 0, 0)), 10),
+            ((time(12, 0, 0), time(18, 0, 0)), 0),
         ]
-        shift_preference_data.append((supporterProjectId, preferences))
+        time_preferences.append((supporterProjectId, preferences))
 
         if periodName == "during_after":
-            # Add to mandatory_data
+            # Add to mandatory_coverage_periods
             monday_shift = (
                 datetime(2024, 6, 30, 12, 0, 0),
                 datetime(2024, 7, 1, 6, 0, 0),
             )
-            mandatory_data.append((supporterProjectId, monday_shift))
+            mandatory_coverage_periods.append((supporterProjectId, monday_shift))
 
-    # print(capacity_data)
+    shift_occurrence_rule = []
+    # print(capacity_limits)
     # print(shift_types_data)
-    # print(day_off_data)
-    # print(minimum_break_data)
-    # print(preference_data)
-    # print(unavailability_data)
-    # print(shift_preference_data)
+    # print(day_off_requests)
+    # print(minimum_break_duration)
+    # print(collaboration_preferences)
+    # print(unavailability_periods)
+    # print(time_preferences)
 
     # Returning the data in the required format
     return {
         "name_data": name_data,
-        "capacity_data": capacity_data,
+        "capacity_limits": capacity_limits,
         "shift_types_data": shift_types_data,
-        "day_off_data": day_off_data,
-        "unavailability_data": unavailability_data,  # Filled with before periodStart and after periodEnd
-        "minimum_break_data": minimum_break_data,
-        "preference_data": preference_data,
-        "shift_preference_data": shift_preference_data,  # Default data
+        "day_off_requests": day_off_requests,
+        "unavailability_periods": unavailability_periods,  # Filled with before periodStart and after periodEnd
+        "minimum_break_duration": minimum_break_duration,
+        "shift_occurrence_rule": shift_occurrence_rule,
+        "collaboration_preferences": collaboration_preferences,
+        "time_preferences": time_preferences,  # Default data
         "gender_data": [],  # Default data
-        "experience_data": [],  # Default data
-        "mandatory_data": mandatory_data,  # Default data
+        "experience_level": [],  # Default data
+        "mandatory_coverage_periods": mandatory_coverage_periods,  # Default data
     }
 
 
@@ -231,7 +244,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
     # Preparing the data lists
     shift_time_data = []
-    shift_capacity_data = []
+    shift_capacity_limits = []
     shift_type_data = []
     shift_priority_data = []
     restrict_shift_type_data = []
@@ -256,14 +269,14 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
         shift_time_data.append((shiftId, (startAt, endAt)))
 
 
-        # shift_capacity_data (slots used as min and max)
+        # shift_capacity_limits (slots used as min and max)
         if overloadable:
-            shift_capacity_data.append(
-                (shiftId, (0, math.ceil(slots + (slots * 0.5))))
+            shift_capacity_limits.append(
+                (shiftId, (0, math.ceil(slots + (slots * 1))))
             )  # 10% overload
-            total_potential_slots += math.ceil(slots + (slots * 0.5))
+            total_potential_slots += math.ceil(slots + (slots * 1))
         else:
-            shift_capacity_data.append((shiftId, (slots, slots)))
+            shift_capacity_limits.append((shiftId, (slots, slots)))
             total_potential_slots += slots
 
         # shift_type_data
@@ -287,7 +300,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
     return {
         "shift_time_data": shift_time_data,
-        "shift_capacity_data": shift_capacity_data,
+        "shift_capacity_limits": shift_capacity_limits,
         "shift_type_data": shift_type_data,
         "shift_priority_data": shift_priority_data,
         "restrict_shift_type_data": restrict_shift_type_data,

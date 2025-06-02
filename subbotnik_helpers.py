@@ -25,5 +25,5 @@ def get_work_type_name(type_id):
 def get_shift_importance_integer(importance_str):
     # Convert importance from string to integer, assuming this is a placeholder.
     # Replace with actual logic as needed.
-    importance_map = {"LOW": 1, "MIDDLE": 1, "HIGH": 3}
+    importance_map = {"LOW": 1, "MIDDLE": 2, "MEDIUM_HIGH": 3, "HIGH": 6}
     return importance_map.get(importance_str.lower(), 0)

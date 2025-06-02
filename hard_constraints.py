@@ -2,6 +2,7 @@ import random
 import time
 import copy
 from logger import logging
+from error_handling import raise_neighbor_selection_error, NeighborSelectionError
 
 
 def get_random_element(d, weights=None):
@@ -21,7 +22,6 @@ def get_random_element(d, weights=None):
         return random.choice(items)
     else:
         raise TypeError("Input must be a list, dictionary, or set")
-
 
 
 def is_valid_assignment(
@@ -111,7 +111,7 @@ def is_valid_assignment(
     if not check_unavailability(
         shifts_data["shift_time_dict"],
         new_shift_id,
-        people_data["unavailability_dict"],
+        people_data["unavailability_periods_dict"],
         person_id,
     ):
         return False
@@ -120,14 +120,30 @@ def is_valid_assignment(
     #     return False
 
     # Check if the person should not be scheduled with someone they have a conflict with
-    if isEnemy(person_id, schedule[new_shift_id], people_data["preference_dict"]):
+    if isEnemy(person_id, schedule[new_shift_id], people_data["collaboration_preferences_dict"]):
         return False
 
     # If all checks pass, the assignment is valid
     return True
 
 
+def revert_changes(
+    schedule,
+    assigned_shifts,
+    track_changes,
+):
+    for change in track_changes:
+        if change["action"] == "append":
+            schedule[change["shift_id"]].remove(change["person_id"])
+            assigned_shifts[change["person_id"]].remove(change["shift_id"])
+        elif change["action"] == "remove":
+            schedule[change["shift_id"]].append(change["person_id"])
+            assigned_shifts[change["person_id"]].append(change["shift_id"])
+        else:
+            raise ValueError("Invalid action in track_changes")
 
+    track_changes.clear()
+    return schedule, assigned_shifts, track_changes
 
 
 def swap_or_move_shift(
@@ -135,8 +151,17 @@ def swap_or_move_shift(
     assigned_shifts,
     people_data,
     shifts_data,
+    biased_selections,
 ):
-    person_a_id = get_random_element(assigned_shifts)  # get a random person
+
+    track_changes = []
+    
+    if biased_selections and random.random() < 0.333:
+        random_person, random_cost = random.choice(biased_selections)
+        logging.info(f"Biased selection selected: {random_person} with cost: {random_cost}")
+        person_a_id = random_person
+    else:
+        person_a_id = get_random_element(assigned_shifts)  # get a random person
 
     person_a_shift_id = get_random_element(
         assigned_shifts[person_a_id]
@@ -149,17 +174,14 @@ def swap_or_move_shift(
     )  # get a random shift of the person
 
     if person_a_shift_id == person_b_shift_id or person_a_id == person_b_id:
-        return schedule, assigned_shifts
+        return schedule, assigned_shifts, track_changes
 
     shift_a = schedule[person_a_shift_id]
     shift_b = schedule[person_b_shift_id]
-    
-    logging.info(f"Person A: {person_a_id}, Shift A: {person_a_shift_id} and Person B: {person_b_id}, Shift B: {person_b_shift_id}")
 
-    new_schedule = copy.deepcopy(schedule)
-    new_assigned_shifts = copy.deepcopy(assigned_shifts)
-    
-
+    logging.info(
+        f"Person A: {person_a_id}, Shift A: {person_a_shift_id} and Person B: {person_b_id}, Shift B: {person_b_shift_id}"
+    )
 
     shift_capacity_dict = shifts_data["shift_capacity_dict"]
 
@@ -171,59 +193,127 @@ def swap_or_move_shift(
         )
     ):
         # Temporarily assign the person to the shift
-        new_schedule[person_a_shift_id].remove(person_a_id)
-        new_schedule[person_b_shift_id].append(person_a_id)
-        new_assigned_shifts[person_a_id].remove(person_a_shift_id)
-        new_assigned_shifts[person_a_id].append(person_b_shift_id)
+        schedule[person_a_shift_id].remove(person_a_id)
+        schedule[person_b_shift_id].append(person_a_id)
+        assigned_shifts[person_a_id].remove(person_a_shift_id)
+        assigned_shifts[person_a_id].append(person_b_shift_id)
+
+        track_changes.append(
+            {
+                "action": "remove",
+                "shift_id": person_a_shift_id,
+                "person_id": person_a_id,
+            }
+        )
+
+        track_changes.append(
+            {
+                "action": "append",
+                "shift_id": person_b_shift_id,
+                "person_id": person_a_id,
+            }
+        )
 
         if is_valid_assignment(
-            new_schedule.copy(),
+            schedule,
             person_b_shift_id,
             person_a_id,
-            new_assigned_shifts.copy()[person_a_id],
+            assigned_shifts[person_a_id],
             people_data,
             shifts_data,
         ):
+            logging.info(
+                f"Person A: {person_a_id} moved from Shift A: {person_a_shift_id} to Shift B: {person_b_shift_id}"
+            )
             return (
-                new_schedule,
-                new_assigned_shifts,
+                schedule,
+                assigned_shifts,
+                track_changes,
             )  # The neighbor solution satisfies both hard constraints
         else:
-            return None, None
+            # Revert changes
+            schedule, assigned_shifts, track_changes = revert_changes(
+                schedule, assigned_shifts, track_changes
+            )
+            raise_neighbor_selection_error(
+                f"Person A: {person_a_id} could not be moved from Shift A: {person_a_shift_id} to Shift B: {person_b_shift_id}"
+            )
 
     else:  # Swap people between the shifts if possible
 
-        new_schedule[person_a_shift_id].remove(person_a_id)
-        new_schedule[person_b_shift_id].append(person_a_id)
-        new_assigned_shifts[person_a_id].remove(person_a_shift_id)
-        new_assigned_shifts[person_a_id].append(person_b_shift_id)
+        schedule[person_a_shift_id].remove(person_a_id)
+        schedule[person_b_shift_id].append(person_a_id)
+        assigned_shifts[person_a_id].remove(person_a_shift_id)
+        assigned_shifts[person_a_id].append(person_b_shift_id)
 
-        new_schedule[person_b_shift_id].remove(person_b_id)
-        new_schedule[person_a_shift_id].append(person_b_id)
-        new_assigned_shifts[person_b_id].remove(person_b_shift_id)
-        new_assigned_shifts[person_b_id].append(person_a_shift_id)
+        track_changes.append(
+            {
+                "action": "remove",
+                "shift_id": person_a_shift_id,
+                "person_id": person_a_id,
+            }
+        )
+
+        track_changes.append(
+            {
+                "action": "append",
+                "shift_id": person_b_shift_id,
+                "person_id": person_a_id,
+            }
+        )
+
+        schedule[person_b_shift_id].remove(person_b_id)
+        schedule[person_a_shift_id].append(person_b_id)
+        assigned_shifts[person_b_id].remove(person_b_shift_id)
+        assigned_shifts[person_b_id].append(person_a_shift_id)
+
+        track_changes.append(
+            {
+                "action": "remove",
+                "shift_id": person_b_shift_id,
+                "person_id": person_b_id,
+            }
+        )
+
+        track_changes.append(
+            {
+                "action": "append",
+                "shift_id": person_a_shift_id,
+                "person_id": person_b_id,
+            }
+        )
 
         if is_valid_assignment(
-            new_schedule.copy(),
+            schedule,
             person_b_shift_id,
             person_a_id,
-            new_assigned_shifts.copy()[person_a_id],
+            assigned_shifts[person_a_id],
             people_data,
             shifts_data,
         ) and is_valid_assignment(
-            new_schedule.copy(),
+            schedule,
             person_a_shift_id,
             person_b_id,
-            new_assigned_shifts.copy()[person_b_id],
+            assigned_shifts[person_b_id],
             people_data,
             shifts_data,
         ):
+            logging.info(
+                f"Person A: {person_a_id} and Person B: {person_b_id} swapped shifts between Shift A: {person_a_shift_id} and Shift B: {person_b_shift_id}"
+            )
             return (
-                new_schedule,
-                new_assigned_shifts,
+                schedule,
+                assigned_shifts,
+                track_changes,
             )  # The neighbor solution satisfies both hard constraints
         else:
-            return None, None
+            # Revert changes
+            schedule, assigned_shifts, track_changes = revert_changes(
+                schedule, assigned_shifts, track_changes
+            )
+            raise_neighbor_selection_error(
+                f"Person A: {person_a_id} and Person B: {person_b_id} could not swap shifts between Shift A: {person_a_shift_id} and Shift B: {person_b_shift_id}"
+            )
 
 
 def get_neighbor(
@@ -231,33 +321,38 @@ def get_neighbor(
     assigned_shifts,
     shifts_data,
     people_data,
+    biased_selections,
     max_attempts=10000,
 ):
     attempts = 0
 
     while attempts < max_attempts:
-        new_schedule, new_assigned_shifts = swap_or_move_shift(
-            schedule.copy(),
-            assigned_shifts.copy(),
-            people_data,
-            shifts_data,
-        )
-        if new_schedule and new_assigned_shifts:
-            return new_schedule, new_assigned_shifts
-        else:
+        try:
+            schedule, assigned_shifts, track_changes = swap_or_move_shift(
+                schedule,
+                assigned_shifts,
+                people_data,
+                shifts_data,
+                biased_selections,
+            )
+            if schedule and assigned_shifts:
+                return schedule, assigned_shifts, track_changes
+        except NeighborSelectionError as e:
             attempts += 1
+            logging.info(f"Attempt {attempts} failed: {e}")
+            continue
 
     # Return the original solution if no valid neighbor is found after max_attempts
     print("No valid neighbor found after", max_attempts, "attempts")
-    return None, None
+    return None, None, None
 
 
-def isEnemy(person, shift, preference_dict):
-    if person not in preference_dict:
+def isEnemy(person, shift, collaboration_preferences_dict):
+    if person not in collaboration_preferences_dict:
         return False
 
     # Create a set of enemies for the person
-    enemies = {p[0] for p in preference_dict[person] if p[1] == 1}
+    enemies = {p[0] for p in collaboration_preferences_dict[person] if p[1] == 1}
 
     # Check if any person in the shift is an enemy
     return any(other_person in enemies for other_person in shift)
@@ -319,9 +414,9 @@ def check_shift_restriction(
     return True
 
 
-def check_unavailability(shift_time_dict, shift_id, unavailability_dict, person):
+def check_unavailability(shift_time_dict, shift_id, unavailability_periods_dict, person):
     shift_start, shift_end = shift_time_dict.get(shift_id)
-    unavailability_periods = unavailability_dict.get(person, [])
+    unavailability_periods = unavailability_periods_dict.get(person, [])
 
     for unavailability_start, unavailability_end in unavailability_periods:
         if not (shift_end <= unavailability_start or shift_start >= unavailability_end):
@@ -330,7 +425,7 @@ def check_unavailability(shift_time_dict, shift_id, unavailability_dict, person)
 
 
 def check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data):
-    mandatory_periods = people_data["mandatory_dict"].get(person_id, [])
+    mandatory_periods = people_data["mandatory_coverage_periods_dict"].get(person_id, [])
 
     # Set to keep track of mandatory periods that have been satisfied
     satisfied_periods = set()
@@ -366,7 +461,7 @@ def check_min_break(person_shifts, person, people_data, shifts_data):
         ]
     )
 
-    min_break = people_data["minimum_break_dict"].get(person, 0)
+    min_break = people_data["minimum_break_duration_dict"].get(person, 0)
 
     # Check the break between consecutive shifts
     for i in range(1, len(person_shifts)):

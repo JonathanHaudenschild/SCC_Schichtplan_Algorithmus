@@ -1,6 +1,7 @@
 import random
 import time
 import copy
+import numpy as np
 from logger import logging
 from utilities import showInitProgressIndicator
 from error_handling import (
@@ -27,6 +28,8 @@ def calculate_total_capacities(data, key):
 def check_shift_type_capacity(people_data, shifts_data):
     """Check individual shift type capacities and log the status."""
     for shift_type, capacity in people_data["total_capacity"].items():
+        if shift_type not in shifts_data["total_capacity"]:
+            continue
         max_shift_capacity = shifts_data["total_capacity"][shift_type][1]
         min_required_capacity = capacity[0]
 
@@ -80,40 +83,36 @@ def generate_initial_solution(shifts_data, people_data):
     Returns:
     - dict: The final schedule after attempting to assign shifts to all people, or None if unsuccessful.
     """
-    try:
-        # Get the start time
-        st = time.time()
+    # Get the start time
+    st = time.time()
 
-        # Initialize the schedule with empty lists for each shift
-        schedule = {shift_id: [] for shift_id in shifts_data["shift_time_dict"]}
+    # Initialize the schedule with empty lists for each shift
+    schedule = {shift_id: [] for shift_id in shifts_data["shift_time_dict"]}
 
-        # Create the schedule by assigning shifts to people
-        schedule, assigned_shifts = create_schedule(
-            schedule,
-            people_data,
-            shifts_data,
-        )
+    # Create the schedule by assigning shifts to people
+    schedule, assigned_shifts = create_schedule(
+        schedule,
+        people_data,
+        shifts_data,
+    )
 
-        logging.info(
-            f"{len(assigned_shifts)} out of {len(people_data['name_dict'])} people have assigned shifts"
-        )
+    logging.info(
+        f"{len(assigned_shifts)} out of {len(people_data['name_dict'])} people have assigned shifts"
+    )
 
-        # Check if a valid schedule was generated
-        if schedule:
-            logging.info(f"Solution generated successfully: {schedule}")
-            logging.info(f"Assigned shifts: {assigned_shifts}")
-        else:
-            logging.error("Failed to generate a valid initial solution...")
+    # Check if a valid schedule was generated
+    if schedule:
+        logging.info(f"Solution generated successfully: {schedule}")
+        logging.info(f"Assigned shifts: {assigned_shifts}")
+    else:
+        logging.error("Failed to generate a valid initial solution...")
 
-        # Get the end time
-        et = time.time()
-        # Calculate the execution time
-        elapsed_time = et - st
-        logging.info(f"(Creating init Schedule) Execution time: {elapsed_time} seconds")
-        return schedule, assigned_shifts
-    except Exception as e:
-        logging.error(f"Error in generating initial solution: {e}")
-        return None, None
+    # Get the end time
+    et = time.time()
+    # Calculate the execution time
+    elapsed_time = et - st
+    logging.info(f"(Creating init Schedule) Execution time: {elapsed_time} seconds")
+    return schedule, assigned_shifts
 
 
 # Helper function to check if the shift's capacity is within limits
@@ -247,7 +246,7 @@ def choose_shift(
         score = 0
 
         # Add a random bonus to avoid local optima
-        if random.random() < (0.23 + factor * 0.10):
+        if random.random() < (factor * 0.10):
             score += random.randint(1, average_weight * factor)
             return score  # Early return if random bonus is applied
 
@@ -256,7 +255,7 @@ def choose_shift(
             score += weights["restricted_shift"]
 
         # Criterion 2: Below person's minimum capacity
-        if shift_type in person_shift_types and assigned_count < person_limits[1]:
+        if assigned_count < person_limits[1]:
             score += weights["below_person_min_capacity"]
 
         # Criterion 3: Shift priority
@@ -310,7 +309,7 @@ def assign_shifts_person(
         person_id, (DEFAULT_MIN_AMOUNT_SHIFT, DEFAULT_MAX_AMOUNT_SHIFT)
     )[1]
 
-    max_iterations = 20  # Maximum iterations allowed
+    max_iterations = 50  # Maximum iterations allowed
     assigned_shifts_history.clear()  # Clear previously assigned shifts for retries
 
     iteration = 1  # Reset iteration counter for each attempt
@@ -392,12 +391,11 @@ def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
 
     backtrack_depth = {}  # Tracks the depth of backtracking for each person
 
-    # Perform initial capacity checks
     check_shift_type_capacity(people_data, shifts_data)
     check_total_capacity(people_data, shifts_data)
 
     start_time = time.time()
-    attempts = 20  # Allow two attempts to assign shifts
+    attempts = 100  # Allow multiple attempts to assign shifts to each person
     prev_iteration_time = start_time
 
     while people:
@@ -415,7 +413,7 @@ def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
             try:
                 # Attempt to assign shifts to the current person
                 schedule, shift_assignments = assign_shifts_person(
-                    assigned_shifts.get(person_id, []).copy(),
+                    assigned_shifts.get(person_id, []),
                     schedule,
                     person_id,
                     people_data,
@@ -436,13 +434,12 @@ def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
             # Reset backtrack depth for the person on success
             backtrack_depth[person_id] = 0
         else:
-               # Retry logic
+            # Retry logic
             current_depth = backtrack_depth.get(person_id, 0) + 1
 
             if len(change_stack) >= current_depth:
                 backtrack_depth[person_id] = current_depth  # Update backtrack depth
 
-                
                 # Undo the last `current_depth` assignments
                 for _ in range(current_depth):
                     last_person, last_assignments = change_stack.pop()
@@ -450,7 +447,7 @@ def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
                         schedule[shift_id].remove(last_person)
                     del assigned_shifts[last_person]
                     people.append(last_person)  # Re-add last person to the queue
-             
+
                 # Retry the current person
                 people.append(person_id)
                 logging.warning(

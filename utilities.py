@@ -1,5 +1,12 @@
 import time
+import pandas as pd
 
+def is_valid_date(value):
+    try:
+        pd.to_datetime(value)
+        return True
+    except (ValueError, TypeError):
+        return False
 
 def replace_numbers_with_names(schedule, name_dict):
     name_solution = {shift: [] for shift in schedule}

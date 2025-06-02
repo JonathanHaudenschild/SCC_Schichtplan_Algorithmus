@@ -196,7 +196,7 @@ def process_shifts_data(file_path):
         if start and end
     ]
 
-    shift_capacity_data = [
+    shift_capacity_limits = [
         (id, (int(min_val), int(max_val)))
         for id, min_val, max_val in zip(
             shifts_raw_data["id"], shifts_raw_data["min"], shifts_raw_data["max"]
@@ -211,7 +211,7 @@ def process_shifts_data(file_path):
 
     return {
         "shift_time_data": shift_time_data,
-        "shift_capacity_data": shift_capacity_data,
+        "shift_capacity_limits": shift_capacity_limits,
         "shift_type_data": shift_type_data,
         "restrict_shift_type_data": restrict_shift_type,
         "shift_cost_data": shift_cost_data,
@@ -237,33 +237,33 @@ def process_people_data(file_path):
         if name
     ]
 
-    capacity_data = extract_min_max(people_raw_data, "min-shifts", "max-shifts", int, 0)
+    capacity_limits = extract_min_max(people_raw_data, "min-shifts", "max-shifts", int, 0)
     gender_data = extract_data(people_raw_data, "gender", int)
     shift_types_data = extract_shift_types(people_raw_data, "shift-types")
-    minimum_break_data = extract_data(
+    minimum_break_duration = extract_data(
         people_raw_data, "minimum_break", convert_time, "12:00:00"
     )
 
-    day_off_data = extract_times(people_raw_data, "day_off")
-    unavailability_data = extract_times(people_raw_data, "unavailability_times")
-    mandatory_data = extract_times(people_raw_data, "mandatory_times")
+    day_off_requests = extract_times(people_raw_data, "day_off")
+    unavailability_periods = extract_times(people_raw_data, "unavailability_times")
+    mandatory_coverage_periods = extract_times(people_raw_data, "mandatory_times")
 
-    preference_data = extract_preferences(people_raw_data, "friends", "enemies")
-    shift_preference_data = extract_shift_preferences(
+    collaboration_preferences = extract_preferences(people_raw_data, "friends", "enemies")
+    time_preferences = extract_shift_preferences(
         people_raw_data, "shift-preference"
     )
 
     return {
         "name_data": name_data,
-        "capacity_data": capacity_data,
+        "capacity_limits": capacity_limits,
         "shift_types_data": shift_types_data,
-        "day_off_data": day_off_data,
-        "unavailability_data": unavailability_data,
-        "minimum_break_data": minimum_break_data,
-        "preference_data": preference_data,
-        "shift_preference_data": shift_preference_data,
+        "day_off_requests": day_off_requests,
+        "unavailability_periods": unavailability_periods,
+        "minimum_break_duration": minimum_break_duration,
+        "collaboration_preferences": collaboration_preferences,
+        "time_preferences": time_preferences,
         "gender_data": gender_data,
-        "mandatory_data": mandatory_data,
+        "mandatory_coverage_periods": mandatory_coverage_periods,
     }
 
 
@@ -282,7 +282,7 @@ def create_file(
     total_cost_breakdown,
     people_data,
     shifts_data,
-    cost_details,
+    cost_details = None,
 ):
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
@@ -365,7 +365,7 @@ def create_file(
     cost_details_sheet = workbook.create_sheet(title="Cost Details")
 
     # Write the cost details to the new worksheet, split at ":" and "="
-    cost_details = cost_details.split("\n")
+    # cost_details = cost_details.split("\n")
     # for row_index, line in enumerate(cost_details, start=1):
     #     parts = [part.strip() for part in line.replace("=", ":").split(":")]
     #     for col_index, part in enumerate(parts, start=1):

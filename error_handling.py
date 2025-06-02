@@ -18,6 +18,11 @@ class ScheduleCreationError(Exception):
 
     pass
 
+class NeighborSelectionError(Exception):
+    """Custom exception for neighbor selection errors."""
+    pass
+
+
 class NotFoundError(Exception):
     """Custom exception for not found errors."""
     pass
@@ -44,3 +49,9 @@ def raise_schedule_creation_error(message):
     """Log and raise a schedule creation error with the given message."""
     logging.fatal(message)
     raise ScheduleCreationError(message)
+
+
+def raise_neighbor_selection_error(message):
+    """Log and raise a neighbor selection error with the given message."""
+    logging.error(message)
+    raise NeighborSelectionError(message)

@@ -10,7 +10,7 @@ import sqlite3
 import os
 import mysql.connector
 from dotenv import load_dotenv
-
+import sys
 from prevent_sleep import PreventSleep
 
 
@@ -19,12 +19,13 @@ PERIODS = ['during', 'during_after']
 STATES = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT']
 SHIFTS_START = '2024-06-26 10:00:00'
 SHIFTS_END = '2024-06-30 23:59:59'
-
+# SHIFTS_START = '2024-09-05 00:00:00'
+# SHIFTS_END = '2024-09-11 23:59:59'
 
 
 # Parameters for the simulated annealing algorithm
-initial_temperature = 1000
-cooling_rate = 0.999
+initial_temperature = 10000
+cooling_rate = 0.9999
 use_db = True
 use_excel = False
 activate_parallelization = False
@@ -32,6 +33,16 @@ num_of_parallel_threads = 14
 max_iterations_without_improvement = 1000
 excel_file_path = "SCC_SCHICHTPLAN_FINAL.xlsx"
 input_solution_path = "SCC_SCHICHTPLAN_2024_B.xlsx"
+
+def get_dict_memory_usage(d):
+    """
+    Calculate the memory usage of a dictionary, including its keys and values.
+    """
+    total_size = sys.getsizeof(d)  # Size of the dictionary object itself
+    for key, value in d.items():
+        total_size += sys.getsizeof(key)  # Memory size of each key
+        total_size += sys.getsizeof(value)  # Memory size of each value
+    return total_size
 
 def create_db_connection():
     # Load environment variables from .env file
@@ -81,11 +92,19 @@ def run_simulation():
         print("Please specify whether to use the database or the excel file")
         exit()
     
-
+    memory_usage_shifts_transformed_data = get_dict_memory_usage(shifts_data)
+    print("Memory usage of shifts_transformed_data: ", memory_usage_shifts_transformed_data)
+    
+    memory_usage_people_transformed_data = get_dict_memory_usage(people_data)
+    print("Memory usage of people_transformed_data: ", memory_usage_people_transformed_data)
 
     shifts_transformed_data = transform_shifts_data(shifts_data)
     people_transformed_data = transform_people_data(people_data)
-
+    memory_usage_shifts_transformed_data = get_dict_memory_usage(shifts_transformed_data)
+    print("Memory usage of shifts_transformed_data: ", memory_usage_shifts_transformed_data)
+    
+    memory_usage_people_transformed_data = get_dict_memory_usage(people_transformed_data)
+    print("Memory usage of people_transformed_data: ", memory_usage_people_transformed_data)
     print("Starting simulated annealing")
 
     if activate_parallelization:
@@ -111,13 +130,14 @@ def run_simulation():
         exit()
 
     # Check the cost of each person
-    total_cost, total_cost_breakdown, cost_details = cost_function(
+    total_cost, total_cost_breakdown,  person_with_max_cost = cost_function(
         best_schedule,
         best_assigned_shifts,
         people_transformed_data,
         shifts_transformed_data,
         True,
     )
+    
     name_list = people_transformed_data["name_dict"]
     best_solution_with_names = replace_numbers_with_names(best_schedule, name_list)
     print(f"Best solution with names: {best_solution_with_names}")
@@ -135,7 +155,6 @@ def run_simulation():
         total_cost_breakdown,
         people_transformed_data,
         shifts_transformed_data,
-        cost_details,
     )
 
 

@@ -1,6 +1,6 @@
 import random
 import math
-import time
+import time as t
 import statistics
 from functools import partial
 import concurrent.futures
@@ -9,7 +9,7 @@ from excel_processing import create_file, load_excel_and_create_solution
 from cost_calculation import cost_function, individual_cost
 from utilities import showProgressIndicator
 
-from hard_constraints import get_neighbor
+from hard_constraints import get_neighbor, revert_changes
 
 from logger import logging
 
@@ -77,7 +77,7 @@ def simulated_annealing(
     )
 
 
-    current_cost, total_cost_breakdown, cost_details = cost_function(
+    current_cost, total_cost_breakdown, biased_selections = cost_function(
         current_schedule, current_assigned_shifts, people_data, shifts_data
     )
 
@@ -87,7 +87,6 @@ def simulated_annealing(
         total_cost_breakdown,
         people_data,
         shifts_data,
-        cost_details,
     )
     
     init_cost = current_cost
@@ -97,24 +96,42 @@ def simulated_annealing(
     total_iterations = math.ceil(
         math.log(1 / initial_temperature) / math.log(cooling_rate)
     )
-    start_time = time.time()
+    start_time = t.time()
     last_progress_time = start_time
     current_iteration = 0
+    
+    biased_selections = biased_selections
     
     while (
         temperature > 1
         and iterations_without_improvement < max_iterations_without_improvement
     ):
+        
+        a = t.time()
 
-        new_schedule, new_assigned_shifts = get_neighbor(
+        new_schedule, new_assigned_shifts, track_changes = get_neighbor(
             current_schedule,
             current_assigned_shifts,
             shifts_data,
             people_data,
+            biased_selections
         )
-        new_cost, new_cost_breakdown, cost_details = cost_function(
+        
+        b = t.time()
+        
+        
+        new_cost, new_cost_breakdown, biased_selections = cost_function(
             new_schedule, new_assigned_shifts, people_data, shifts_data
         )
+        
+        d = t.time()
+        
+        logging.info(f"Time to get neighbor: {b - a:.2f} | Time to calculate cost: {d - b:.2f}")
+        
+        biased_selections = biased_selections
+        
+        
+        logging.info(f"Current cost: {current_cost:.1f} | New cost: {new_cost:.1f}")
 
         if (
             acceptance_probability(
@@ -129,12 +146,13 @@ def simulated_annealing(
             current_cost = new_cost
             iterations_without_improvement = 0
         else:
+            current_schedule, current_assigned_shifts, _ = revert_changes(new_schedule, new_assigned_shifts, track_changes)
             iterations_without_improvement += 1
 
         temperature *= cooling_rate
         current_iteration += 1
         # Check if 5 seconds have passed since the last progress indicator
-        current_time = time.time()
+        current_time = t.time()
         if current_time - last_progress_time >= 5:
             showProgressIndicator(
                 current_iteration, total_iterations, start_time, new_cost, init_cost
@@ -142,7 +160,7 @@ def simulated_annealing(
             
         if current_time - last_progress_time >= 30:
             logging.info(
-                f"Progress: {current_iteration / total_iterations * 100:.2f}% | Current Cost: {new_cost:.1f}"
+                f"Progress: {current_iteration / total_iterations * 100:.2f}% | Cost Improvement: {round(((init_cost - new_cost) / init_cost) * 100)}% | Current Cost: {new_cost:.1f}"
             )
         
 
