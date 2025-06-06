@@ -12,26 +12,27 @@ import mysql.connector
 from dotenv import load_dotenv
 import sys
 from prevent_sleep import PreventSleep
+from analyze_preferences import analyze_schedule_compliance
 
 
-PROJECT_ID = 15
-PERIODS = ['during', 'during_after']
+PROJECT_ID = 17
+PERIODS = ['pre1', 'pre2']
 STATES = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT']
-SHIFTS_START = '2024-06-26 10:00:00'
-SHIFTS_END = '2024-06-30 23:59:59'
+SHIFTS_START = '2025-06-11 10:00:00'
+SHIFTS_END = '2025-06-30 23:59:59'
 # SHIFTS_START = '2024-09-05 00:00:00'
 # SHIFTS_END = '2024-09-11 23:59:59'
 
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 10000
-cooling_rate = 0.9999
+cooling_rate = 0.99
 use_db = True
 use_excel = False
 activate_parallelization = False
 num_of_parallel_threads = 14
 max_iterations_without_improvement = 1000
-excel_file_path = "SCC_SCHICHTPLAN_FINAL.xlsx"
+excel_file_path = "2025_FUSION_SCHICHTPLAN.xlsx"
 input_solution_path = "SCC_SCHICHTPLAN_2024_B.xlsx"
 
 def get_dict_memory_usage(d):
@@ -129,15 +130,6 @@ def run_simulation():
         print("No valid solution found")
         exit()
 
-    # Check the cost of each person
-    total_cost, total_cost_breakdown,  person_with_max_cost = cost_function(
-        best_schedule,
-        best_assigned_shifts,
-        people_transformed_data,
-        shifts_transformed_data,
-        True,
-    )
-    
     name_list = people_transformed_data["name_dict"]
     best_solution_with_names = replace_numbers_with_names(best_schedule, name_list)
     print(f"Best solution with names: {best_solution_with_names}")
@@ -150,11 +142,14 @@ def run_simulation():
         write_to_db(db_connection, PROJECT_ID, best_schedule)
         db_connection.close() 
 
+    full_analysis = analyze_schedule_compliance(best_schedule, people_transformed_data, shifts_transformed_data)
+    
     create_file(
         best_schedule,
-        total_cost_breakdown,
         people_transformed_data,
         shifts_transformed_data,
+        full_analysis,
+        'final'
     )
 
 

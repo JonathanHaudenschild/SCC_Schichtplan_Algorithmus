@@ -81,11 +81,11 @@ def process_supporter_data(db_connection, project_id, states, periods):
         name_data.append((supporterProjectId, supporter_id))
 
         # capacity_limits corresponds to shiftsNeeded
-        shiftsNeeded = 3
-        if periodName == "during":
-            shiftsNeeded = 3
-        elif periodName == "during_after":
-            shiftsNeeded = 2
+        shiftsNeeded = 13
+        if periodName == "pre1":
+            shiftsNeeded = 13
+        elif periodName == "pre2":
+            shiftsNeeded = 6
 
         capacity_limits.append((supporterProjectId, (shiftsNeeded, shiftsNeeded)))
 
@@ -155,10 +155,14 @@ def process_supporter_data(db_connection, project_id, states, periods):
         # unavailability_periods - periods before periodStart or after periodEnd
         start_of_time = datetime(1970, 1, 1)
         end_of_time = datetime(9999, 12, 31, 23, 59, 59)
+        
+        start_of_pre2 = datetime(2025, 6, 19, 0, 0, 0)
 
         start_of_time_during_after = datetime(2024, 6, 30, 12, 0, 0)
 
         unavailability = []
+        if periodStart and periodName == "pre2":
+            unavailability.append((start_of_time, start_of_pre2))
         if periodStart and periodName == "during":
             unavailability.append((start_of_time, periodStart))
         elif periodStart and periodName == "during_after":
@@ -270,14 +274,13 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
 
         # shift_capacity_limits (slots used as min and max)
-        if overloadable:
+        if workType == 'mobile' and overloadable:
+            upper_limit = math.ceil((slots * 2))  # 100% overload
             shift_capacity_limits.append(
-                (shiftId, (0, math.ceil(slots + (slots * 1))))
-            )  # 10% overload
-            total_potential_slots += math.ceil(slots + (slots * 1))
+                (shiftId, (0, upper_limit))
+            )  # 100% overload
         else:
-            shift_capacity_limits.append((shiftId, (slots, slots)))
-            total_potential_slots += slots
+            shift_capacity_limits.append((shiftId, (0, slots)))
 
         # shift_type_data
         if stewards:

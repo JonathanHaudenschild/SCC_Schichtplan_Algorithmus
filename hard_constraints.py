@@ -156,13 +156,14 @@ def swap_or_move_shift(
 
     track_changes = []
     
-    if biased_selections and random.random() < 0.333:
-        random_person, random_cost = random.choice(biased_selections)
-        logging.info(f"Biased selection selected: {random_person} with cost: {random_cost}")
-        person_a_id = random_person
-    else:
-        person_a_id = get_random_element(assigned_shifts)  # get a random person
+    # if biased_selections and random.random() < 0.333:
+    #     random_person, random_cost = random.choice(biased_selections)
+    #     logging.info(f"Biased selection selected: {random_person} with cost: {random_cost}")
+    #     person_a_id = random_person
+    # else:
+    #     person_a_id = get_random_element(assigned_shifts)  # get a random person
 
+    person_a_id = get_random_element(assigned_shifts) 
     person_a_shift_id = get_random_element(
         assigned_shifts[person_a_id]
     )  # get a random shift of the person

@@ -14,6 +14,7 @@ from hard_constraints import get_neighbor, revert_changes
 from logger import logging
 
 from create_init import generate_initial_solution
+from analyze_preferences import analyze_schedule_compliance
 
 
 def run_parallel_simulated_annealing(
@@ -77,18 +78,19 @@ def simulated_annealing(
     )
 
 
-    current_cost, total_cost_breakdown, biased_selections = cost_function(
+    current_cost, total_cost_breakdown, biased_selections  = cost_function(
         current_schedule, current_assigned_shifts, people_data, shifts_data
     )
-
+    full_analysis = analyze_schedule_compliance(current_schedule, people_data, shifts_data)
 
     create_file(
         current_schedule,
-        total_cost_breakdown,
         people_data,
         shifts_data,
+        full_analysis,
+        "init",
     )
-    
+
     init_cost = current_cost
     temperature = initial_temperature
     iterations_without_improvement = 0
@@ -120,7 +122,7 @@ def simulated_annealing(
         b = t.time()
         
         
-        new_cost, new_cost_breakdown, biased_selections = cost_function(
+        new_cost, new_cost_breakdown, biased_selections  = cost_function(
             new_schedule, new_assigned_shifts, people_data, shifts_data
         )
         

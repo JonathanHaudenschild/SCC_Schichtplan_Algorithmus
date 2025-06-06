@@ -279,10 +279,10 @@ def timestamp_to_datetime(timestamp):
 
 def create_file(
     best_schedule,
-    total_cost_breakdown,
     people_data,
     shifts_data,
-    cost_details = None,
+    full_analysis,
+    file_name="final"
 ):
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
@@ -309,7 +309,8 @@ def create_file(
             + " - "
             + end_datetime.strftime("%A, %d/%m/%Y %H:%M:%S")  # Format includes weekday, date, and time
         )
-
+        cell3 = worksheet.cell(row=4, column=col_index * 2 + 2)
+        cell3.value = start_datetime.strftime("%H:%M:%S")
         col_index += 1
 
     name_colors = {}
@@ -346,7 +347,6 @@ def create_file(
 
             cost_cell = worksheet.cell(row=row_index, column=col_index + 1)
             cost_cell.fill = name_colors[name]
-            # cost_cell.value = total_cost_breakdown.get(name, 0)
             cost_cell.font = white_font
 
         # Update the max row if necessary
@@ -360,11 +360,106 @@ def create_file(
         cell = worksheet.cell(row=row, column=1)
         cell.value = row - 4
         cell.font = dark_font
+        
 
     # Create a new worksheet for the cost details
-    cost_details_sheet = workbook.create_sheet(title="Cost Details")
+    cost_details_sheet = workbook.create_sheet(title="Cost Details")    # full analysis with column headers
+    # Define column headers based on the structure    # Dynamically determine shift types from the data
+    all_shift_types = set()
+    for analysis in full_analysis.values():
+        shift_type_analysis = analysis.get('shift_type_analysis', {})
+        assigned_counts = shift_type_analysis.get('assigned_type_counts', {})
+        all_shift_types.update(assigned_counts.keys())
+    
+    # Sort shift types for consistent column ordering
+    all_shift_types = sorted(all_shift_types)
+    
+    # Create headers with dynamic shift type columns
+    headers = [
+        "Person ID", "Name", "Total Shifts", "Off-Day Violations", 
+        "Shifts with Enemies", "Friends Worked With", "Missing Friends"
+    ]
+    
+    # Add a column for each shift type
+    for shift_type in all_shift_types:
+        headers.append(f"Type {shift_type} Shifts")
+    
+    headers.extend([
+        "Unwanted Shifts", "Dispreferred Time Slots", "Night Shifts (01-07)"
+    ])
+    
+    # Set headers in the first row
+    for col_idx, header in enumerate(headers, start=1):
+        cost_details_sheet.cell(row=1, column=col_idx).value = header
+    
+    # Process and add person data row by row
+    row_index = 2
+    for person_id, analysis in full_analysis.items():
+        # Column 1: Person ID
+        cost_details_sheet.cell(row=row_index, column=1).value = analysis.get('person_id', person_id)
+        
+        # Column 2: Name
+        cost_details_sheet.cell(row=row_index, column=2).value = analysis.get('person_name', 'Unknown')
+        
+        # Column 3: Total Assigned Shifts
+        cost_details_sheet.cell(row=row_index, column=3).value = analysis.get('total_assigned_shifts', 0)
+        
+        # Column 4: Off-Day Violations
+        off_day_violations = analysis.get('off_day_violations', {})
+        cost_details_sheet.cell(row=row_index, column=4).value = off_day_violations.get('count', 0)
+        
+        # Column 5: Shifts with Enemies
+        collab_analysis = analysis.get('collaboration_analysis', {})
+        cost_details_sheet.cell(row=row_index, column=5).value = collab_analysis.get('shifts_with_enemies_count', 0)
+        
+        # Column 6: Friends Worked With
+        friends_count = collab_analysis.get('friends_worked_with_count', 0)
+        friends_details = collab_analysis.get('friends_worked_with_details', {})
+        friend_details_str = ', '.join([f"{k}: {len(v)}" for k, v in friends_details.items()]) if friends_details else ""
+        cost_details_sheet.cell(row=row_index, column=6).value = f"{friends_count} ({friend_details_str})"
+        
+        # Column 7: Missing Friends
+        missing_friends = collab_analysis.get('friends_not_worked_with_at_all', [])
+        cost_details_sheet.cell(row=row_index, column=7).value = ', '.join(map(str, missing_friends)) if missing_friends else ""
+          # Dynamic columns for shift types
+        shift_type_analysis = analysis.get('shift_type_analysis', {})
+        assigned_counts = shift_type_analysis.get('assigned_type_counts', {})
+        
+        # Start at column 8 for shift types
+        col_offset = 8
+        for idx, shift_type in enumerate(all_shift_types):
+            cost_details_sheet.cell(row=row_index, column=col_offset + idx).value = assigned_counts.get(shift_type, 0)
+          # Calculate the column index for unwanted shifts (after all shift type columns)
+        unwanted_col = 8 + len(all_shift_types)
+        
+        # Unwanted Shift Types
+        violations = shift_type_analysis.get('violations', {}).get('assigned_unwanted', [])
+        unwanted_str = ', '.join([f"{v['type']}: {v['assigned']}" for v in violations]) if violations else ""
+        cost_details_sheet.cell(row=row_index, column=unwanted_col).value = unwanted_str
+        
+        # Dispreferred Time Slots (one column after unwanted shifts)
+        disprefs = analysis.get('dispreferred_time_slots', {})
+        disprefs_count = disprefs.get('count', 0)
+        disprefs_details = disprefs.get('details', [])
+        disprefs_factors = sum(detail.get('violated_preference', {}).get('penalty_factor', 0) for detail in disprefs_details)
+        cost_details_sheet.cell(row=row_index, column=unwanted_col + 1).value = f"{disprefs_count} (weight: {disprefs_factors})"
+        
+        # Night Shifts (two columns after unwanted shifts)
+        night_shifts = analysis.get('night_shifts_01_to_07', {})
+        night_shifts_count = night_shifts.get('count', 0)
+        cost_details_sheet.cell(row=row_index, column=unwanted_col + 2).value = night_shifts_count
+        
+        row_index += 1
+    
+    # individual costs
+    # individual_costs_cell = cost_details_sheet.cell(row=2, column=1)
+    # individual_costs_cell.value = "Individual Costs"
+    # for index, (name, cost) in enumerate(individual_costs.items(), start=3):
+    #     individual_costs_cell = cost_details_sheet.cell(row=index, column=1)
+    #     individual_costs_cell.value = f"{name}: {cost}"
+    # Write the total cost breakdown
 
-    # Write the cost details to the new worksheet, split at ":" and "="
+    # # Write the cost details to the new worksheet, split at ":" and "="
     # cost_details = cost_details.split("\n")
     # for row_index, line in enumerate(cost_details, start=1):
     #     parts = [part.strip() for part in line.replace("=", ":").split(":")]
@@ -384,7 +479,7 @@ def create_file(
     now_str = now.strftime("%H-%M-%S")
 
     # Save the workbook with the formatted time in the filename
-    workbook.save(now_str + "_shifts.xlsx")
+    workbook.save(file_name + '_' + now_str + "_shifts.xlsx")
 
 
 def convert_names_to_indices(shift_data, name_list):

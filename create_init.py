@@ -31,7 +31,7 @@ def check_shift_type_capacity(people_data, shifts_data):
         if shift_type not in shifts_data["total_capacity"]:
             continue
         max_shift_capacity = shifts_data["total_capacity"][shift_type][1]
-        min_required_capacity = capacity[0]
+        min_required_capacity = capacity[1]
 
         if max_shift_capacity < min_required_capacity:
             raise_capacity_error(
@@ -237,18 +237,18 @@ def choose_shift(
 
         # Define weights for criteria
         weights = {
-            "restricted_shift": 100,
+            "restricted_shift": 1000,
             "below_person_min_capacity": 15,
             "shift_priority": 10,
-            "below_shift_min_capacity": 15,
+            "below_shift_min_capacity": 20,
         }
-        average_weight = sum(weights.values()) / len(weights)
+        # average_weight = sum(weights.values()) / len(weights)
         score = 0
 
         # Add a random bonus to avoid local optima
-        if random.random() < (factor * 0.10):
-            score += random.randint(1, average_weight * factor)
-            return score  # Early return if random bonus is applied
+        # if random.random() < (factor * 0.10):
+        #     score += random.randint(1, average_weight * factor)
+        #     return score  # Early return if random bonus is applied
 
         # Criterion 1: Restriction
         if restrict_shift and assigned_count < person_limits[2]:
@@ -369,6 +369,27 @@ def assign_shifts_person(
         )
         return schedule, assigned_shifts_history
 
+def sort_people_by_shift_type_capacity(people, people_data, shifts_data):
+    """
+    Sort people by their shift type capacity.
+
+    Args:
+    - people_data (dict): Data about people including their preferences and capacities.
+    - shifts_data (dict): Data about shifts including capacities and priorities.
+
+    Returns:
+    - list: Sorted list of people based on their shift type capacity.
+    """
+    sorted_people = sorted(
+        people,
+        key=lambda person_id: 
+            sum(
+                values[1] for values in people_data["people_shift_types_dict"][person_id].values() if values[1] > 0
+            ),
+        reverse=True
+    )
+    return sorted_people
+
 
 def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
     """
@@ -385,6 +406,7 @@ def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
     """
     people = list(people_data["name_dict"].keys())
     random.shuffle(people)
+    people = sort_people_by_shift_type_capacity(people, people_data, shifts_data)
     no_of_people = len(people)
     change_stack = []  # Stack to track incremental changes
     assigned_shifts = {}  # Dictionary to track shifts assigned to each person

@@ -1,5 +1,3 @@
-import random
-import statistics
 from io import StringIO
 from datetime import time
 from data_transformation import time_to_seconds_since_midnight
@@ -12,13 +10,12 @@ from concurrent.futures import ThreadPoolExecutor
 EXPERIENCE_FACTOR = 1000
 GENDER_DISTRIBUTION_FACTOR = 1000
 SHIFT_CATEGORY_FACTOR = 1
-SHIFT_TYPE_FACTOR = 1000
+SHIFT_TYPE_FACTOR = 4000
 OFF_DAY_FACTOR = 1000
 SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 5
-FRIEND_FACTOR = 10000
+FRIEND_FACTOR = 400
 ENEMY_FACTOR = 200000
-NIGHT_SHIFT_FACTOR = 10000
 
 
 DEFAULT_MIN_AMOUNT_SHIFT = 4
@@ -68,17 +65,17 @@ def cost_function(
 
     # Calculate mixed experience and gender costs
     gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
-    # experience_cost = mixed_experience_cost(schedule, people_data, shifts_data)
+    experience_cost = mixed_experience_cost(schedule, people_data, shifts_data)
 
-    priority_cost = shift_priority_cost(schedule, shifts_data)
+    # priority_cost = shift_priority_cost(schedule, shifts_data)
 
     # Total cost combines individual costs, experience cost, gender cost, and balance cost
     total_cost = (
         +total_sum_individual_cost
-        + priority_cost
+        # + priority_cost
         + individual_balance_cost
         + gender_cost
-        # + experience_cost
+        + experience_cost
     )
 
     # Calculate the top n people with the highest costs
@@ -238,7 +235,7 @@ def shift_priority_cost(schedule, shifts_data):
     for shift_id, shift in schedule.items():
         shift_priority = shifts_data["shift_priority_dict"].get(shift_id, 1)
         if len(shift) < shifts_data["shift_capacity_dict"][shift_id][0]:
-            cost += shift_priority**50
+            cost += shift_priority
     return cost
 
 
@@ -282,7 +279,7 @@ def shift_type_cost(
 
         # Penalty if the assigned shifts are less than the minimum required
         if min_required > 0 and assigned_count < min_required:
-            cost += SHIFT_TYPE_FACTOR
+            cost += SHIFT_TYPE_FACTOR * 3
 
         # Penalty if the assigned shifts exceed the maximum allowed
         if max_allowed > 0 and assigned_count > max_allowed:
@@ -386,6 +383,36 @@ def off_day_cost(
     return np.sum(off_day_mask) * off_day_factor
 
 
+def overlap_mask(
+    shift_start_times, shift_end_times, lower_bound, upper_bound
+):
+
+    S = shift_start_times      # array of ints in [0..86399]
+    E = shift_end_times        # array of ints in [0..86399]
+    L = lower_bound           # single int in [0..86399]
+    U = upper_bound           # single int in [0..86399]
+
+    shift_overnight  = (S > E)
+    window_overnight = (L > U)
+
+    # 2) Build each of the four sub‐masks:
+
+    # A) shift & window both “same‐day” (no wrap)
+    case_A = (~shift_overnight & ~window_overnight) & ( (S < U) & (E > L) )
+
+    # B) shift same‐day, window wraps
+    case_B = (~shift_overnight & window_overnight) & ( (E > L) | (S < U) )
+
+    # C) shift wraps, window same‐day
+    case_C = (shift_overnight & ~window_overnight) & ( (S < U) | (E > L) )
+
+    # D) shift wraps, window wraps → always overlap
+    case_D = (shift_overnight & window_overnight)   # no extra test needed
+
+    # 3) Final mask: any of the four cases is enough
+    overlap_mask = case_A | case_B | case_C | case_D
+    return overlap_mask
+
 def time_frame_cost(
     schedule,
     person_id,
@@ -395,18 +422,17 @@ def time_frame_cost(
     ranking_factor=SHIFT_RANKING_FACTOR,
 ):
     time_frame_cost = 0
-    SECONDS_IN_A_DAY = 86400
 
     # General shift costs from shifts_data
     shift_costs = shifts_data["shift_cost_dict"]
-
-    avg_shift_cost = np.mean(list(shift_costs.values())) if shift_costs else 0
-
-    ## expected cost for a person with 4 shifts
-    expected_cost = avg_shift_cost * DEFAULT_MIN_AMOUNT_SHIFT
-
+    time_frame_cost = np.sum(
+        [
+            (shift_costs.get(shift_id, 0)) * SHIFT_RANKING_FACTOR
+            for shift_id in assigned_shifts_person
+        ]
+    )
+    
     night_shift_count = 0
-    # Vectorized computation for night shift counts
     shift_times = [
         shifts_data["shift_time_dict"][shift_id] for shift_id in assigned_shifts_person
     ]
@@ -418,94 +444,36 @@ def time_frame_cost(
         [time_to_seconds_since_midnight(end) for _, end in shift_times]
     )
 
-    lower_bound = time_to_seconds_since_midnight(time(22, 0, 0))
+    lower_bound = time_to_seconds_since_midnight(time(1, 0, 0))
     upper_bound = time_to_seconds_since_midnight(time(7, 0, 0))
 
-    night_shift_mask = (shift_start_times >= lower_bound) | (
-        shift_end_times <= upper_bound
+    night_shift_mask = overlap_mask(
+        shift_start_times, shift_end_times, lower_bound, upper_bound
     )
 
     night_shift_count = np.sum(night_shift_mask)
 
-    time_frame_cost = np.sum(
-        [
-            (shift_costs.get(shift_id, 0) + 1) * SHIFT_RANKING_FACTOR
-            for shift_id in assigned_shifts_person
-        ]
-    )
+    if night_shift_count > 2:
+        ratio = (
+          night_shift_count /  len(assigned_shifts_person) 
+        )
+        
+        time_frame_cost += np.exp((ratio))** 5
 
-    if night_shift_count > 1:
-        time_frame_cost += (
-            len(assigned_shifts_person) / night_shift_count
-        ) * NIGHT_SHIFT_FACTOR
-        ## todo add if person likes night shifts then reduce the cost
 
-    # Retrieve personal shift preferences for the person
     time_preferences = people_data["time_preferences_dict"].get(person_id, [])
 
-    collaboration_preferences_costs = np.zeros(len(shift_start_times))
-
-    test = {}
     # Iterate through preferences and calculate costs
     for pref_times, cost in time_preferences:
         for pref_start, pref_end in pref_times:
-            pref_start_sec = time_to_seconds_since_midnight(pref_start)
-            pref_end_sec = time_to_seconds_since_midnight(pref_end)
-
-            if pref_start_sec <= pref_end_sec:
-                # Regular preference range (same day)
-                time_preferences_mask = (
-                    (
-                        (shift_start_times >= pref_start_sec)
-                        & (shift_start_times < pref_end_sec)
-                    )
-                    | (
-                        (shift_end_times > pref_start_sec)
-                        & (shift_end_times <= pref_end_sec)
-                    )
-                    | (
-                        (shift_start_times <= pref_start_sec)
-                        & (shift_end_times >= pref_end_sec)
-                    )
-                )
-            else:
-                # Wrap-around preference range (spans midnight)
-                time_preferences_mask = (
-                    # First part: pref_start_sec to 23:59
-                    (
-                        (shift_start_times >= pref_start_sec)
-                        & (shift_start_times < SECONDS_IN_A_DAY)
-                    )
-                    | (
-                        (shift_end_times > pref_start_sec)
-                        & (shift_end_times < SECONDS_IN_A_DAY)
-                    )
-                    | (
-                        (shift_start_times <= pref_start_sec)
-                        & (shift_end_times > SECONDS_IN_A_DAY)
-                    )
-                ) | (
-                    # Second part: 00:00 to pref_end_sec
-                    ((shift_start_times >= 0) & (shift_start_times < pref_end_sec))
-                    | ((shift_end_times > 0) & (shift_end_times < pref_end_sec))
-                    | ((shift_start_times <= 0) & (shift_end_times > pref_end_sec))
-                )
-
-            test[pref_start] = time_preferences_mask
-
-            # Update preference costs for the shifts that match
-            collaboration_preferences_costs = np.maximum(
-                collaboration_preferences_costs, time_preferences_mask * cost
+            overlap_mask_result = overlap_mask(
+                shift_start_times,
+                shift_end_times,
+                time_to_seconds_since_midnight(pref_start),
+                time_to_seconds_since_midnight(pref_end),
             )
+            time_frame_cost += np.sum(overlap_mask_result) * cost ** 2
 
-    # Add ranking and compute the final cost
-    time_frame_cost = np.sum(
-        (collaboration_preferences_costs**2)
-        + np.array(
-            [shift_costs.get(shift_id, 0) for shift_id in assigned_shifts_person]
-        )
-        * ranking_factor
-    )
 
     return time_frame_cost
 
@@ -513,24 +481,73 @@ def time_frame_cost(
 def mixed_experience_cost(
     schedule, people_data, shifts_data, experience_factor=EXPERIENCE_FACTOR
 ):
+    """
+    For each shift‐type t (no matter how many there are):
+      1) Find all shifts with shifts_data['shift_type_dict'][shift_key] == t.
+      2) Compute avg_experience for each such shift.
+      3) Compute stddev of those per‐shift averages (within type t).
+    Return (sum of stddevs over all types) * experience_factor.
+    """
 
-    if not people_data["experience_dict"]:
-        return 0
+    # Alias for quicker lookups
+    psd = people_data.get("people_shift_types_dict", {})
+    shift_type_dict = shifts_data.get("shift_type_dict", {})
 
-    # Vectorized computation of gender distribution per shift
-    shift_experience = [
-        [people_data["gender_dict"].get(person_id, 0) for person_id in shift]
-        for shift in schedule.values()
-    ]
+    if not psd:
+        return 0.0
 
-    shift_experience_means = np.array(
-        [np.mean(experiences) if experiences else 0 for experiences in shift_experience]
-    )
+    # We'll build dictionaries on the fly:
+    #   S1[t] = sum of all per‐shift means for type t
+    #   S2[t] = sum of (per‐shift mean)^2 for type t
+    #   M[t]  = number of shifts of type t that had ≥1 valid person
+    S1 = {}
+    S2 = {}
+    M  = {}
 
-    # Use NumPy for standard deviation
-    experience_deviation = np.std(shift_experience_means)
-    return experience_deviation * experience_factor
+    for shift_key, person_list in schedule.items():
+        # Lookup this shift's numeric type
+        t = shift_type_dict.get(shift_key, 0)
 
+        # If it's the first time we see t, initialize
+        if t not in S1:
+            S1[t] = 0.0
+            S2[t] = 0.0
+            M[t]  = 0
+
+        # Compute sum/count for this shift
+        total_exp = 0.0
+        cnt = 0
+
+        for pid in person_list:
+            person_experiences = psd.get(pid)
+            if not person_experiences:
+                continue
+
+            tup = person_experiences.get(t)
+            if tup:
+                total_exp += tup[0]
+                cnt += 1
+
+        if cnt > 0:
+            mean_i = total_exp / cnt
+            S1[t] += mean_i
+            S2[t] += mean_i * mean_i
+            M[t]  += 1
+        # If cnt == 0, skip this shift entirely (no contribution to S1/S2/M)
+
+    total_std = 0.0
+    for t, count_shifts in M.items():
+        if count_shifts == 0:
+            continue
+        mean_of_means = S1[t] / count_shifts
+        var_of_means = (S2[t] / count_shifts) - (mean_of_means * mean_of_means)
+        # Guard against tiny negative due to FP rounding
+        if var_of_means < 0 and var_of_means > -1e-12:
+            var_of_means = 0.0
+        std_of_means = np.sqrt(var_of_means)
+        total_std += std_of_means
+
+    return total_std * experience_factor
 
 def mixed_gender_dist_cost(
     schedule, people_data, shifts_data, gender_dist_factor=GENDER_DISTRIBUTION_FACTOR
