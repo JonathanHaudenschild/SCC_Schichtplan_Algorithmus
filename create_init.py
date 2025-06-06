@@ -10,7 +10,6 @@ from error_handling import (
     raise_schedule_creation_error,
     InvalidAssignmentError,
 )
-
 from hard_constraints import is_valid_assignment
 
 
@@ -237,10 +236,10 @@ def choose_shift(
 
         # Define weights for criteria
         weights = {
-            "restricted_shift": 1000,
+            "restricted_shift": 100,
             "below_person_min_capacity": 15,
-            "shift_priority": 10,
-            "below_shift_min_capacity": 20,
+            "shift_priority": 0,
+            "below_shift_min_capacity": 0,
         }
         # average_weight = sum(weights.values()) / len(weights)
         score = 0
@@ -259,7 +258,7 @@ def choose_shift(
             score += weights["below_person_min_capacity"]
 
         # Criterion 3: Shift priority
-        score += shift_priority * weights["shift_priority"]
+        score += shift_priority * weights["shift_priority"] * random.randint(0, 2)
 
         # Criterion 4: Below shift's minimum capacity
         if current_shift_capacity < min_shift_capacity:
@@ -391,105 +390,217 @@ def sort_people_by_shift_type_capacity(people, people_data, shifts_data):
     return sorted_people
 
 
-def create_schedule(schedule, people_data, shifts_data, max_backtracks=200):
+def raise_schedule_creation_error(message):
+    logging.error(message)
+    raise Exception(message)
+
+# --- Main Function ---
+def create_schedule(
+    initial_schedule_template: dict,
+    people_data: dict, # This is your main people_data dictionary
+    shifts_data: dict, # This is your main shifts_data dictionary
+    max_attempts_per_person: int = 10,
+    max_total_backtracks: int = 200,
+    max_full_resets: int = 5
+):
     """
     Create a schedule by assigning shifts to people based on provided data.
 
     Args:
-    - schedule (dict): The initial empty or partially filled schedule.
-    - people_data (dict): Data about people including their preferences and capacities.
-    - shifts_data (dict): Data about shifts including capacities and priorities.
+    - initial_schedule_template (dict): An empty schedule template (shift_id: []).
+    - people_data (dict): Your main data structure for people, expected to contain "name_dict"
+                          among other keys for preferences, capacities etc.
+    - shifts_data (dict): Your main data structure for shifts.
+    - max_attempts_per_person (int): Attempts for one person before backtracking.
+    - max_total_backtracks (int): Max backtrack operations before a full reset.
+    - max_full_resets (int): Max full resets before giving up.
 
     Returns:
-    - dict: The final schedule after attempting to assign shifts to all people.
-    - dict: The dictionary tracking assigned shifts for each person.
+    - dict: The final schedule.
+    - dict: Dictionary tracking assigned shifts for each person.
     """
-    people = list(people_data["name_dict"].keys())
-    random.shuffle(people)
-    people = sort_people_by_shift_type_capacity(people, people_data, shifts_data)
-    no_of_people = len(people)
-    change_stack = []  # Stack to track incremental changes
-    assigned_shifts = {}  # Dictionary to track shifts assigned to each person
+    
+    current_schedule = {k: list(v) for k, v in initial_schedule_template.items()}
+    all_shift_ids_for_reset = list(initial_schedule_template.keys())
 
-    backtrack_depth = {}  # Tracks the depth of backtracking for each person
+    if "name_dict" not in people_data:
+        raise ValueError("The 'people_data' dictionary must contain a 'name_dict' key with person_ids.")
+    
+    # Get the initial list of person_ids
+    base_person_id_list = list(people_data["name_dict"].keys())
+    if not base_person_id_list:
+        logging.warning("No people found in people_data['name_dict']. Returning empty schedule.")
+        return current_schedule, {}
 
+    # Initial checks (passing the full data structures)
     check_shift_type_capacity(people_data, shifts_data)
     check_total_capacity(people_data, shifts_data)
 
-    start_time = time.time()
-    attempts = 100  # Allow multiple attempts to assign shifts to each person
-    prev_iteration_time = start_time
+    # Prepare the initial processing queue
+    # A copy of the base list to be shuffled and sorted
+    initial_people_to_process = list(base_person_id_list)
+    random.shuffle(initial_people_to_process)
+    # sort_people_by_shift_type_capacity receives the list of IDs, and full data dicts
+    processing_queue = sort_people_by_shift_type_capacity(initial_people_to_process, people_data, shifts_data)
+    
+    num_total_people = len(processing_queue) 
+    
+    change_stack = []  # Stores (person_id, list_of_shifts_assigned_to_them_in_that_step)
+    assigned_shifts_per_person = {}
 
-    while people:
+    num_actual_backtrack_ops = 0
+    current_backtrack_undo_depth = 1
+    num_full_resets_done = 0
+
+    start_time = time.time()
+    prev_iteration_time = start_time
+    
+    logging.info(f"Starting schedule creation for {num_total_people} people.")
+
+    while processing_queue: # Continues as long as there are people to process
+        # Progress indicator uses len(processing_queue) and num_total_people
         prev_iteration_time = showInitProgressIndicator(
-            len(people), no_of_people, start_time, prev_iteration_time
+            len(processing_queue), num_total_people, start_time, prev_iteration_time
         )
 
-        # Select the next person to assign shifts
-        person_id = people.pop()
+        person_id_to_schedule = processing_queue.pop(0) # Get person from front of queue
 
-        success = False
-        shift_assignments = []
+        successful_assignment_for_person = False
+        shifts_assigned_this_round = [] # Shifts confirmed for this person in this round
 
-        for attempt in range(attempts):
+        for attempt_num in range(max_attempts_per_person):
             try:
-                # Attempt to assign shifts to the current person
-                schedule, shift_assignments = assign_shifts_person(
-                    assigned_shifts.get(person_id, []),
-                    schedule,
-                    person_id,
-                    people_data,
-                    shifts_data,
-                    attempt,
+                # Get shifts already assigned to this person for incremental assignment
+                shifts_already_with_person = assigned_shifts_per_person.get(person_id_to_schedule, [])
+                
+                # Create a copy of the current_schedule for assign_shifts_person to work on,
+                # to avoid partial updates if it fails.
+                schedule_copy_for_attempt = {k: list(v) for k, v in current_schedule.items()}
+
+                updated_schedule_state, shifts_assigned_this_round = assign_shifts_person(
+                    list(shifts_already_with_person), # Pass a copy of current assignments
+                    schedule_copy_for_attempt,    # Pass the schedule copy
+                    person_id_to_schedule,
+                    people_data,      # Pass the full people_data
+                    shifts_data,      # Pass the full shifts_data
+                    attempt_num,
                 )
-                success = True
-                break  # Break if successful
+                # If assign_shifts_person succeeds:
+                current_schedule = updated_schedule_state # Commit the changes from the copy
+                successful_assignment_for_person = True
+                break 
 
             except InvalidAssignmentError as e:
-                continue  # Retry if assignment is invalid
+                logging.debug(f"Attempt {attempt_num+1}/{max_attempts_per_person} for {person_id_to_schedule} failed: {e}")
+                if attempt_num == max_attempts_per_person - 1:
+                    logging.warning(
+                        f"All {max_attempts_per_person} assignment attempts failed for {person_id_to_schedule}."
+                    )
+                # Continue to next attempt or fail out of loop
 
-        if success:
-            # Save the current state before updating
-            change_stack.append((person_id, shift_assignments))
-            assigned_shifts[person_id] = shift_assignments
+        if successful_assignment_for_person:
+            # Record the successful state
+            # The change_stack should store what was decided for this person in this step
+            change_stack.append((person_id_to_schedule, list(shifts_assigned_this_round)))
+            assigned_shifts_per_person[person_id_to_schedule] = list(shifts_assigned_this_round)
 
-            # Reset backtrack depth for the person on success
-            backtrack_depth[person_id] = 0
-        else:
-            # Retry logic
-            current_depth = backtrack_depth.get(person_id, 0) + 1
+            current_backtrack_undo_depth = 1 # Reset progressive backtrack on success
+            logging.debug(f"Successfully processed {person_id_to_schedule}. Assigned: {shifts_assigned_this_round}. Resetting backtrack_undo_depth to 1.")
+        
+        else: # Failed to assign to person_id_to_schedule after all attempts
+            num_actual_backtrack_ops += 1
+            logging.warning(
+                f"Failed assignment for {person_id_to_schedule}. Backtrack op #{num_actual_backtrack_ops}. "
+                f"Will try to undo up to {current_backtrack_undo_depth} assignments."
+            )
 
-            if len(change_stack) >= current_depth:
-                backtrack_depth[person_id] = current_depth  # Update backtrack depth
-
-                # Undo the last `current_depth` assignments
-                for _ in range(current_depth):
-                    last_person, last_assignments = change_stack.pop()
-                    for shift_id in last_assignments:
-                        schedule[shift_id].remove(last_person)
-                    del assigned_shifts[last_person]
-                    people.append(last_person)  # Re-add last person to the queue
-
-                # Retry the current person
-                people.append(person_id)
-                logging.warning(
-                    f"Backtracked {current_depth} steps to {last_person} to resolve conflict for person {person_id}."
-                )
-            else:
-                schedule = {shift_id: [] for shift_id in schedule}
-                assigned_shifts = {}
-                people = list(people_data["name_dict"].keys())
-                random.shuffle(people)
-                backtrack_depth.clear()
-                change_stack.clear()
+            if num_actual_backtrack_ops > max_total_backtracks or not change_stack:
+                if not change_stack and num_full_resets_done <= max_full_resets : # Cannot backtrack if stack is empty
+                     logging.warning("Change stack empty, cannot backtrack normally. Attempting full reset.")
+                
+                num_full_resets_done += 1
+                if num_full_resets_done > max_full_resets:
+                    raise_schedule_creation_error(
+                        f"Exceeded maximum full resets ({max_full_resets}). Cannot create schedule."
+                    )
+                
                 logging.error(
-                    f"Exceeded maximum backtracks. Resetting schedule and assigned shifts."
+                    f"Exceeded max_total_backtracks or stack empty. Full schedule reset #{num_full_resets_done}."
                 )
+                # FULL RESET
+                current_schedule = {shift_id: [] for shift_id in all_shift_ids_for_reset}
+                assigned_shifts_per_person.clear()
+                change_stack.clear()
+                
+                people_for_reset = list(base_person_id_list) # Get fresh list of all people
+                random.shuffle(people_for_reset)
+                processing_queue = sort_people_by_shift_type_capacity(people_for_reset, people_data, shifts_data)
+                num_total_people = len(processing_queue) # Update for progress indicator
+                
+                num_actual_backtrack_ops = 0 # Reset for this new attempt
+                current_backtrack_undo_depth = 1
+                # start_time = time.time() # Optionally reset timer for this new full attempt
+                prev_iteration_time = time.time() # Reset iteration timer
+                logging.info("Schedule fully reset. Restarting assignment process.")
+                # Re-add the person who just failed to the new queue so they are tried again
+                if person_id_to_schedule not in processing_queue: # Should be there from sort
+                    processing_queue.append(person_id_to_schedule) # Ensure they are there
+                    random.shuffle(processing_queue) # Re-shuffle if adding manually
 
-    # If people list is empty, scheduling is complete
-    if not people:
-        logging.info("Schedule created successfully.")
-    else:
-        raise_schedule_creation_error("Failed to assign shifts to all people.")
+                continue # Restart the while loop
 
-    return schedule, assigned_shifts
+            # Actual backtracking if not a full reset
+            actual_steps_to_undo = min(current_backtrack_undo_depth, len(change_stack))
+            logging.info(f"Backtracking: Undoing {actual_steps_to_undo} assignment steps.")
+
+            people_to_re_process_after_undo = []
+            for _ in range(actual_steps_to_undo):
+                if not change_stack: break 
+                
+                last_person_id, shifts_they_had = change_stack.pop()
+                
+                # Undo their assignments in the main schedule
+                for shift_id_to_clear in shifts_they_had:
+                    if shift_id_to_clear in current_schedule and last_person_id in current_schedule[shift_id_to_clear]:
+                        current_schedule[shift_id_to_clear].remove(last_person_id)
+                
+                if last_person_id in assigned_shifts_per_person:
+                    del assigned_shifts_per_person[last_person_id]
+                
+                people_to_re_process_after_undo.append(last_person_id)
+                logging.debug(f"Undid assignments for {last_person_id}: {shifts_they_had}")
+
+            # Add the current failing person to be re-processed
+            # processing_queue.insert(0, person_id_to_schedule) # Try failing person first
+            
+            # Add all undone people and the failing person to the front of the queue
+            # Order can matter: failing person first, then those whose assignments were undone
+            re_add_to_queue = [person_id_to_schedule] + list(reversed(people_to_re_process_after_undo))
+            # Ensure no duplicates if person_id_to_schedule was among people_to_re_process_after_undo
+            # (should not happen if logic is correct as person_id_to_schedule failed, so not on stack top)
+            
+            current_queue_set = set(processing_queue)
+            new_front_queue = []
+            for p_id in re_add_to_queue:
+                if p_id not in current_queue_set and p_id not in new_front_queue:
+                    new_front_queue.append(p_id)
+            
+            processing_queue = new_front_queue + processing_queue
+            
+            # Re-sort potentially, or just rely on the order.
+            # processing_queue = sort_people_by_shift_type_capacity(processing_queue, people_data, shifts_data) # Optional re-sort
+
+            current_backtrack_undo_depth += 1 # Increase for next potential backtrack
+            logging.info(f"Next backtrack (if needed before a success) will attempt to undo {current_backtrack_undo_depth} assignments.")
+            
+    # Loop finished
+    if not processing_queue: # If queue is empty, all people were processed
+        logging.info(f"Schedule created successfully in {time.time() - start_time:.2f} seconds.")
+        logging.info(f"Total backtrack operations (undo steps): {num_actual_backtrack_ops}")
+        logging.info(f"Total full resets: {num_full_resets_done}")
+    else: # Should be caught by max_full_resets or other logic
+        raise_schedule_creation_error(
+             f"Failed to assign shifts to all people. {len(processing_queue)} people remaining in queue."
+        )
+
+    return current_schedule, assigned_shifts_per_person

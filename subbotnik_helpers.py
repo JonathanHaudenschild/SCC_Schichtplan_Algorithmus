@@ -2,16 +2,16 @@
 # Define the mapping from work type names to integers
 work_type_mapping = {
     "garbage": 1,
-    "mobile": 2,
-    "stage": 3,
-    "kitchen": 4,
-    "hygiene": 5,
-    "steward": 6,
-    "bottleDeposit": 7,
-    "other": 8,
-    "fence": 9,
-    "parking": 10,
-    "entrance": 11,
+    "stage": 2,
+    "fence": 3,
+    "entrance": 4,
+    "parking": 5,
+    "kitchen": 6,
+    "hygiene": 7,
+    "mobile": 8,
+    "other": 9,
+    "steward": 10,
+    "bottleDeposit": 11
 }
 
 # Example of a helper function
@@ -21,9 +21,12 @@ def get_work_type_name(type_id):
             return name
     return None
 
+importance_map = {"LOW": 1, "MIDDLE": 2, "MEDIUM_HIGH": 3, "HIGH": 6}
 
 def get_shift_importance_integer(importance_str):
     # Convert importance from string to integer, assuming this is a placeholder.
     # Replace with actual logic as needed.
-    importance_map = {"LOW": 1, "MIDDLE": 2, "MEDIUM_HIGH": 3, "HIGH": 6}
-    return importance_map.get(importance_str.lower(), 0)
+    print(f"Converting importance '{importance_str}' to integer.")
+    if not isinstance(importance_str, str):
+        raise ValueError("Importance must be a string.")
+    return importance_map.get(importance_str.upper(), 0)

@@ -91,6 +91,7 @@ def simulated_annealing(
         "init",
     )
 
+        
     init_cost = current_cost
     temperature = initial_temperature
     iterations_without_improvement = 0

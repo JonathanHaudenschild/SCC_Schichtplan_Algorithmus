@@ -26,7 +26,7 @@ SHIFTS_END = '2025-06-30 23:59:59'
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 10000
-cooling_rate = 0.99
+cooling_rate = 0.999
 use_db = True
 use_excel = False
 activate_parallelization = False

@@ -10,11 +10,11 @@ from concurrent.futures import ThreadPoolExecutor
 EXPERIENCE_FACTOR = 1000
 GENDER_DISTRIBUTION_FACTOR = 1000
 SHIFT_CATEGORY_FACTOR = 1
-SHIFT_TYPE_FACTOR = 4000
+SHIFT_TYPE_FACTOR = 100
 OFF_DAY_FACTOR = 1000
 SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 5
-FRIEND_FACTOR = 400
+FRIEND_FACTOR = 100
 ENEMY_FACTOR = 200000
 
 
@@ -64,18 +64,18 @@ def cost_function(
     individual_balance_cost = deviation_individual_cost * balance_factor
 
     # Calculate mixed experience and gender costs
-    gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
-    experience_cost = mixed_experience_cost(schedule, people_data, shifts_data)
+    # gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
+    # experience_cost = mixed_experience_cost(schedule, people_data, shifts_data)
 
-    # priority_cost = shift_priority_cost(schedule, shifts_data)
+    priority_cost = shift_priority_cost(schedule, shifts_data)
 
     # Total cost combines individual costs, experience cost, gender cost, and balance cost
     total_cost = (
-        +total_sum_individual_cost
-        # + priority_cost
+        + total_sum_individual_cost
+        + priority_cost
         + individual_balance_cost
-        + gender_cost
-        + experience_cost
+        # + gender_cost
+        # + experience_cost
     )
 
     # Calculate the top n people with the highest costs
@@ -235,7 +235,7 @@ def shift_priority_cost(schedule, shifts_data):
     for shift_id, shift in schedule.items():
         shift_priority = shifts_data["shift_priority_dict"].get(shift_id, 1)
         if len(shift) < shifts_data["shift_capacity_dict"][shift_id][0]:
-            cost += shift_priority
+            cost += shift_priority ** 2  # Penalize underfilled shifts more heavily
     return cost
 
 

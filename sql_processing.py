@@ -22,6 +22,7 @@ class ShiftOccurance(Enum):
 def process_supporter_data(db_connection, project_id, states, periods):
     cursor = db_connection.cursor()
 
+    delete_previous_entries(db_connection, project_id)
     # SQL query to retrieve supporter data
     supporters_query = f"""
         SELECT sp.id as supporterProjectId,
@@ -128,18 +129,21 @@ def process_supporter_data(db_connection, project_id, states, periods):
             for workType in workTypeList:
                 workType = workType.strip()  # Clean up any surrounding whitespace
                 if workType in work_type_mapping:
-                    mapped_work_type = work_type_mapping[workType]
-                    shift_type_dict[mapped_work_type] = (0, 0, 0)
+                    if workType == 'kitchen' and periodName == "pre1":
+                        mapped_work_type = work_type_mapping["kitchen"]
+                        shift_type_dict[mapped_work_type] = (0, 4, 8)
+                    else:    
+                       mapped_work_type = work_type_mapping[workType]
+                       shift_type_dict[mapped_work_type] = (0, 0, 0)
                 else:
                     print(
                         f"Warning: Work type '{workType}' is not recognized and will be ignored."
                     )
+        shift_type_dict[8] = (0, 0, 0)  # Default mobile shift
 
         shift_types_data.append((supporterProjectId, shift_type_dict))
 
-        # day_off_requests corresponds to dayOffStart and dayOffEnd
-        day_off_requests.append((supporterProjectId, (dayOffStart, dayOffEnd)))
-
+   
         # minimum_break_duration - standard 12 hours
         minimum_break_duration.append((supporterProjectId, time(12, 0, 0)))
 
@@ -158,9 +162,12 @@ def process_supporter_data(db_connection, project_id, states, periods):
         
         start_of_pre2 = datetime(2025, 6, 19, 0, 0, 0)
 
-        start_of_time_during_after = datetime(2024, 6, 30, 12, 0, 0)
+        start_of_time_during_after = datetime(2025, 6, 30, 12, 0, 0)
 
         unavailability = []
+             # day_off_requests corresponds to dayOffStart and dayOffEnd
+        unavailability.append((dayOffStart, dayOffEnd))
+
         if periodStart and periodName == "pre2":
             unavailability.append((start_of_time, start_of_pre2))
         if periodStart and periodName == "during":
@@ -176,9 +183,9 @@ def process_supporter_data(db_connection, project_id, states, periods):
 
         # Add to time_preferences
         preferences = [
-            ((time(8, 0, 0), time(12, 0, 0)), 7),
-            ((time(22, 0, 0), time(8, 0, 0)), 15),
-            ((time(18, 0, 0), time(22, 0, 0)), 10),
+            ((time(8, 0, 0), time(12, 0, 0)), 0),
+            ((time(22, 0, 0), time(8, 0, 0)), 0),
+            ((time(18, 0, 0), time(22, 0, 0)), 0),
             ((time(12, 0, 0), time(18, 0, 0)), 0),
         ]
         time_preferences.append((supporterProjectId, preferences))
@@ -254,7 +261,6 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
     restrict_shift_type_data = []
     shift_cost_data = []
 
-    total_potential_slots = 0
     for row in rows:
         (
             shiftId,
@@ -275,10 +281,12 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
         # shift_capacity_limits (slots used as min and max)
         if workType == 'mobile' and overloadable:
-            upper_limit = math.ceil((slots * 2))  # 100% overload
+            upper_limit = math.ceil((slots*2.5))  # 100% overload
             shift_capacity_limits.append(
                 (shiftId, (0, upper_limit))
             )  # 100% overload
+        elif workType == 'kitchen':
+            shift_capacity_limits.append((shiftId, (slots/2, slots)))
         else:
             shift_capacity_limits.append((shiftId, (0, slots)))
 
@@ -290,7 +298,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
             restrict_shift_type_data.append((shiftId, True))
             shift_type_data.append((shiftId, work_type_mapping["bottleDeposit"]))
         elif workType:
-            if work_type_mapping[workType] == 6:
+            if work_type_mapping[workType] == 10 and work_type_mapping[workType] == 11:
                 restrict_shift_type_data.append((shiftId, True))
             shift_type_data.append((shiftId, work_type_mapping[workType]))
 
@@ -310,11 +318,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
         "shift_cost_data": shift_cost_data,  # Default data, if applicable
     }
 
-
-def write_to_db(db_connection, project_id, schedule):
-    print("Writing to database...")
-    print(schedule)
-
+def delete_previous_entries(db_connection, project_id):
     cursor = db_connection.cursor()
 
     # Delete previous automatically created entries
@@ -344,6 +348,12 @@ def write_to_db(db_connection, project_id, schedule):
 
     db_connection.commit()
 
+def write_to_db(db_connection, project_id, schedule):
+    print("Writing to database...")
+    print(schedule)
+
+    delete_previous_entries(db_connection, project_id)
+
     # Insert new entries
     insert_shift_supporter_query = """
         INSERT INTO shift_supporter_project 
@@ -356,6 +366,9 @@ def write_to_db(db_connection, project_id, schedule):
         (version, created_at, created_by_id, shift_supporter_project_id, state) 
         VALUES (0, %s, 3, %s, 'ASSIGNED')
     """
+    
+    
+    cursor = db_connection.cursor()
 
     for shift_id, supporter_ids in schedule.items():
         for supporter_id in supporter_ids:
