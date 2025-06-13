@@ -60,8 +60,8 @@ def cost_function(
     )
 
     # # Introduce a balance factor to penalize high deviation
-    balance_factor = 50  # Adjust this factor as needed
-    individual_balance_cost = deviation_individual_cost * balance_factor
+    # balance_factor = 50  # Adjust this factor as needed
+    # individual_balance_cost = deviation_individual_cost * balance_factor
 
     # Calculate mixed experience and gender costs
     # gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
@@ -73,7 +73,8 @@ def cost_function(
     total_cost = (
         + total_sum_individual_cost
         + priority_cost
-        + individual_balance_cost
+        # + mean_individual_cost
+        # + individual_balance_cost
         # + gender_cost
         # + experience_cost
     )
@@ -183,6 +184,12 @@ def individual_cost(
     shift_type_costs = shift_type_cost(
         schedule, person_id, assigned_shifts_person, people_data, shifts_data
     )
+    
+    shift_type_balance_costs = shift_type_balance_cost(
+        schedule, person_id, assigned_shifts_person, people_data, shifts_data
+    )
+    individual_costs += shift_type_balance_costs
+    cost_breakdown["shift_type_balance_cost"] = shift_type_balance_costs
 
     individual_costs += shift_type_costs
     cost_breakdown["shift_type_cost"] = shift_type_costs
@@ -234,10 +241,83 @@ def shift_priority_cost(schedule, shifts_data):
     cost = 0
     for shift_id, shift in schedule.items():
         shift_priority = shifts_data["shift_priority_dict"].get(shift_id, 1)
-        if len(shift) < shifts_data["shift_capacity_dict"][shift_id][0]:
-            cost += shift_priority ** 2  # Penalize underfilled shifts more heavily
+        if len(shift) < shifts_data["shift_capacity_dict"][shift_id][1] and shift_priority > 2:
+            cost += shift_priority ** 4  # Penalize underfilled shifts more heavily
     return cost
 
+def shift_type_balance_cost(
+    schedule, person_id, assigned_shifts_person, people_data, shifts_data
+):
+    def retrieve_shift_types(assigned_shifts, shift_type_dict):
+        """
+        Calculate the number of assigned shift types for a person.
+
+        Args:
+        - assigned_shifts (list): List of shifts already assigned to the person.
+        - shift_type_dict (dict): Mapping from shift ID to shift type.
+
+        Returns:
+        - dict: A dictionary with the count of each shift type assigned to the person.
+        """
+        
+        assigned_shift_types = {}
+        for assigned_shift in assigned_shifts:
+            assigned_shift_type = shift_type_dict.get(assigned_shift, 0)
+            assigned_shift_types[assigned_shift_type] = (
+                assigned_shift_types.get(assigned_shift_type, 0) + 1
+            )
+        return assigned_shift_types
+    
+    # If no shifts assigned, no diversity issue
+    if not assigned_shifts_person:
+        return 0
+        
+    # Calculate the distribution of shift types assigned to the person
+    assigned_shift_types = retrieve_shift_types(
+        assigned_shifts_person, shifts_data["shift_type_dict"]
+    )
+    
+    # Get preferences
+    person_preferences = people_data["people_shift_types_dict"].get(person_id, {})
+    
+    # Calculate diversity metrics
+    total_shifts = len(assigned_shifts_person)
+    unique_shift_types = len(assigned_shift_types)
+    
+    # Diversity penalty - penalize having very few shift types
+    diversity_cost = 0
+    if unique_shift_types == 1 and total_shifts > 2:
+        # Major penalty for having only one type when assigned multiple shifts
+        diversity_cost += 1000
+    elif unique_shift_types < 2 and total_shifts > 3:
+        # Moderate penalty for insufficient diversity with many shifts
+        diversity_cost += 600
+    
+    # Penalize if person doesn't have at least 3 shifts of type 6
+    type_6_count = assigned_shift_types.get(6, 0)
+    if type_6_count < int(0.3 * total_shifts):
+        # If less than 30% of shifts are type 6, apply a penalty
+        diversity_cost += 2000  # Adjust penalty as needed
+        
+    # Check if any shift type dominates the schedule
+    for shift_type, count in assigned_shift_types.items():
+        ratio = count / total_shifts
+
+        # If this type makes up more than 50% of someone's shifts
+        if ratio > 0.5 and count > 2:
+            # Check if this is a preferred shift type for this person
+            is_preferred = False
+            if shift_type in person_preferences:
+                # Person has preference for this shift type
+                preference_value = person_preferences[shift_type][0]
+                if preference_value > 0:
+                    is_preferred = True
+                    
+            # Apply penalty if not preferred
+            if not is_preferred:
+                diversity_cost += int(ratio * 400)  # Higher ratio = higher penalty
+    
+    return diversity_cost
 
 def shift_type_cost(
     schedule, person_id, assigned_shifts_person, people_data, shifts_data

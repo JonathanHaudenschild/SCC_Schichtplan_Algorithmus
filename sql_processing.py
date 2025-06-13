@@ -129,9 +129,18 @@ def process_supporter_data(db_connection, project_id, states, periods):
             for workType in workTypeList:
                 workType = workType.strip()  # Clean up any surrounding whitespace
                 if workType in work_type_mapping:
+                    if workType == 'hygiene' and periodName == "pre1":
+                        mapped_work_type = work_type_mapping["kitchen"]
+                        shift_type_dict[mapped_work_type] = (0, 0, 1)
                     if workType == 'kitchen' and periodName == "pre1":
                         mapped_work_type = work_type_mapping["kitchen"]
-                        shift_type_dict[mapped_work_type] = (0, 4, 8)
+                        shift_type_dict[mapped_work_type] = (0, 3, 5)
+                    if workType == 'entrance' and periodName == "pre1":
+                       mapped_work_type = work_type_mapping["entrance"]
+                       shift_type_dict[mapped_work_type] = (0, 1, 2)
+                    if workType == 'mobile' and periodName == "pre1":
+                       mapped_work_type = work_type_mapping["mobile"]
+                       shift_type_dict[mapped_work_type] = (0, 3, 5)
                     else:    
                        mapped_work_type = work_type_mapping[workType]
                        shift_type_dict[mapped_work_type] = (0, 0, 0)
@@ -281,12 +290,12 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
         # shift_capacity_limits (slots used as min and max)
         if workType == 'mobile' and overloadable:
-            upper_limit = math.ceil((slots*2.5))  # 100% overload
+            upper_limit = math.ceil((slots))  # 100% overload
             shift_capacity_limits.append(
                 (shiftId, (0, upper_limit))
             )  # 100% overload
         elif workType == 'kitchen':
-            shift_capacity_limits.append((shiftId, (slots/2, slots)))
+            shift_capacity_limits.append((shiftId, (slots, slots)))
         else:
             shift_capacity_limits.append((shiftId, (0, slots)))
 
