@@ -22,19 +22,19 @@ class ShiftOccurance(Enum):
 def process_supporter_data(db_connection, project_id, states, periods):
     cursor = db_connection.cursor()
 
-    # delete_previous_entries(db_connection, project_id)
+    delete_previous_entries(db_connection, project_id)
     # SQL query to retrieve supporter data
     supporters_query = f"""
         SELECT sp.id as supporterProjectId,
-               sp.supporter_id as supporter_id,
-               sg.name as groupName,
-               p.start_at as periodStart,
-               ifnull(ewd.date, p.end_at) as periodEnd,
-               p.name as periodName,
-               ewd.date as extraWorkingDay,
-               group_concat(wt.name separator ',') as workTypes,
-               min(timestamp(date(do.date))) AS dayOffStart,
-               max(timestamp(date(do.date), '33:00:00')) AS dayOffEnd
+            sp.supporter_id as supporter_id,
+            sg.name as groupName,
+            p.start_at as periodStart,
+            ifnull(ewd.date, p.end_at) as periodEnd,
+            p.name as periodName,
+            ewd.date as extraWorkingDay,
+            group_concat(wt.name separator ',') as workTypes,
+            min(timestamp(date(do.date))) AS dayOffStart,
+            max(timestamp(date(do.date), '33:00:00')) AS dayOffEnd
         FROM supporter_project sp
         LEFT JOIN supporter_group sg ON sp.supporter_group_id = sg.id
         LEFT JOIN supporter_project_work_type spwt ON spwt.supporter_project_work_types_id = sp.id
@@ -47,6 +47,12 @@ def process_supporter_data(db_connection, project_id, states, periods):
         WHERE sp.project_id = %s
         AND sp.state IN ({','.join(['%s'] * len(states))})
         AND p.name IN ({','.join(['%s'] * len(periods))})
+        AND NOT EXISTS (
+            SELECT 1
+            FROM shift_supporter_project ssp
+            WHERE ssp.supporter_project_id = sp.id
+            AND ssp.active = 1
+        )
         GROUP BY sp.id, sg.name, p.start_at, ifnull(ewd.date, p.end_at), p.name
     """
 
@@ -124,14 +130,19 @@ def process_supporter_data(db_connection, project_id, states, periods):
 
         if workTypes is not None:
             # Add steward shifts if applicable
-            # If bottleDeposit is in workTypes, only use this work type
             if "steward" in workTypes:
                 mapped_work_type = work_type_mapping["steward"]
-                shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
+                if periodName == "pre2":
+                    shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
+                else:
+                    shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
                 number_of_steward_people += 1
             elif "bottleDeposit" in workTypes:
                 mapped_work_type = work_type_mapping["bottleDeposit"]
-                shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
+                if periodName == "pre2":
+                    shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
+                else:
+                    shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
                 number_of_bottle_deposit_people += 1
            
             # Add work types
@@ -164,8 +175,10 @@ def process_supporter_data(db_connection, project_id, states, periods):
         shift_types_data.append((supporterProjectId, shift_type_dict))
         # minimum_break_duration - standard 12 hours
         
-        if periodStart and periodName == "after":
-            minimum_break_duration.append((supporterProjectId, time(9, 0, 0)))
+        if periodName == "pre3":
+            minimum_break_duration.append((supporterProjectId, time(8, 0, 0)))
+        if periodName == "after":
+            minimum_break_duration.append((supporterProjectId, time(8, 0, 0)))
         else:
             minimum_break_duration.append((supporterProjectId, time(12, 0, 0)))
 
@@ -186,13 +199,13 @@ def process_supporter_data(db_connection, project_id, states, periods):
         
         start_of_pre3 = datetime(2025, 6, 23, 0, 0, 0)
         
-        end_of_pre3 = datetime(2025, 6, 26, 12, 0, 0)
+        end_of_pre3 = datetime(2025, 6, 26, 23, 59, 0)
         
         start_of_during = datetime(2025, 6, 25, 10, 0, 0)
         
         end_of_during = datetime(2025, 6, 29, 23, 59, 0)
         if extraWorkingDay:
-            end_of_during = datetime.strptime(extraWorkingDay, "%Y-%m-%d %H:%M:%S")
+            end_of_during = extraWorkingDay
 
         start_of_after = datetime(2025, 6, 29, 12, 0, 0)
 
@@ -226,13 +239,13 @@ def process_supporter_data(db_connection, project_id, states, periods):
         ]
         time_preferences.append((supporterProjectId, preferences))
 
-        if periodName == "after":
-            # Add to mandatory_coverage_periods
-            monday_shift = (
-                datetime(2025, 6, 29, 12, 0, 0),
-                datetime(2025, 7, 1, 6, 0, 0),
-            )
-            mandatory_coverage_periods.append((supporterProjectId, monday_shift))
+        # if periodName == "after":
+        #     # Add to mandatory_coverage_periods
+        #     monday_shift = (
+        #         datetime(2025, 6, 29, 12, 0, 0),
+        #         datetime(2025, 7, 1, 6, 0, 0),
+        #     )
+        #     mandatory_coverage_periods.append((supporterProjectId, monday_shift))
 
     shift_occurrence_rule = []
     # print(capacity_limits)
@@ -266,23 +279,28 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
 
     # SQL query to retrieve shift data
     shifts_query = f"""
-        SELECT s.id as shiftId,
-               s.start_at as startAt,
-               s.end_at as endAt,
-               s.slots as slots,
-               if(l.stewards_needed or s.only_stewards, 1, 0) as stewards,
-               s.bottle_deposit as bottleDeposit,
-               wt.name as workType,
-               l.name as location,
-               s.importance as importance,
-               s.overloadable as overloadable
+        SELECT 
+            s.id as shiftId,
+            s.start_at as startAt,
+            s.end_at as endAt,
+            GREATEST(s.slots - COUNT(DISTINCT ssp.id), 0) AS slots,
+            IF(l.stewards_needed OR s.only_stewards, 1, 0) as stewards,
+            s.bottle_deposit as bottleDeposit,
+            wt.name as workType,
+            l.name as location,
+            s.importance as importance,
+            s.overloadable as overloadable
         FROM shift s
-        LEFT JOIN location l on s.location_id = l.id
-        LEFT JOIN work_type wt on l.work_type_id = wt.id
-        WHERE s.project_id = {'%s'}
-        AND s.start_at >= {'%s'}
-        AND s.start_at <= {'%s'}
+        LEFT JOIN location l ON s.location_id = l.id
+        LEFT JOIN work_type wt ON l.work_type_id = wt.id
+        LEFT JOIN shift_supporter_project ssp ON ssp.shift_id = s.id AND ssp.active = 1
+        WHERE s.project_id = %s
+        AND s.start_at >= %s
+        AND s.start_at <= %s
         AND s.enabled = 1
+        GROUP BY s.id, s.start_at, s.end_at, s.slots, l.stewards_needed, s.only_stewards, 
+                s.bottle_deposit, wt.name, l.name, s.importance, s.overloadable
+        HAVING (s.slots - COUNT(DISTINCT ssp.id) > 0 OR s.overloadable = 1)
     """
 
     params = [project_id, shifts_start, shifts_end]
@@ -311,13 +329,25 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
             importance,
             overloadable,
         ) = row
+        
 
         # shift_time_data
         shift_time_data.append((shiftId, (startAt, endAt)))
 
+        start_of_during = datetime(2025, 6, 25, 10, 0, 0)
+        end_of_during = datetime(2025, 6, 29, 23, 59, 0)
+        shift_is_during = (
+            startAt >= start_of_during
+            and startAt <= end_of_during
+        )
 
         # shift_capacity_limits (slots used as min and max)
         if workType == 'mobile' and overloadable:
+            upper_limit = math.ceil((slots))  # 100% overload
+            shift_capacity_limits.append(
+                (shiftId, (0, slots*6))
+            )  # 100% overload
+        elif workType == 'mobile' and not overloadable:
             upper_limit = math.ceil((slots))  # 100% overload
             shift_capacity_limits.append(
                 (shiftId, (0, 0))
@@ -327,7 +357,7 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
         elif stewards:
             shift_capacity_limits.append((shiftId, (slots, slots)))
         elif bottleDeposit:
-            shift_capacity_limits.append((shiftId, (0, slots)))
+            shift_capacity_limits.append((shiftId, (slots, slots)))
         else:
             shift_capacity_limits.append((shiftId, (0, slots)))
 
@@ -369,21 +399,24 @@ def delete_previous_entries(db_connection, project_id):
         DELETE FROM shift_supporter_project_event
         WHERE shift_supporter_project_id IN (
             SELECT id FROM shift_supporter_project 
-            WHERE shift_id IN (
+            WHERE created_automatically = 1
+            AND import_identifier = 'TEST'
+            AND shift_id IN (
                 SELECT id FROM shift 
-                WHERE project_id = %s AND created_automatically = 1
+                WHERE project_id = %s
             )
         )
         """,
         """
         DELETE FROM shift_supporter_project 
-        WHERE shift_id IN (
+        WHERE created_automatically = 1
+        AND import_identifier = 'TEST'
+        AND shift_id IN (
             SELECT id FROM shift 
-            WHERE project_id = %s AND created_automatically = 1
+            WHERE project_id = %s
         )
-        """,
+        """
     ]
-
     # Execute delete queries
     for query in delete_queries:
         cursor.execute(query, (project_id,))
@@ -414,7 +447,7 @@ def write_to_db(db_connection, project_id, schedule):
 
     for shift_id, supporter_ids in schedule.items():
         for supporter_id in supporter_ids:
-            cursor.execute(insert_shift_supporter_query, (shift_id, supporter_id, 'AUTO_GENERATED_250613'))
+            cursor.execute(insert_shift_supporter_query, (shift_id, supporter_id, 'TEST'))
             last_id = cursor.lastrowid
             current_time = datetime.now()
             cursor.execute(insert_event_query, (current_time, last_id))

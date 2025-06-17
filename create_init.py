@@ -137,6 +137,8 @@ def is_not_already_assigned(shift_id, schedule, person_id):
     return person_id not in schedule[shift_id]
 
 
+
+
 def choose_shift(
     schedule, person_id, assigned_shifts, people_data, shifts_data, factor=1
 ):
@@ -238,14 +240,13 @@ def choose_shift(
 
         # Define weights for criteria
         weights = {
-            "restricted_shift": 1,
+            "restricted_shift": 15,
             "below_person_min_capacity": 0,
-            "shift_priority": 0,
-            "below_shift_min_capacity": 0
+            "shift_priority": 0.1,
+            "below_shift_min_capacity": 15
         }
         average_weight = sum(weights.values()) / len(weights)
         score = 0
-
         # Add a random bonus to avoid local optima
         # if  random.uniform(0, 5) < 1:  # Randomly apply a bonus
         #     score += random.uniform(0, 5) * average_weight
@@ -253,19 +254,20 @@ def choose_shift(
 
         # Criterion 1: Restriction
         # 20% chance to apply the restricted shift bonus
-        if person_limits is not None and restrict_shift and random.randint(1, 4) == 1 and assigned_count < person_limits[1] and current_shift_capacity < max_shift_capacity and max_shift_capacity > 0:
+        if person_limits is not None and restrict_shift and random.randint(1, factor) == 1 and assigned_count < person_limits[1] and current_shift_capacity < max_shift_capacity and max_shift_capacity > 0:
             score += weights["restricted_shift"] 
 
         # Criterion 2: Below person's minimum capacity
-        if person_limits is not None and assigned_count < person_limits[1] and person_limits[1] > 0:
-            score += weights["below_person_min_capacity"]  * random.uniform(0, 5)
+        if person_limits is not None and assigned_count < person_limits[1] and person_limits[1] > 0 and random.randint(1, factor+1) == 1:
+            score += weights["below_person_min_capacity"]
 
         # Criterion 3: Shift priority
-        score += shift_priority * weights["shift_priority"]
+        if shift_priority > 0 and random.randint(1, factor) == 1:
+            score += weights["shift_priority"]  * shift_priority
 
         # Criterion 4: Below shift's minimum capacity
-        if current_shift_capacity < min_shift_capacity:
-            score += weights["below_shift_min_capacity"] * (min_shift_capacity - current_shift_capacity) * random.uniform(0, 5)
+        if current_shift_capacity < min_shift_capacity and min_shift_capacity > 0 and random.randint(1, factor) == 1:
+            score += weights["below_shift_min_capacity"] 
 
         return score
 
@@ -327,7 +329,7 @@ def assign_shifts_person(
             assigned_shifts_history,
             people_data,
             shifts_data,
-            iteration,
+            iteration * (attempt+1)
         )
 
         # If no valid shift is found, break and retry

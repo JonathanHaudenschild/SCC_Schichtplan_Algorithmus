@@ -25,7 +25,7 @@ except ImportError:
 
 # Constants (can be adjusted)
 NIGHT_SHIFT_START_TIME = time(1, 0, 0)
-NIGHT_SHIFT_END_TIME = time(7, 0, 0)
+NIGHT_SHIFT_END_TIME = time(6, 0, 0)
 SECONDS_IN_A_DAY = 24 * 60 * 60
 
 

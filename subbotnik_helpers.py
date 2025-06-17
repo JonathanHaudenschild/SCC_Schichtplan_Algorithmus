@@ -21,7 +21,7 @@ def get_work_type_name(type_id):
             return name
     return None
 
-importance_map = {"LOW": 1, "MIDDLE": 2, "MEDIUM_HIGH": 3, "HIGH": 6}
+importance_map = {"LOW": 1, "MEDIUM_LOW": 2, "MIDDLE": 3, "MEDIUM_HIGH": 4, "HIGH": 6}
 
 def get_shift_importance_integer(importance_str):
     # Convert importance from string to integer, assuming this is a placeholder.

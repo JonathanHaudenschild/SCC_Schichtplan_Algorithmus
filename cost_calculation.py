@@ -14,7 +14,7 @@ SHIFT_TYPE_FACTOR = 100
 OFF_DAY_FACTOR = 1000
 SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 5
-FRIEND_FACTOR = 1000
+FRIEND_FACTOR = 2000
 ENEMY_FACTOR = 200000
 
 
@@ -380,7 +380,7 @@ def shift_type_cost(
 
         if min_required == 0 and max_allowed == 0:
             if person_shift_type not in assigned_shift_types:
-                cost += SHIFT_TYPE_FACTOR * 2
+                cost += SHIFT_TYPE_FACTOR
 
     return cost
 
@@ -548,10 +548,10 @@ def time_frame_cost(
 
     if night_shift_count > 1:
         ratio = (
-          night_shift_count /  len(assigned_shifts_person) 
+          night_shift_count / len(assigned_shifts_person) 
         )
         
-        time_frame_cost += np.exp((ratio))** 10
+        time_frame_cost += np.exp((ratio)) ** (5 * night_shift_count)
 
 
     time_preferences = people_data["time_preferences_dict"].get(person_id, [])
