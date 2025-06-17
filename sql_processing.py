@@ -137,7 +137,7 @@ def process_supporter_data(db_connection, project_id, states, periods):
                 else:
                     shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
                 number_of_steward_people += 1
-            elif "bottleDeposit" in workTypes:
+            elif "bottleDeposit" in workTypes and not periodName == "after":
                 mapped_work_type = work_type_mapping["bottleDeposit"]
                 if periodName == "pre2":
                     shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
@@ -176,9 +176,9 @@ def process_supporter_data(db_connection, project_id, states, periods):
         # minimum_break_duration - standard 12 hours
         
         if periodName == "pre3":
-            minimum_break_duration.append((supporterProjectId, time(8, 0, 0)))
+            minimum_break_duration.append((supporterProjectId, time(9, 0, 0)))
         if periodName == "after":
-            minimum_break_duration.append((supporterProjectId, time(8, 0, 0)))
+            minimum_break_duration.append((supporterProjectId, time(9, 0, 0)))
         else:
             minimum_break_duration.append((supporterProjectId, time(12, 0, 0)))
 
@@ -345,12 +345,12 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
         if workType == 'mobile' and overloadable:
             upper_limit = math.ceil((slots))  # 100% overload
             shift_capacity_limits.append(
-                (shiftId, (0, slots*6))
+                (shiftId, (0, slots*2))
             )  # 100% overload
         elif workType == 'mobile' and not overloadable:
             upper_limit = math.ceil((slots))  # 100% overload
             shift_capacity_limits.append(
-                (shiftId, (0, 0))
+                (shiftId, (0, slots))
             )  # 100% overload
         elif workType == 'kitchen':
             shift_capacity_limits.append((shiftId, (slots, slots)))
