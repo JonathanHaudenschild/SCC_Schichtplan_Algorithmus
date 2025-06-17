@@ -22,7 +22,7 @@ class ShiftOccurance(Enum):
 def process_supporter_data(db_connection, project_id, states, periods):
     cursor = db_connection.cursor()
 
-    delete_previous_entries(db_connection, project_id)
+    # delete_previous_entries(db_connection, project_id)
     # SQL query to retrieve supporter data
     supporters_query = f"""
         SELECT sp.id as supporterProjectId,
@@ -31,6 +31,7 @@ def process_supporter_data(db_connection, project_id, states, periods):
                p.start_at as periodStart,
                ifnull(ewd.date, p.end_at) as periodEnd,
                p.name as periodName,
+               ewd.date as extraWorkingDay,
                group_concat(wt.name separator ',') as workTypes,
                min(timestamp(date(do.date))) AS dayOffStart,
                max(timestamp(date(do.date), '33:00:00')) AS dayOffEnd
@@ -64,7 +65,8 @@ def process_supporter_data(db_connection, project_id, states, periods):
     unavailability_periods = []
     time_preferences = []
     mandatory_coverage_periods = []
-
+    number_of_bottle_deposit_people = 0
+    number_of_steward_people = 0
     for row in rows:
         (
             supporterProjectId,
@@ -73,6 +75,7 @@ def process_supporter_data(db_connection, project_id, states, periods):
             periodStart,
             periodEnd,
             periodName,
+            extraWorkingDay,
             workTypes,
             dayOffStart,
             dayOffEnd,
@@ -87,74 +90,84 @@ def process_supporter_data(db_connection, project_id, states, periods):
             shiftsNeeded = 13
         elif periodName == "pre2":
             shiftsNeeded = 6
+        elif periodName == "during":
+            shiftsNeeded = 3
+        elif periodName == "pre3":
+            shiftsNeeded = 4
+        elif periodName == "after":
+            shiftsNeeded = 4
 
         capacity_limits.append((supporterProjectId, (shiftsNeeded, shiftsNeeded)))
 
         # shift_types_data construction
         shift_type_dict = {}
 
-        # Check if steward needs to be added to workTypes
+        # # Check if steward needs to be added to workTypes
         steward_check_query = """
             SELECT id
             FROM supporter_project
             WHERE steward_form_received = true
-              AND project_id != 15
-              AND project_id >= 12
+              AND project_id = %s
               AND supporter_id  = %s
         """
-        cursor.execute(steward_check_query, (supporter_id,))
+        cursor.execute(steward_check_query, (project_id, supporter_id,))
         steward_result = cursor.fetchall()
 
-        # Add "steward" to workTypes if the condition is met
+        # # Add "steward" to workTypes if the condition is met
         if steward_result:
             if workTypes:
                 workTypes += ",steward"
             else:
                 workTypes = "steward"
 
-        # if workTypes is not None:
-        #     # Add steward shifts if applicable
-        #     if "steward" in workTypes:
-        #         mapped_work_type = work_type_mapping["steward"]
-        #         shift_type_dict[mapped_work_type] = (0, shiftsNeeded, shiftsNeeded)
+        # # Check if bottleDeposit needs to be added to workType
 
-        #     # Add bottleDeposit shifts if applicable
-        #     if "bottleDeposit" in workTypes:
-        #         mapped_work_type = work_type_mapping["bottleDeposit"]
-        #         shift_type_dict[mapped_work_type] = (0, shiftsNeeded, shiftsNeeded)
-
-        # Add work types
-        if workTypes:
-            workTypeList = workTypes.split(",")
-            for workType in workTypeList:
-                workType = workType.strip()  # Clean up any surrounding whitespace
-                if workType in work_type_mapping:
-                    if workType == 'hygiene' and periodName == "pre1":
-                        mapped_work_type = work_type_mapping["kitchen"]
-                        shift_type_dict[mapped_work_type] = (0, 0, 1)
-                    if workType == 'kitchen' and periodName == "pre1":
-                        mapped_work_type = work_type_mapping["kitchen"]
-                        shift_type_dict[mapped_work_type] = (0, 3, 5)
-                    if workType == 'entrance' and periodName == "pre1":
-                       mapped_work_type = work_type_mapping["entrance"]
-                       shift_type_dict[mapped_work_type] = (0, 1, 2)
-                    if workType == 'mobile' and periodName == "pre1":
-                       mapped_work_type = work_type_mapping["mobile"]
-                       shift_type_dict[mapped_work_type] = (0, 3, 5)
-                    else:    
-                       mapped_work_type = work_type_mapping[workType]
-                       shift_type_dict[mapped_work_type] = (0, 0, 0)
-                else:
-                    print(
-                        f"Warning: Work type '{workType}' is not recognized and will be ignored."
-                    )
-        shift_type_dict[8] = (0, 0, 0)  # Default mobile shift
+        if workTypes is not None:
+            # Add steward shifts if applicable
+            # If bottleDeposit is in workTypes, only use this work type
+            if "steward" in workTypes:
+                mapped_work_type = work_type_mapping["steward"]
+                shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
+                number_of_steward_people += 1
+            elif "bottleDeposit" in workTypes:
+                mapped_work_type = work_type_mapping["bottleDeposit"]
+                shift_type_dict[mapped_work_type] = (0, 1, shiftsNeeded)
+                number_of_bottle_deposit_people += 1
+           
+            # Add work types
+            
+            if workTypes and "bottleDeposit" not in workTypes and "steward" not in workTypes:
+                workTypeList = workTypes.split(",")
+                for workType in workTypeList:
+                    workType = workType.strip()  # Clean up any surrounding whitespace
+                    if workType in work_type_mapping:
+                        if workType == 'hygiene' and periodName == "pre1":
+                            mapped_work_type = work_type_mapping["kitchen"]
+                            shift_type_dict[mapped_work_type] = (0, 0, 1)
+                        if workType == 'kitchen' and periodName == "pre1":
+                            mapped_work_type = work_type_mapping["kitchen"]
+                            shift_type_dict[mapped_work_type] = (0, 3, 5)
+                        if workType == 'entrance' and periodName == "pre1":
+                            mapped_work_type = work_type_mapping["entrance"]
+                            shift_type_dict[mapped_work_type] = (0, 1, 2)
+                        if workType == 'mobile' and periodName == "pre1":
+                            mapped_work_type = work_type_mapping["mobile"]
+                            shift_type_dict[mapped_work_type] = (0, 3, 5)
+                        else:    
+                            mapped_work_type = work_type_mapping[workType]
+                            shift_type_dict[mapped_work_type] = (0, 0, 0)
+                    else:
+                        print(
+                            f"Warning: Work type '{workType}' is not recognized and will be ignored."
+                        )
 
         shift_types_data.append((supporterProjectId, shift_type_dict))
-
-   
         # minimum_break_duration - standard 12 hours
-        minimum_break_duration.append((supporterProjectId, time(12, 0, 0)))
+        
+        if periodStart and periodName == "after":
+            minimum_break_duration.append((supporterProjectId, time(9, 0, 0)))
+        else:
+            minimum_break_duration.append((supporterProjectId, time(12, 0, 0)))
 
         # collaboration_preferences - pick others with the same groupName
         cursor.execute(
@@ -170,8 +183,18 @@ def process_supporter_data(db_connection, project_id, states, periods):
         end_of_time = datetime(9999, 12, 31, 23, 59, 59)
         
         start_of_pre2 = datetime(2025, 6, 19, 0, 0, 0)
+        
+        start_of_pre3 = datetime(2025, 6, 23, 0, 0, 0)
+        
+        end_of_pre3 = datetime(2025, 6, 26, 12, 0, 0)
+        
+        start_of_during = datetime(2025, 6, 25, 10, 0, 0)
+        
+        end_of_during = datetime(2025, 6, 29, 23, 59, 0)
+        if extraWorkingDay:
+            end_of_during = datetime.strptime(extraWorkingDay, "%Y-%m-%d %H:%M:%S")
 
-        start_of_time_during_after = datetime(2025, 6, 30, 12, 0, 0)
+        start_of_after = datetime(2025, 6, 29, 12, 0, 0)
 
         unavailability = []
              # day_off_requests corresponds to dayOffStart and dayOffEnd
@@ -179,10 +202,14 @@ def process_supporter_data(db_connection, project_id, states, periods):
 
         if periodStart and periodName == "pre2":
             unavailability.append((start_of_time, start_of_pre2))
+        if periodStart and periodName == "pre3":
+            unavailability.append((start_of_time, start_of_pre3))
+            unavailability.append((end_of_pre3, end_of_time))
         if periodStart and periodName == "during":
-            unavailability.append((start_of_time, periodStart))
-        elif periodStart and periodName == "during_after":
-            unavailability.append((start_of_time, start_of_time_during_after))
+            unavailability.append((start_of_time, start_of_during))
+            unavailability.append((end_of_during, end_of_time))
+        elif periodStart and periodName == "after":
+            unavailability.append((start_of_time, start_of_after))
         if periodEnd:
             unavailability.append((periodEnd, end_of_time))
 
@@ -192,18 +219,18 @@ def process_supporter_data(db_connection, project_id, states, periods):
 
         # Add to time_preferences
         preferences = [
-            ((time(8, 0, 0), time(12, 0, 0)), 0),
-            ((time(22, 0, 0), time(8, 0, 0)), 0),
-            ((time(18, 0, 0), time(22, 0, 0)), 0),
+            ((time(8, 0, 0), time(12, 0, 0)), 4),
+            ((time(22, 0, 0), time(8, 0, 0)), 9),
+            ((time(18, 0, 0), time(22, 0, 0)), 5),
             ((time(12, 0, 0), time(18, 0, 0)), 0),
         ]
         time_preferences.append((supporterProjectId, preferences))
 
-        if periodName == "during_after":
+        if periodName == "after":
             # Add to mandatory_coverage_periods
             monday_shift = (
-                datetime(2024, 6, 30, 12, 0, 0),
-                datetime(2024, 7, 1, 6, 0, 0),
+                datetime(2025, 6, 29, 12, 0, 0),
+                datetime(2025, 7, 1, 6, 0, 0),
             )
             mandatory_coverage_periods.append((supporterProjectId, monday_shift))
 
@@ -215,6 +242,7 @@ def process_supporter_data(db_connection, project_id, states, periods):
     # print(collaboration_preferences)
     # print(unavailability_periods)
     # print(time_preferences)
+    print(number_of_bottle_deposit_people, number_of_steward_people)
 
     # Returning the data in the required format
     return {
@@ -292,10 +320,14 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
         if workType == 'mobile' and overloadable:
             upper_limit = math.ceil((slots))  # 100% overload
             shift_capacity_limits.append(
-                (shiftId, (0, upper_limit))
+                (shiftId, (0, 0))
             )  # 100% overload
         elif workType == 'kitchen':
             shift_capacity_limits.append((shiftId, (slots, slots)))
+        elif stewards:
+            shift_capacity_limits.append((shiftId, (slots, slots)))
+        elif bottleDeposit:
+            shift_capacity_limits.append((shiftId, (0, slots)))
         else:
             shift_capacity_limits.append((shiftId, (0, slots)))
 
@@ -307,12 +339,13 @@ def process_supporter_shifts_data(db_connection, project_id, shifts_start, shift
             restrict_shift_type_data.append((shiftId, True))
             shift_type_data.append((shiftId, work_type_mapping["bottleDeposit"]))
         elif workType:
-            if work_type_mapping[workType] == 10 and work_type_mapping[workType] == 11:
-                restrict_shift_type_data.append((shiftId, True))
             shift_type_data.append((shiftId, work_type_mapping[workType]))
 
         # shift_priority_data
-        shift_priority_data.append((shiftId, get_shift_importance_integer(importance)))
+        if stewards or bottleDeposit:
+            shift_priority_data.append((shiftId, 10))
+        else:
+            shift_priority_data.append((shiftId, get_shift_importance_integer(importance)))
 
     # No equivalent in your example for restrict_shift_type or shift_cost_data
     # Assuming these fields are not necessary or not applicable in this context
@@ -366,8 +399,8 @@ def write_to_db(db_connection, project_id, schedule):
     # Insert new entries
     insert_shift_supporter_query = """
         INSERT INTO shift_supporter_project 
-        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp, status) 
-        VALUES (0, true, true, %s, %s, false, 'FINAL')
+        (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp, status, import_identifier) 
+        VALUES (0, true, true, %s, %s, false, 'FINAL', %s)
     """
 
     insert_event_query = """
@@ -381,7 +414,7 @@ def write_to_db(db_connection, project_id, schedule):
 
     for shift_id, supporter_ids in schedule.items():
         for supporter_id in supporter_ids:
-            cursor.execute(insert_shift_supporter_query, (shift_id, supporter_id))
+            cursor.execute(insert_shift_supporter_query, (shift_id, supporter_id, 'AUTO_GENERATED_250613'))
             last_id = cursor.lastrowid
             current_time = datetime.now()
             cursor.execute(insert_event_query, (current_time, last_id))
@@ -401,8 +434,8 @@ def write_to_db(db_connection, project_id, schedule):
                     # SQL for shift_supporter_project insert
                     insert_shift_supporter_query_text = f"""
     INSERT INTO shift_supporter_project 
-    (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp) 
-    VALUES (0, true, true, {shift_id}, {supporter_id}, false);
+    (version, created_automatically, active, shift_id, supporter_project_id, got_food_stamp, status, import_identifier) 
+    VALUES (0, true, true, {shift_id}, {supporter_id}, false, 'FINAL', 'AUTO_GENERATED_250613');
     """
                     f.write(insert_shift_supporter_query_text)
                     print(

@@ -29,10 +29,11 @@ def check_shift_type_capacity(people_data, shifts_data):
     for shift_type, capacity in people_data["total_capacity"].items():
         if shift_type not in shifts_data["total_capacity"]:
             continue
+        
         max_shift_capacity = shifts_data["total_capacity"][shift_type][1]
         min_required_capacity = capacity[1]
 
-        if max_shift_capacity < min_required_capacity:
+        if max_shift_capacity < min_required_capacity and max_shift_capacity != 0:
             raise_capacity_error(
                 f"Insufficient capacity for shift type '{shift_type}': "
                 f"Maximum capacity available is {max_shift_capacity}, but at least {min_required_capacity} slots are required."
@@ -229,40 +230,42 @@ def choose_shift(
         shift_type = shifts_data["shift_type_dict"][shift_id]
         restrict_shift = shifts_data["restrict_shift_type_dict"].get(shift_id, False)
         assigned_count = assigned_shift_types.get(shift_type, 0)
-        person_limits = person_shift_types.get(shift_type, [0, 0, 0])
+        person_limits = person_shift_types.get(shift_type)
         min_shift_capacity = shifts_data["shift_capacity_dict"][shift_id][0]
+        max_shift_capacity = shifts_data["shift_capacity_dict"][shift_id][1]
         current_shift_capacity = len(schedule.get(shift_id, []))
         shift_priority = shifts_data["shift_priority_dict"].get(shift_id, 0)
 
         # Define weights for criteria
         weights = {
-            "restricted_shift": 100,
-            "below_person_min_capacity": 15,
+            "restricted_shift": 1,
+            "below_person_min_capacity": 0,
             "shift_priority": 0,
-            "below_shift_min_capacity": 0,
+            "below_shift_min_capacity": 0
         }
-        # average_weight = sum(weights.values()) / len(weights)
+        average_weight = sum(weights.values()) / len(weights)
         score = 0
 
         # Add a random bonus to avoid local optima
-        # if random.random() < (factor * 0.10):
-        #     score += random.randint(1, average_weight * factor)
+        # if  random.uniform(0, 5) < 1:  # Randomly apply a bonus
+        #     score += random.uniform(0, 5) * average_weight
         #     return score  # Early return if random bonus is applied
 
         # Criterion 1: Restriction
-        if restrict_shift and assigned_count < person_limits[2]:
-            score += weights["restricted_shift"]
+        # 20% chance to apply the restricted shift bonus
+        if person_limits is not None and restrict_shift and random.randint(1, 4) == 1 and assigned_count < person_limits[1] and current_shift_capacity < max_shift_capacity and max_shift_capacity > 0:
+            score += weights["restricted_shift"] 
 
         # Criterion 2: Below person's minimum capacity
-        if assigned_count < person_limits[1]:
-            score += weights["below_person_min_capacity"]
+        if person_limits is not None and assigned_count < person_limits[1] and person_limits[1] > 0:
+            score += weights["below_person_min_capacity"]  * random.uniform(0, 5)
 
         # Criterion 3: Shift priority
-        score += shift_priority * weights["shift_priority"] * random.randint(0, 2)
+        score += shift_priority * weights["shift_priority"]
 
         # Criterion 4: Below shift's minimum capacity
         if current_shift_capacity < min_shift_capacity:
-            score += weights["below_shift_min_capacity"]
+            score += weights["below_shift_min_capacity"] * (min_shift_capacity - current_shift_capacity) * random.uniform(0, 5)
 
         return score
 
@@ -433,8 +436,9 @@ def create_schedule(
         return current_schedule, {}
 
     # Initial checks (passing the full data structures)
-    check_shift_type_capacity(people_data, shifts_data)
-    check_total_capacity(people_data, shifts_data)
+    # check_shift_type_capacity(people_data, shifts_data)
+    # TODO Handle when shift_type_capacity is not defined
+    # check_total_capacity(people_data, shifts_data)
 
     # Prepare the initial processing queue
     # A copy of the base list to be shuffled and sorted

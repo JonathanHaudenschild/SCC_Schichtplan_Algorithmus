@@ -16,17 +16,17 @@ from analyze_preferences import analyze_schedule_compliance
 
 
 PROJECT_ID = 17
-PERIODS = ['pre1', 'pre2']
-STATES = ['CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT']
-SHIFTS_START = '2025-06-11 10:00:00'
-SHIFTS_END = '2025-06-30 23:59:59'
+PERIODS = ['during']
+STATES = ['CONFIRMED',]
+SHIFTS_START = '2025-06-23 00:00:00'
+SHIFTS_END = '2025-07-02 23:59:59'
 # SHIFTS_START = '2024-09-05 00:00:00'
 # SHIFTS_END = '2024-09-11 23:59:59'
 
 
 # Parameters for the simulated annealing algorithm
 initial_temperature = 10000
-cooling_rate = 0.9
+cooling_rate = 0.9994
 use_db = True
 use_excel = False
 activate_parallelization = False

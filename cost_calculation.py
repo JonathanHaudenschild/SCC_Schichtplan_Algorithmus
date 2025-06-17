@@ -14,7 +14,7 @@ SHIFT_TYPE_FACTOR = 100
 OFF_DAY_FACTOR = 1000
 SHIFT_RANKING_FACTOR = 1
 CONSECUTIVE_SHIFT_FACTOR = 5
-FRIEND_FACTOR = 100
+FRIEND_FACTOR = 1000
 ENEMY_FACTOR = 200000
 
 
@@ -60,8 +60,8 @@ def cost_function(
     )
 
     # # Introduce a balance factor to penalize high deviation
-    # balance_factor = 50  # Adjust this factor as needed
-    # individual_balance_cost = deviation_individual_cost * balance_factor
+    balance_factor = 50  # Adjust this factor as needed
+    individual_balance_cost = deviation_individual_cost * balance_factor
 
     # Calculate mixed experience and gender costs
     # gender_cost = mixed_gender_dist_cost(schedule, people_data, shifts_data)
@@ -72,9 +72,9 @@ def cost_function(
     # Total cost combines individual costs, experience cost, gender cost, and balance cost
     total_cost = (
         + total_sum_individual_cost
-        + priority_cost
+        # + priority_cost
         # + mean_individual_cost
-        # + individual_balance_cost
+        + individual_balance_cost
         # + gender_cost
         # + experience_cost
     )
@@ -83,11 +83,12 @@ def cost_function(
     n = len(people_data["name_dict"]) // 100
     n = max(n, 1)
     # Get the top n people and their costs
-    top_n_people = sorted(
-        individual_costs.items(), key=lambda item: item[1], reverse=True
-    )[:n]
+    # top_n_people = sorted(
+    #     individual_costs.items(), key=lambda item: item[1], reverse=True
+    # )[:n]
 
-    bias = top_n_people
+    bias = 0
+    # bias = top_n_people
 
     # if print_costs:
     #     for person in people_data["name_dict"]:
@@ -165,12 +166,12 @@ def individual_cost(
     )
     individual_costs += pref_costs
 
-    off_day_costs = off_day_cost(
-        schedule, person_id, assigned_shifts_person, people_data, shifts_data
-    )
+    # off_day_costs = off_day_cost(
+    #     schedule, person_id, assigned_shifts_person, people_data, shifts_data
+    # )
 
-    individual_costs += off_day_costs
-    cost_breakdown["off_day_cost"] = off_day_costs
+    # individual_costs += off_day_costs
+    # cost_breakdown["off_day_cost"] = off_day_costs
     
 
     time_frame_costs = time_frame_cost(
@@ -185,11 +186,11 @@ def individual_cost(
         schedule, person_id, assigned_shifts_person, people_data, shifts_data
     )
     
-    shift_type_balance_costs = shift_type_balance_cost(
-        schedule, person_id, assigned_shifts_person, people_data, shifts_data
-    )
-    individual_costs += shift_type_balance_costs
-    cost_breakdown["shift_type_balance_cost"] = shift_type_balance_costs
+    # shift_type_balance_costs = shift_type_balance_cost(
+    #     schedule, person_id, assigned_shifts_person, people_data, shifts_data
+    # )
+    # individual_costs += shift_type_balance_costs
+    # cost_breakdown["shift_type_balance_cost"] = shift_type_balance_costs
 
     individual_costs += shift_type_costs
     cost_breakdown["shift_type_cost"] = shift_type_costs
@@ -235,6 +236,7 @@ def check_mandatory(assigned_shifts_person, person_id, people_data, shifts_data)
         return 0
 
     return 5000000
+
 
 
 def shift_priority_cost(schedule, shifts_data):
@@ -319,6 +321,12 @@ def shift_type_balance_cost(
     
     return diversity_cost
 
+
+def inverse_power(x, k=2):
+    if x == 0:
+        return  0
+    return 50 / (x ** k)
+
 def shift_type_cost(
     schedule, person_id, assigned_shifts_person, people_data, shifts_data
 ):
@@ -334,12 +342,15 @@ def shift_type_cost(
         - dict: A dictionary with the count of each shift type assigned to the person.
         """
         assigned_shift_types = {}
+        priority_cost = 0
         for assigned_shift in assigned_shifts:
+            priority_cost += inverse_power(shifts_data["shift_priority_dict"].get(assigned_shift, 0)) 
+
             assigned_shift_type = shift_type_dict.get(assigned_shift, 0)
             assigned_shift_types[assigned_shift_type] = (
                 assigned_shift_types.get(assigned_shift_type, 0) + 1
             )
-        return assigned_shift_types
+        return assigned_shift_types, priority_cost
 
     # If person_shift_types is empty, act as a "joker" and don't apply any penalties
     person_shift_types = people_data["people_shift_types_dict"].get(person_id, {})
@@ -349,9 +360,11 @@ def shift_type_cost(
     cost = 0
 
     # Calculate the number of each shift type already assigned to the person
-    assigned_shift_types = retrieve_shift_types(
+    assigned_shift_types, priority_cost = retrieve_shift_types(
         assigned_shifts_person, shifts_data["shift_type_dict"]
     )
+    
+    cost += priority_cost
 
     # Apply penalties based on shift type preferences
     for person_shift_type, (_, min_required, max_allowed) in person_shift_types.items():
@@ -524,8 +537,8 @@ def time_frame_cost(
         [time_to_seconds_since_midnight(end) for _, end in shift_times]
     )
 
-    lower_bound = time_to_seconds_since_midnight(time(1, 0, 0))
-    upper_bound = time_to_seconds_since_midnight(time(7, 0, 0))
+    lower_bound = time_to_seconds_since_midnight(time(23, 0, 0))
+    upper_bound = time_to_seconds_since_midnight(time(5, 0, 0))
 
     night_shift_mask = overlap_mask(
         shift_start_times, shift_end_times, lower_bound, upper_bound
@@ -533,12 +546,12 @@ def time_frame_cost(
 
     night_shift_count = np.sum(night_shift_mask)
 
-    if night_shift_count > 2:
+    if night_shift_count > 1:
         ratio = (
           night_shift_count /  len(assigned_shifts_person) 
         )
         
-        time_frame_cost += np.exp((ratio))** 5
+        time_frame_cost += np.exp((ratio))** 10
 
 
     time_preferences = people_data["time_preferences_dict"].get(person_id, [])
